@@ -1,479 +1,988 @@
 <script lang="ts">
-	let firstName = '';
-	let lastName = '';
-	let email = '';
-	let password = '';
-	let confirmPassword = '';
-	let agreeToTerms = false;
-	let isLoading = false;
-	let errors: { [key: string]: string } = {};
+  import { TelInput, normalizedCountries } from "svelte-tel-input";
+  import type {
+    DetailedValue,
+    CountryCode,
+    E164Number,
+  } from "svelte-tel-input/types";
 
-	const validateForm = () => {
-		errors = {};
-		
-		if (!firstName.trim()) {
-			errors.firstName = 'First name is required';
-		}
-		
-		if (!lastName.trim()) {
-			errors.lastName = 'Last name is required';
-		}
-		
-		if (!email) {
-			errors.email = 'Email is required';
-		} else if (!/\S+@\S+\.\S+/.test(email)) {
-			errors.email = 'Please enter a valid email';
-		}
-		
-		if (!password) {
-			errors.password = 'Password is required';
-		} else if (password.length < 8) {
-			errors.password = 'Password must be at least 8 characters';
-		} else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
-			errors.password = 'Password must contain at least one uppercase letter, one lowercase letter, and one number';
-		}
-		
-		if (!confirmPassword) {
-			errors.confirmPassword = 'Please confirm your password';
-		} else if (password !== confirmPassword) {
-			errors.confirmPassword = 'Passwords do not match';
-		}
-		
-		if (!agreeToTerms) {
-			errors.terms = 'You must agree to the Terms of Service';
-		}
-		
-		return Object.keys(errors).length === 0;
-	};
+  // Any Country Code Alpha-2 (ISO 3166)
+  let selectedCountry: CountryCode | null = "HU";
 
-	const handleSubmit = async (event: Event) => {
-		event.preventDefault();
-		
-		if (!validateForm()) return;
-		
-		isLoading = true;
-		
-		try {
-			// TODO: Replace with actual API call
-			console.log('Signup attempt:', { firstName, lastName, email, password });
-			
-			// Simulate API call
-			await new Promise(resolve => setTimeout(resolve, 1500));
-			
-			// TODO: Handle successful signup (redirect, show confirmation, etc.)
-			alert('Account created successfully! (This is a demo)');
-		} catch (error) {
-			console.error('Signup error:', error);
-			errors.general = 'Account creation failed. Please try again.';
-		} finally {
-			isLoading = false;
-		}
-	};
+  // You must use E164 number format. It's guarantee the parsing and storing consistency.
+  let value: E164Number | null = "+36301234567";
 
-	const getPasswordStrength = (password: string) => {
-		if (password.length === 0) return { strength: 0, label: '' };
-		if (password.length < 6) return { strength: 1, label: 'Weak', color: '#dc2626' };
-		if (password.length < 8) return { strength: 2, label: 'Fair', color: '#f59e0b' };
-		if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) return { strength: 2, label: 'Fair', color: '#f59e0b' };
-		return { strength: 3, label: 'Strong', color: '#059669' };
-	};
+  // Validity
+  let valid = true;
 
-	$: passwordStrength = getPasswordStrength(password);
+  // Optional - Extended details about the parsed phone number
+  let detailedValue: DetailedValue | null = null;
+  let email = "";
+  let phoneNumber = "";
+  let password = "";
+  let rememberMe = false;
+  let isLoading = false;
+  let errors: { [key: string]: string } = {};
+  let loginMethod: "phone" | "email" = "phone";
+  // let selectedCountry = { name: 'United States', code: '+1', flag: '🇺🇸' };
+  let showCountryDropdown = false;
+
+  const countries = [
+    { name: "United States", code: "+1", flag: "🇺🇸" },
+    { name: "United Kingdom", code: "+44", flag: "🇬🇧" },
+    { name: "Canada", code: "+1", flag: "🇨🇦" },
+    { name: "Australia", code: "+61", flag: "🇦🇺" },
+    { name: "Germany", code: "+49", flag: "🇩🇪" },
+    { name: "France", code: "+33", flag: "🇫🇷" },
+    { name: "Japan", code: "+81", flag: "🇯🇵" },
+    { name: "India", code: "+91", flag: "🇮🇳" },
+    { name: "China", code: "+86", flag: "🇨🇳" },
+    { name: "Brazil", code: "+55", flag: "🇧🇷" },
+    { name: "Mexico", code: "+52", flag: "🇲🇽" },
+  ];
+
+  const switchLoginMethod = (method: "phone" | "email") => {
+    loginMethod = method;
+    errors = {}; // Clear errors when switching
+  };
+
+  const selectCountry = (country: (typeof countries)[0]) => {
+    // selectedCountry = country;
+    // showCountryDropdown = false;
+  };
+
+  const validateForm = () => {
+    errors = {};
+
+    if (loginMethod === "email") {
+      if (!email) {
+        errors.email = "Email is required";
+      } else if (!/\S+@\S+\.\S+/.test(email)) {
+        errors.email = "Please enter a valid email";
+      }
+    } else {
+      if (!phoneNumber) {
+        errors.phone = "Phone number is required";
+      } else if (!/^\d{10,15}$/.test(phoneNumber.replace(/\s/g, ""))) {
+        errors.phone = "Please enter a valid phone number";
+      }
+    }
+
+    if (!password) {
+      errors.password = "Password is required";
+    } else if (password.length < 6) {
+      errors.password = "Password must be at least 6 characters";
+    }
+
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSubmit = async (event: Event) => {
+    // event.preventDefault();
+    // if (!validateForm()) return;
+    // isLoading = true;
+    // try {
+    // 	// TODO: Replace with actual API call
+    // 	const loginData = loginMethod === 'email'
+    // 		? { email, password, rememberMe }
+    // 		: { phone: selectedCountry.code + phoneNumber, password, rememberMe };
+    // 	console.log('Login attempt:', loginData);
+    // 	// Simulate API call
+    // 	await new Promise(resolve => setTimeout(resolve, 1000));
+    // 	// TODO: Handle successful login (redirect, store token, etc.)
+    // 	alert('Login successful! (This is a demo)');
+    // } catch (error) {
+    // 	console.error('Login error:', error);
+    // 	errors.general = 'Login failed. Please try again.';
+    // } finally {
+    // 	isLoading = false;
+    // }
+  };
+
+  // Function to get country flag emoji from ISO code
+  const getCountryFlag = (iso2: string): string => {
+    const flagEmojis: { [key: string]: string } = {
+      US: "🇺🇸",
+      GB: "🇬🇧",
+      CA: "🇨🇦",
+      AU: "🇦🇺",
+      DE: "🇩🇪",
+      FR: "🇫🇷",
+      JP: "🇯🇵",
+      IN: "🇮🇳",
+      CN: "🇨🇳",
+      BR: "🇧🇷",
+      MX: "🇲🇽",
+      HU: "🇭🇺",
+      IT: "🇮🇹",
+      ES: "🇪🇸",
+      NL: "🇳🇱",
+      SE: "🇸🇪",
+      NO: "🇳🇴",
+      DK: "🇩🇰",
+      FI: "🇫🇮",
+      PL: "🇵🇱",
+      CZ: "🇨🇿",
+      AT: "🇦🇹",
+      CH: "🇨🇭",
+      BE: "🇧🇪",
+      IE: "🇮🇪",
+      PT: "🇵🇹",
+      GR: "🇬🇷",
+      TR: "🇹🇷",
+      RU: "🇷🇺",
+      UA: "🇺🇦",
+      RO: "🇷🇴",
+      BG: "🇧🇬",
+      HR: "🇭🇷",
+      SI: "🇸🇮",
+      SK: "🇸🇰",
+      LT: "🇱🇹",
+      LV: "🇱🇻",
+      EE: "🇪🇪",
+      MT: "🇲🇹",
+      CY: "🇨🇾",
+      LU: "🇱🇺",
+      IS: "🇮🇸",
+      NZ: "🇳🇿",
+      SG: "🇸🇬",
+      MY: "🇲🇾",
+      TH: "🇹🇭",
+      VN: "🇻🇳",
+      PH: "🇵🇭",
+      ID: "🇮🇩",
+      KR: "🇰🇷",
+      TW: "🇹🇼",
+      HK: "🇭🇰",
+      IL: "🇮🇱",
+      AE: "🇦🇪",
+      SA: "🇸🇦",
+      EG: "🇪🇬",
+      ZA: "🇿🇦",
+      NG: "🇳🇬",
+      KE: "🇰🇪",
+      GH: "🇬🇭",
+      AR: "🇦🇷",
+      CL: "🇨🇱",
+      CO: "🇨🇴",
+      VE: "🇻🇪",
+      EC: "🇪🇨",
+      UY: "🇺🇾",
+      PY: "🇵🇾",
+      BO: "🇧🇴",
+      CR: "🇨🇷",
+      PA: "🇵🇦",
+      GT: "🇬🇹",
+      SV: "🇸🇻",
+      HN: "🇭🇳",
+      NI: "🇳🇮",
+      BZ: "🇧🇿",
+      JM: "🇯🇲",
+      TT: "🇹🇹",
+      BB: "🇧🇧",
+      GD: "🇬🇩",
+      LC: "🇱🇨",
+      VC: "🇻🇨",
+      AG: "🇦🇬",
+      KN: "🇰🇳",
+      DM: "🇩🇲",
+      DO: "🇩🇴",
+      HT: "🇭🇹",
+      CU: "🇨🇺",
+      PR: "🇵🇷",
+    };
+    return flagEmojis[iso2] || "🏳️";
+  };
+
+  // Close dropdown when clicking outside
+  const handleClickOutside = (event: MouseEvent) => {
+    const target = event.target as Element;
+    if (!target.closest(".country-selector")) {
+      showCountryDropdown = false;
+    }
+  };
 </script>
 
 <svelte:head>
-	<title>Sign Up - Drawtopia</title>
-	<meta name="description" content="Create your Drawtopia account" />
+  <title>Signup - Drawtopia</title>
+  <meta name="description" content="Signup to your Drawtopia account" />
 </svelte:head>
 
-<div class="signup-container">
-	<div class="signup-card">
-		<div class="logo-section">
-			<h1>Drawtopia</h1>
-			<p>Create your account and start your creative journey!</p>
-		</div>
+<svelte:window on:click={handleClickOutside} />
 
-		<form on:submit={handleSubmit} class="signup-form">
-			{#if errors.general}
-				<div class="error-banner">{errors.general}</div>
-			{/if}
+<div class="login-with-phone-number">
+  <div class="form">
+    <div class="logo-text-full">
+      <div class="logo-img"></div>
+    </div>
+    <div class="container">
+      <div class="form_01">
+        <div class="heading">
+          <div class="welcome-to-drawtopia">
+            <span class="welcometodrawtopia_span">Welcome to Drawtopia!</span>
+          </div>
+          <div>
+            <span class="logintocontinuewithyourdrawtopiajourney_span"
+              >Log in to continue with your drawtopia journey</span
+            >
+          </div>
+        </div>
+        <div class="frame-1410103986">
+          <button
+            type="button"
+            class="button-social"
+            on:click={() => alert("Google login coming soon!")}
+          >
+            <div class="icon-l">
+              <div class="super-g-img"></div>
+            </div>
+            <div>
+              <span class="loginwithgoogle_span">Login with Google</span>
+            </div>
+          </button>
+          <div class="frame-1410103989">
+            <div class="stroke"></div>
+            <div><span class="or_span">Or</span></div>
+            <div class="stroke_01"></div>
+          </div>
+          <div class="frame-1410103988">
+            <div class="switch">
+              <button
+                type="button"
+                class="button"
+                class:active={loginMethod === "phone"}
+                on:click={() => switchLoginMethod("phone")}
+              >
+                <div class="phone">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </div>
+                <div><span class="phonenumber_span">Phone Number</span></div>
+              </button>
+              <button
+                type="button"
+                class="button_01"
+                class:active={loginMethod === "email"}
+                on:click={() => switchLoginMethod("email")}
+              >
+                <div class="envelope">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </div>
+                <div><span class="email_span">Email</span></div>
+              </button>
+            </div>
+            <div class="select-wrapper">
+              <label for="accountType">Account Type</label>
+              <select id="accountType" required class="selectyouraccount_span">
+                <option value="" disabled selected hidden
+                  >Select your account</option
+                >
+                <option value="personal">Personal</option>
+                <option value="business">Business</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            {#if loginMethod === "phone"}
+              <div class="text-field">
+                <div><span class="phonenumber_01_span">Phone Number</span></div>
+                <div class="wrapper" style="display: flex; width: 100%;">
+                  <select
+                    class="country-select {!valid ? 'invalid' : ''}"
+                    aria-label="Default select example"
+                    name="Country"
+                    required
+                    bind:value={selectedCountry}
+                  >
+                    <option value={null} hidden={selectedCountry !== null}
+                      >Please select</option
+                    >
+                    {#each normalizedCountries.filter((country) => getCountryFlag(country.iso2) !== "🏳️") as currentCountry (currentCountry.id)}
+                      <option
+                        value={currentCountry.iso2}
+                        selected={currentCountry.iso2 === selectedCountry}
+                        aria-selected={currentCountry.iso2 === selectedCountry}
+                      >
+                        {getCountryFlag(currentCountry.iso2)}
+                        (+{currentCountry.dialCode})
+                      </option>
+                    {/each}
+                  </select>
+                  <TelInput
+                    bind:country={selectedCountry}
+                    bind:value
+                    bind:valid
+                    bind:detailedValue
+                    class="basic-tel-input {!valid ? 'invalid' : ''}"
+                  />
+                </div>
+                {#if errors.phone}
+                  <span class="error-text">{errors.phone}</span>
+                {/if}
+              </div>
+            {:else}
+              <div class="text-field">
+                <div><span class="phonenumber_01_span">Email</span></div>
+                <input
+                  type="email"
+                  bind:value={email}
+                  placeholder="Enter your Email Here"
+                  class="email-input"
+                  class:error={errors.email}
+                  disabled={isLoading}
+                />
+                {#if errors.email}
+                  <span class="error-text">{errors.email}</span>
+                {/if}
+              </div>
+            {/if}
+          </div>
+        </div>
+      </div>
+      <div
+        class="by-creating-an-account-you-agree-to-our-terms-of-service-and-privacy-policy"
+      >
+      <input type="checkbox" id="terms" style="width: 16px; height: 16px;"/>&nbsp;
+        <span class="policy_terms_1">By creating an account, you agree to our </span>
+        <span class="policy_terms_2">Terms of Service</span>
+        <span class="policy_terms_3">and </span>
+        <span class="policy_terms_4">Privacy Policy</span>
+      </div>
 
-			<div class="name-row">
-				<div class="form-group">
-					<label for="firstName">First Name</label>
-					<input
-						id="firstName"
-						type="text"
-						bind:value={firstName}
-						placeholder="First name"
-						class:error={errors.firstName}
-						disabled={isLoading}
-					/>
-					{#if errors.firstName}
-						<span class="error-text">{errors.firstName}</span>
-					{/if}
-				</div>
-
-				<div class="form-group">
-					<label for="lastName">Last Name</label>
-					<input
-						id="lastName"
-						type="text"
-						bind:value={lastName}
-						placeholder="Last name"
-						class:error={errors.lastName}
-						disabled={isLoading}
-					/>
-					{#if errors.lastName}
-						<span class="error-text">{errors.lastName}</span>
-					{/if}
-				</div>
-			</div>
-
-			<div class="form-group">
-				<label for="email">Email</label>
-				<input
-					id="email"
-					type="email"
-					bind:value={email}
-					placeholder="Enter your email"
-					class:error={errors.email}
-					disabled={isLoading}
-				/>
-				{#if errors.email}
-					<span class="error-text">{errors.email}</span>
-				{/if}
-			</div>
-
-			<div class="form-group">
-				<label for="password">Password</label>
-				<input
-					id="password"
-					type="password"
-					bind:value={password}
-					placeholder="Create a password"
-					class:error={errors.password}
-					disabled={isLoading}
-				/>
-				{#if password.length > 0}
-					<div class="password-strength">
-						<div class="strength-bar">
-							<div 
-								class="strength-fill" 
-								style="width: {passwordStrength.strength * 33.33}%; background-color: {passwordStrength.color}"
-							></div>
-						</div>
-						<span class="strength-label" style="color: {passwordStrength.color}">
-							{passwordStrength.label}
-						</span>
-					</div>
-				{/if}
-				{#if errors.password}
-					<span class="error-text">{errors.password}</span>
-				{/if}
-			</div>
-
-			<div class="form-group">
-				<label for="confirmPassword">Confirm Password</label>
-				<input
-					id="confirmPassword"
-					type="password"
-					bind:value={confirmPassword}
-					placeholder="Confirm your password"
-					class:error={errors.confirmPassword}
-					disabled={isLoading}
-				/>
-				{#if errors.confirmPassword}
-					<span class="error-text">{errors.confirmPassword}</span>
-				{/if}
-			</div>
-
-			<div class="terms-section">
-				<label class="checkbox-label">
-					<input
-						type="checkbox"
-						bind:checked={agreeToTerms}
-						disabled={isLoading}
-					/>
-					<span class="checkmark"></span>
-					<span class="terms-text">
-						I agree to the <a href="/terms" target="_blank">Terms of Service</a> 
-						and <a href="/privacy" target="_blank">Privacy Policy</a>
-					</span>
-				</label>
-				{#if errors.terms}
-					<span class="error-text">{errors.terms}</span>
-				{/if}
-			</div>
-
-			<button type="submit" class="signup-btn" disabled={isLoading}>
-				{#if isLoading}
-					<span class="spinner"></span>
-					Creating Account...
-				{:else}
-					Create Account
-				{/if}
-			</button>
-
-			<div class="login-link">
-				Already have an account? <a href="/login">Sign in here</a>
-			</div>
-		</form>
-	</div>
+      <form on:submit={handleSubmit} style="width: 100%;">
+        <div class="frame-1410104077">
+          {#if errors.general}
+            <div class="error-banner">{errors.general}</div>
+          {/if}
+          <button type="submit" class="button_02" disabled={isLoading}>
+            {#if isLoading}
+              <div class="spinner"></div>
+              <span class="login_span">Creating account...</span>
+            {:else}
+              <div class="login">
+                <span class="login_span">Create Account</span>
+              </div>
+            {/if}
+          </button>
+          <a href="/login" class="button_03">
+            <div class="dont-have-account-sign-up">
+              <span class="donthaveaccountsignup_span_01"
+                >Already have an account?
+              </span>
+              &nbsp; <span class="donthaveaccountsignup_span_02">Login</span>
+            </div>
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="background-image"></div>
 </div>
 
 <style>
-	.signup-container {
-		min-height: 100vh;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		padding: 1rem;
-	}
+  .welcometodrawtopia_span {
+    color: #141414;
+    font-size: 40px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 56px;
+    word-wrap: break-word;
+  }
 
-	.signup-card {
-		background: white;
-		border-radius: 16px;
-		box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-		padding: 2.5rem;
-		width: 100%;
-		max-width: 500px;
-		margin: 1rem 0;
-	}
+  .welcome-to-drawtopia {
+    align-self: stretch;
+  }
+  .logo-img {
+    background-image: url("../../assets/logo.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+  }
+  .super-g-img {
+    background-image: url("../../assets/super-g.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+  }
+  .logintocontinuewithyourdrawtopiajourney_span {
+    color: #666d80;
+    font-size: 20px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 28px;
+    word-wrap: break-word;
+  }
 
-	.logo-section {
-		text-align: center;
-		margin-bottom: 2rem;
-	}
+  .loginwithgoogle_span {
+    color: #121212;
+    font-size: 18px;
+    font-family: Geist;
+    font-weight: 500;
+    line-height: 25.2px;
+    word-wrap: break-word;
+  }
 
-	.logo-section h1 {
-		color: #667eea;
-		font-size: 2rem;
-		font-weight: 700;
-		margin: 0 0 0.5rem 0;
-	}
+  .stroke {
+    flex: 1 1 0;
+    height: 2px;
+    transform: rotate(180deg);
+    background: #ededed;
+  }
 
-	.logo-section p {
-		color: #6b7280;
-		margin: 0;
-		font-size: 0.95rem;
-	}
+  .or_span {
+    color: #666d80;
+    font-size: 18px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 25.2px;
+    word-wrap: break-word;
+  }
 
-	.signup-form {
-		display: flex;
-		flex-direction: column;
-		gap: 1.5rem;
-	}
+  .stroke_01 {
+    flex: 1 1 0;
+    height: 2px;
+    transform: rotate(180deg);
+    background: #ededed;
+  }
 
-	.error-banner {
-		background: #fee2e2;
-		color: #dc2626;
-		padding: 0.75rem;
-		border-radius: 8px;
-		font-size: 0.875rem;
-		text-align: center;
-	}
+  .phonenumber_span {
+    color: #141414;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 22.4px;
+    word-wrap: break-word;
+  }
 
-	.name-row {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 1rem;
-	}
+  .email_span {
+    color: #666d80;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 400;
+    line-height: 22.4px;
+    word-wrap: break-word;
+  }
 
-	.form-group {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
+  .phonenumber_01_span {
+    color: #0d0d12;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 22.4px;
+    word-wrap: break-word;
+  }
 
-	label {
-		font-weight: 600;
-		color: #374151;
-		font-size: 0.875rem;
-	}
+  .login_span {
+    color: white;
+    font-size: 18px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 25.2px;
+    word-wrap: break-word;
+  }
 
-	input[type="text"],
-	input[type="email"],
-	input[type="password"] {
-		padding: 0.75rem;
-		border: 2px solid #e5e7eb;
-		border-radius: 8px;
-		font-size: 1rem;
-		transition: border-color 0.2s ease;
-	}
+  .login {
+    text-align: center;
+  }
 
-	input[type="text"]:focus,
-	input[type="email"]:focus,
-	input[type="password"]:focus {
-		outline: none;
-		border-color: #667eea;
-		box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-	}
+  .donthaveaccountsignup_span_01 {
+    color: #727272;
+    font-size: 18px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 25.2px;
+    word-wrap: break-word;
+  }
 
-	input.error {
-		border-color: #dc2626;
-	}
+  .donthaveaccountsignup_span_02 {
+    color: black;
+    font-size: 18px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 25.2px;
+    word-wrap: break-word;
+  }
 
-	.error-text {
-		color: #dc2626;
-		font-size: 0.75rem;
-		margin-top: 0.25rem;
-	}
+  .dont-have-account-sign-up {
+    text-align: center;
+  }
 
-	.password-strength {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-		margin-top: 0.5rem;
-	}
+  .background-image {
+    width: 48%;
+    height: 98vh;
+    position: relative;
+    background: #eef6ff;
+    border-radius: 12px;
+    border: 1px #ededed solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-	.strength-bar {
-		flex: 1;
-		height: 4px;
-		background: #e5e7eb;
-		border-radius: 2px;
-		overflow: hidden;
-	}
+  .heading {
+    align-self: stretch;
+    padding-left: 4px;
+    padding-right: 4px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 8px;
+    display: flex;
+  }
 
-	.strength-fill {
-		height: 100%;
-		transition: width 0.3s ease, background-color 0.3s ease;
-	}
+  .button_02 {
+    align-self: stretch;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    background: #438bff;
+    border-radius: 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: inline-flex;
+    width: 100%;
+  }
 
-	.strength-label {
-		font-size: 0.75rem;
-		font-weight: 600;
-		min-width: 50px;
-	}
+  .button_03 {
+    align-self: stretch;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    /* box-shadow: 0px 4px 4px rgba(141.8, 141.8, 141.8, 0.25) inset; */
+    border-radius: 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: inline-flex;
+  }
 
-	.terms-section {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
+  .logo-text-full {
+    width: 290px;
+    min-height: 54.2px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-	.checkbox-label {
-		display: flex;
-		align-items: flex-start;
-		cursor: pointer;
-		font-size: 0.875rem;
-		color: #6b7280;
-		line-height: 1.4;
-	}
+  .icon-l {
+    width: 20px;
+    height: 20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-	.checkbox-label input[type="checkbox"] {
-		display: none;
-	}
+  .frame-1410103989 {
+    align-self: stretch;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    display: inline-flex;
+  }
 
-	.checkmark {
-		width: 18px;
-		height: 18px;
-		border: 2px solid #d1d5db;
-		border-radius: 4px;
-		margin-right: 0.75rem;
-		margin-top: 2px;
-		flex-shrink: 0;
-		position: relative;
-		transition: all 0.2s ease;
-	}
+  .phone {
+    width: 18px;
+    height: 18px;
+    position: relative;
+    overflow: hidden;
+  }
 
-	.checkbox-label input[type="checkbox"]:checked + .checkmark {
-		background-color: #667eea;
-		border-color: #667eea;
-	}
+  .envelope {
+    width: 18px;
+    height: 18px;
+    position: relative;
+    overflow: hidden;
+  }
 
-	.checkbox-label input[type="checkbox"]:checked + .checkmark::after {
-		content: "✓";
-		position: absolute;
-		color: white;
-		font-size: 12px;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-	}
+  .frame-1410104077 {
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 4px;
+    display: flex;
+  }
 
-	.terms-text a {
-		color: #667eea;
-		text-decoration: none;
-		font-weight: 500;
-	}
+  .button-social {
+    align-self: stretch;
+    height: 57px;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    background: white;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+    border-radius: 20px;
+    outline: 1px #d2d6db solid;
+    outline-offset: -1px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    display: inline-flex;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
 
-	.terms-text a:hover {
-		text-decoration: underline;
-	}
+  .button-social:hover {
+    background: #f8fafc;
+    transform: translateY(-1px);
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
-	.signup-btn {
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		color: white;
-		border: none;
-		padding: 0.75rem 1.5rem;
-		border-radius: 8px;
-		font-size: 1rem;
-		font-weight: 600;
-		cursor: pointer;
-		transition: transform 0.2s ease, box-shadow 0.2s ease;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 0.5rem;
-		margin-top: 0.5rem;
-	}
+  .button {
+    flex: 1 1 0;
+    padding: 8px;
+    background: white;
+    border-radius: 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    display: flex;
+  }
 
-	.signup-btn:hover:not(:disabled) {
-		transform: translateY(-1px);
-		box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
-	}
+  .button_01 {
+    flex: 1 1 0;
+    padding: 8px;
+    border-radius: 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    display: flex;
+  }
 
-	.signup-btn:disabled {
-		opacity: 0.7;
-		cursor: not-allowed;
-	}
+  .switch {
+    align-self: stretch;
+    padding: 4px;
+    background: #f6f8fa;
+    border-radius: 8px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 4px;
+    display: inline-flex;
+  }
 
-	.spinner {
-		width: 16px;
-		height: 16px;
-		border: 2px solid rgba(255, 255, 255, 0.3);
-		border-top: 2px solid white;
-		border-radius: 50%;
-		animation: spin 1s linear infinite;
-	}
+  .email-input {
+    width: 100%;
+    height: 50px;
+    padding-left: 12px;
+    padding-right: 12px;
+    border-radius: 10px;
+    border: 1px solid #bbb;
+    font-size: 16px;
+    outline: none;
+  }
+  .text-field {
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+    display: flex;
+  }
 
-	@keyframes spin {
-		0% { transform: rotate(0deg); }
-		100% { transform: rotate(360deg); }
-	}
+  .frame-1410103988 {
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    display: flex;
+  }
 
-	.login-link {
-		text-align: center;
-		color: #6b7280;
-		font-size: 0.875rem;
-	}
+  .frame-1410103986 {
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 24px;
+    display: flex;
+  }
 
-	.login-link a {
-		color: #667eea;
-		text-decoration: none;
-		font-weight: 600;
-	}
+  .form_01 {
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 24px;
+    display: flex;
+  }
 
-	.login-link a:hover {
-		text-decoration: underline;
-	}
+  .container {
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 40px;
+    display: flex;
+  }
 
-	@media (max-width: 768px) {
-		.name-row {
-			grid-template-columns: 1fr;
-		}
-	}
+  .form {
+    width: 50%;
+    height: 100vh;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    display: inline-flex;
+    padding: 48px;
+  }
 
-	@media (max-width: 480px) {
-		.signup-card {
-			padding: 2rem;
-			margin: 0.5rem;
-		}
-		
-		.logo-section h1 {
-			font-size: 1.75rem;
-		}
-	}
+  .login-with-phone-number {
+    width: 100%;
+    height: 100vh;
+    background: white;
+    overflow: hidden;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    display: flex;
+    flex-wrap: nowrap;
+  }
+
+  /* New interactive styles */
+  .button.active {
+    background: white !important;
+    color: #141414 !important;
+  }
+
+  .button_01.active {
+    background: white !important;
+    color: #141414 !important;
+  }
+
+  .button,
+  .button_01 {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    background: transparent;
+  }
+
+  .button:hover,
+  .button_01:hover {
+    background: rgba(255, 255, 255, 0.8) !important;
+  }
+
+  .error-text {
+    color: #dc2626;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+  }
+
+  .error-banner {
+    background-color: #fee2e2;
+    color: #dc2626;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  .selectyouraccount_span {
+    color: #666d80;
+    font-size: 16px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 22.4px;
+    word-wrap: break-word;
+  }
+  .select-wrapper {
+    display: flex;
+    flex-direction: column;
+    /* font-family: Nunito; */
+    width: 100%;
+  }
+
+  .select-wrapper label {
+    margin-bottom: 6px;
+    font-size: 16px;
+    color: #333;
+  }
+
+  .select-wrapper select {
+    padding: 12px 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: white;
+    font-size: 16px;
+    color: #333;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("../../assets/CaretDown.svg");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 20px;
+    cursor: pointer;
+  }
+
+  .select-wrapper select:focus {
+    outline: none;
+    border-color: #666;
+  }
+  .policy_terms_1 {
+    color: #666d80;
+    font-size: 18px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 25.2px;
+    word-wrap: break-word;
+  }
+  .policy_terms_2 {
+    color: #141414;
+    font-size: 18px;
+    font-family: Nunito;
+    font-weight: 500;
+    text-decoration: underline;
+    line-height: 25.2px;
+    word-wrap: break-word;
+    cursor: pointer;
+  }
+  .policy_terms_3 {
+    color: #666d80;
+    font-size: 18px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 25.2px;
+    word-wrap: break-word;
+  }
+  .policy_terms_4 {
+    color: #141414;
+    font-size: 18px;
+    font-family: Nunito;
+    font-weight: 500;
+    text-decoration: underline;
+    line-height: 25.2px;
+    word-wrap: break-word;
+    cursor: pointer;
+  }
+  .by-creating-an-account-you-agree-to-our-terms-of-service-and-privacy-policy {
+    width: 100%;
+  }
+
+  .wrapper :global(.basic-tel-input) {
+    height: 50px;
+    width: 80%;
+    padding-left: 12px;
+    padding-right: 12px;
+    border-radius: 0px 10px 10px 0px;
+    border: 1px solid;
+    outline: none;
+    border-color: #bbb;
+    font-size: 16px;
+  }
+
+  .wrapper :global(.country-select) {
+    height: 50px;
+    width: 20%;
+    align-items: center;
+    justify-content: center;
+    padding-left: 12px;
+    padding-right: 12px;
+    border-radius: 10px 0px 0px 10px;
+    border: 1px solid;
+    outline: none;
+    background-color: white;
+    border-color: #bbb;
+    font-size: 16px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-align: center;
+    background-image: url("../../assets/CaretDown.svg");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 20px;
+  }
+
+  .wrapper :global(.invalid) {
+    border-color: red;
+  }
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .button_02:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .button_02 {
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+  }
+
+  .button_02:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(67, 139, 255, 0.3);
+  }
+
+  @media (max-width: 768px) {
+    .login-with-phone-number {
+      flex-direction: column;
+      height: auto;
+      min-height: 100vh;
+    }
+
+    .form {
+      width: 100%;
+      height: auto;
+      min-height: 50vh;
+    }
+
+    .background-image {
+      width: 100%;
+      height: 50vh;
+      min-height: 300px;
+    }
+  }
 </style>
