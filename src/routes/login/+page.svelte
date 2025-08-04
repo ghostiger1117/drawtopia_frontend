@@ -5,7 +5,10 @@
     CountryCode,
     E164Number,
   } from "svelte-tel-input/types";
-
+  import PhoneNumber from "../../components/PhoneNumber.svelte";
+  import PrimaryBtn from "../../components/PrimaryBtn.svelte";
+  import TextBtn from "../../components/TextBtn.svelte";
+  import PrimaryInput from "../../components/PrimaryInput.svelte";
   // Any Country Code Alpha-2 (ISO 3166)
   let selectedCountry: CountryCode | null = "HU";
 
@@ -100,99 +103,7 @@
   };
 
   // Function to get country flag emoji from ISO code
-  const getCountryFlag = (iso2: string): string => {
-    const flagEmojis: { [key: string]: string } = {
-      US: "🇺🇸",
-      GB: "🇬🇧",
-      CA: "🇨🇦",
-      AU: "🇦🇺",
-      DE: "🇩🇪",
-      FR: "🇫🇷",
-      JP: "🇯🇵",
-      IN: "🇮🇳",
-      CN: "🇨🇳",
-      BR: "🇧🇷",
-      MX: "🇲🇽",
-      HU: "🇭🇺",
-      IT: "🇮🇹",
-      ES: "🇪🇸",
-      NL: "🇳🇱",
-      SE: "🇸🇪",
-      NO: "🇳🇴",
-      DK: "🇩🇰",
-      FI: "🇫🇮",
-      PL: "🇵🇱",
-      CZ: "🇨🇿",
-      AT: "🇦🇹",
-      CH: "🇨🇭",
-      BE: "🇧🇪",
-      IE: "🇮🇪",
-      PT: "🇵🇹",
-      GR: "🇬🇷",
-      TR: "🇹🇷",
-      RU: "🇷🇺",
-      UA: "🇺🇦",
-      RO: "🇷🇴",
-      BG: "🇧🇬",
-      HR: "🇭🇷",
-      SI: "🇸🇮",
-      SK: "🇸🇰",
-      LT: "🇱🇹",
-      LV: "🇱🇻",
-      EE: "🇪🇪",
-      MT: "🇲🇹",
-      CY: "🇨🇾",
-      LU: "🇱🇺",
-      IS: "🇮🇸",
-      NZ: "🇳🇿",
-      SG: "🇸🇬",
-      MY: "🇲🇾",
-      TH: "🇹🇭",
-      VN: "🇻🇳",
-      PH: "🇵🇭",
-      ID: "🇮🇩",
-      KR: "🇰🇷",
-      TW: "🇹🇼",
-      HK: "🇭🇰",
-      IL: "🇮🇱",
-      AE: "🇦🇪",
-      SA: "🇸🇦",
-      EG: "🇪🇬",
-      ZA: "🇿🇦",
-      NG: "🇳🇬",
-      KE: "🇰🇪",
-      GH: "🇬🇭",
-      AR: "🇦🇷",
-      CL: "🇨🇱",
-      CO: "🇨🇴",
-      VE: "🇻🇪",
-      EC: "🇪🇨",
-      UY: "🇺🇾",
-      PY: "🇵🇾",
-      BO: "🇧🇴",
-      CR: "🇨🇷",
-      PA: "🇵🇦",
-      GT: "🇬🇹",
-      SV: "🇸🇻",
-      HN: "🇭🇳",
-      NI: "🇳🇮",
-      BZ: "🇧🇿",
-      JM: "🇯🇲",
-      TT: "🇹🇹",
-      BB: "🇧🇧",
-      GD: "🇬🇩",
-      LC: "🇱🇨",
-      VC: "🇻🇨",
-      AG: "🇦🇬",
-      KN: "🇰🇳",
-      DM: "🇩🇲",
-      DO: "🇩🇴",
-      HT: "🇭🇹",
-      CU: "🇨🇺",
-      PR: "🇵🇷",
-    };
-    return flagEmojis[iso2] || "🏳️";
-  };
+
 
   // Close dropdown when clicking outside
   const handleClickOutside = (event: MouseEvent) => {
@@ -296,35 +207,7 @@
             {#if loginMethod === "phone"}
               <div class="text-field">
                 <div><span class="phonenumber_01_span">Phone Number</span></div>
-                <div class="wrapper" style="display: flex; width: 100%;">
-                  <select
-                    class="country-select {!valid ? 'invalid' : ''}"
-                    aria-label="Default select example"
-                    name="Country"
-                    bind:value={selectedCountry}
-                  >
-                    <option value={null} hidden={selectedCountry !== null}
-                      >Please select</option
-                    >
-                    {#each normalizedCountries.filter((country) => getCountryFlag(country.iso2) !== "🏳️") as currentCountry (currentCountry.id)}
-                      <option
-                        value={currentCountry.iso2}
-                        selected={currentCountry.iso2 === selectedCountry}
-                        aria-selected={currentCountry.iso2 === selectedCountry}
-                      >
-                        {getCountryFlag(currentCountry.iso2)}
-                        (+{currentCountry.dialCode})
-                      </option>
-                    {/each}
-                  </select>
-                  <TelInput
-                    bind:country={selectedCountry}
-                    bind:value
-                    bind:valid
-                    bind:detailedValue
-                    class="basic-tel-input {!valid ? 'invalid' : ''}"
-                  />
-                </div>
+                <PhoneNumber phoneNumber={phoneNumber} valid={valid} detailedValue={detailedValue} selectedCountry={selectedCountry} value={value} />
                 {#if errors.phone}
                   <span class="error-text">{errors.phone}</span>
                 {/if}
@@ -332,14 +215,7 @@
             {:else}
               <div class="text-field">
                 <div><span class="phonenumber_01_span">Email</span></div>
-                <input
-                  type="email"
-                  bind:value={email}
-                  placeholder="Enter your Email Here"
-                  class="email-input"
-                  class:error={errors.email}
-                  disabled={isLoading}
-                />
+                <PrimaryInput type="email" value={email} placeholder="Enter your Email Here" errors={errors} disabled={isLoading} />
                 {#if errors.email}
                   <span class="error-text">{errors.email}</span>
                 {/if}
@@ -353,22 +229,8 @@
           {#if errors.general}
             <div class="error-banner">{errors.general}</div>
           {/if}
-          <button type="submit" class="button_02" disabled={isLoading}>
-            {#if isLoading}
-              <div class="spinner"></div>
-              <span class="login_span">Logging in...</span>
-            {:else}
-              <div class="login"><span class="login_span">Login</span></div>
-            {/if}
-          </button>
-          <a href="/signup" class="button_03">
-            <div class="dont-have-account-sign-up">
-              <span class="donthaveaccountsignup_span_01"
-                >Don't have account?
-              </span>
-              &nbsp; <span class="donthaveaccountsignup_span_02">Sign Up</span>
-            </div>
-          </a>
+          <PrimaryBtn text="Login" isLoading={isLoading} spinner_name="Logging in..." onClick={handleSubmit} />
+          <TextBtn text="Don't have account?" linkText="Sign Up" link="/signup" />
         </div>
       </form>
     </div>
@@ -473,40 +335,7 @@
     word-wrap: break-word;
   }
 
-  .login_span {
-    color: white;
-    font-size: 18px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 25.2px;
-    word-wrap: break-word;
-  }
 
-  .login {
-    text-align: center;
-  }
-
-  .donthaveaccountsignup_span_01 {
-    color: #727272;
-    font-size: 18px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 25.2px;
-    word-wrap: break-word;
-  }
-
-  .donthaveaccountsignup_span_02 {
-    color: black;
-    font-size: 18px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 25.2px;
-    word-wrap: break-word;
-  }
-
-  .dont-have-account-sign-up {
-    text-align: center;
-  }
 
   .background-image {
     width: 48%;
@@ -531,34 +360,7 @@
     display: flex;
   }
 
-  .button_02 {
-    align-self: stretch;
-    padding-left: 24px;
-    padding-right: 24px;
-    padding-top: 16px;
-    padding-bottom: 16px;
-    background: #438bff;
-    border-radius: 20px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    display: inline-flex;
-    width: 100%;
-  }
 
-  .button_03 {
-    align-self: stretch;
-    padding-left: 24px;
-    padding-right: 24px;
-    padding-top: 16px;
-    padding-bottom: 16px;
-    /* box-shadow: 0px 4px 4px rgba(141.8, 141.8, 141.8, 0.25) inset; */
-    border-radius: 20px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    display: inline-flex;
-  }
 
   .logo-text-full {
     width: 290px;
@@ -670,16 +472,6 @@
     display: inline-flex;
   }
 
-  .email-input {
-    width: 100%;
-    height: 50px;
-    padding-left: 12px;
-    padding-right: 12px;
-    border-radius: 10px;
-    border: 1px solid #bbb;
-    font-size: 16px;
-    outline: none;
-  }
   .text-field {
     align-self: stretch;
     flex-direction: column;
@@ -789,53 +581,6 @@
     font-size: 14px;
   }
 
-  .spinner {
-    width: 16px;
-    height: 16px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top: 2px solid white;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-
-  .wrapper :global(.basic-tel-input) {
-    height: 50px;
-    width: 80%;
-    padding-left: 12px;
-    padding-right: 12px;
-    border-radius: 0px 10px 10px 0px;
-    border: 1px solid;
-    outline: none;
-    border-color: #bbb;
-    font-size: 16px;
-  }
-
-  .wrapper :global(.country-select) {
-    height: 50px;
-    width: 20%;
-    align-items: center;
-    justify-content: center;
-    padding-left: 12px;
-    padding-right: 12px;
-    border-radius: 10px 0px 0px 10px;
-    border: 1px solid;
-    outline: none;
-    background-color: white;
-    border-color: #bbb;
-    font-size: 16px;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    text-align: center;
-    background-image: url("../../assets/CaretDown.svg");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 20px;
-  }
-
-  .wrapper :global(.invalid) {
-    border-color: red;
-  }
   @keyframes spin {
     0% {
       transform: rotate(0deg);
@@ -843,22 +588,6 @@
     100% {
       transform: rotate(360deg);
     }
-  }
-
-  .button_02:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-
-  .button_02 {
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s ease;
-  }
-
-  .button_02:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(67, 139, 255, 0.3);
   }
 
   @media (max-width: 768px) {

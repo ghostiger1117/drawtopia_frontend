@@ -5,11 +5,7 @@
     CountryCode,
     E164Number,
   } from "svelte-tel-input/types";
-  import PrimarySelect from "../../components/PrimarySelect.svelte";
-  import PhoneNumber from "../../components/PhoneNumber.svelte";
-  import TextBtn from "../../components/TextBtn.svelte";
-  import PrimaryBtn from "../../components/PrimaryBtn.svelte";
-  import PrimaryInput from "../../components/PrimaryInput.svelte";
+
   // Any Country Code Alpha-2 (ISO 3166)
   let selectedCountry: CountryCode | null = "HU";
 
@@ -30,11 +26,7 @@
   let loginMethod: "phone" | "email" = "phone";
   // let selectedCountry = { name: 'United States', code: '+1', flag: '🇺🇸' };
   let showCountryDropdown = false;
-  let selectedOption = "";
-  let options = [
-    { value: "personal", label: "Personal" },
-    { value: "business", label: "Business" },
-  ];
+
   const countries = [
     { name: "United States", code: "+1", flag: "🇺🇸" },
     { name: "United Kingdom", code: "+44", flag: "🇬🇧" },
@@ -212,8 +204,8 @@
 </script>
 
 <svelte:head>
-  <title>Signup - Drawtopia</title>
-  <meta name="description" content="Signup to your Drawtopia account" />
+  <title>OTP-Verify your phone</title>
+  <meta name="description" content="Verify your phone" />
 </svelte:head>
 
 <svelte:window on:click={handleClickOutside} />
@@ -227,120 +219,47 @@
       <div class="form_01">
         <div class="heading">
           <div class="welcome-to-drawtopia">
-            <span class="welcometodrawtopia_span">Welcome to Drawtopia!</span>
+            <span class="welcometodrawtopia_span">Check Your Messages!</span>
           </div>
           <div>
             <span class="logintocontinuewithyourdrawtopiajourney_span"
-              >Log in to continue with your drawtopia journey</span
+              >We've sent a 6-digit code to your phone Number</span
+            >
+            <span class="donthaveaccountsignup_span_02"
+              >+36301234567</span
             >
           </div>
         </div>
-        <div class="frame-1410103986">
-          <button
-            type="button"
-            class="button-social"
-            on:click={() => alert("Google login coming soon!")}
-          >
-            <div class="icon-l">
-              <div class="super-g-img"></div>
-            </div>
-            <div>
-              <span class="loginwithgoogle_span">Login with Google</span>
-            </div>
-          </button>
-          <div class="frame-1410103989">
-            <div class="stroke"></div>
-            <div><span class="or_span">Or</span></div>
-            <div class="stroke_01"></div>
-          </div>
-          <div class="frame-1410103988">
-            <div class="switch">
-              <button
-                type="button"
-                class="button"
-                class:active={loginMethod === "phone"}
-                on:click={() => switchLoginMethod("phone")}
-              >
-                <div class="phone">
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                </div>
-                <div><span class="phonenumber_span">Phone Number</span></div>
-              </button>
-              <button
-                type="button"
-                class="button"
-                class:active={loginMethod === "email"}
-                on:click={() => switchLoginMethod("email")}
-              >
-                <div class="envelope">
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
-                      fill="currentColor"
-                    />
-                  </svg>
-                </div>
-                <div><span class="email_span">Email</span></div>
-              </button>
-            </div>
-            <div class="select-wrapper">
-              <label for="accountType">Account Type</label>
-              <PrimarySelect options={options} selectedOption={selectedOption} onChange={() => {}} />
-            </div>
-            {#if loginMethod === "phone"}
-              <div class="text-field">
-                <div><span class="phonenumber_01_span">Phone Number</span></div>
-                <PhoneNumber phoneNumber={phoneNumber} valid={valid} detailedValue={detailedValue} selectedCountry={selectedCountry} value={value} />
-                {#if errors.phone}
-                  <span class="error-text">{errors.phone}</span>
-                {/if}
-              </div>
-            {:else}
-              <div class="text-field">
-                <div><span class="phonenumber_01_span">Email</span></div>
-                <PrimaryInput type="email" value={email} placeholder="Enter your Email Here" errors={errors} disabled={isLoading} />
-                {#if errors.email}
-                  <span class="error-text">{errors.email}</span>
-                {/if}
-              </div>
-            {/if}
-          </div>
-        </div>
       </div>
-      <div
-        class="by-creating-an-account-you-agree-to-our-terms-of-service-and-privacy-policy"
-      >
-      <input type="checkbox" id="terms" style="width: 16px; height: 16px;"/>&nbsp;
-        <span class="policy_terms_1">By creating an account, you agree to our </span>
-        <span class="policy_terms_2">Terms of Service</span>
-        <span class="policy_terms_1">and </span>
-        <span class="policy_terms_2">Privacy Policy</span>
+      <div class="frame-1410103856">
+        <input class="input-placeholder f_span" type="text" value="1" />
+        <input class="input-placeholder f_span" type="text" value="1" />
+        <input class="input-placeholder f_span" type="text" value="1" />
+        <input class="input-placeholder f_span" type="text" value="1" />
+        <input class="input-placeholder f_span" type="text" value="2" />
+        <input class="input-placeholder f_span" type="text" value="2" />
       </div>
-
       <form on:submit={handleSubmit} style="width: 100%;">
         <div class="frame-1410104077">
           {#if errors.general}
             <div class="error-banner">{errors.general}</div>
           {/if}
-          <PrimaryBtn text="Create Account" isLoading={isLoading} spinner_name="Creating account..." onClick={handleSubmit} />
-          <TextBtn text="Already have an account?" linkText="Login" link="/login" />
+          <button type="submit" class="continue_btn" disabled={isLoading}>
+            {#if isLoading}
+              <div class="spinner"></div>
+              <span class="login_span">Logging in...</span>
+            {:else}
+              <div class="login"><span class="login_span">Continue</span></div>
+            {/if}
+          </button>
+          <button type="submit" class="back_btn" disabled={isLoading}>
+            {#if isLoading}
+              <div class="spinner"></div>
+              <span class="login_span">Logging in...</span>
+            {:else}
+              <div class=""><span class="">Back</span></div>
+            {/if}
+          </button>
         </div>
       </form>
     </div>
@@ -369,14 +288,6 @@
     width: 100%;
     height: 100%;
   }
-  .super-g-img {
-    background-image: url("../../assets/super-g.svg");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    width: 100%;
-    height: 100%;
-  }
   .logintocontinuewithyourdrawtopiajourney_span {
     color: #666d80;
     font-size: 20px;
@@ -386,64 +297,42 @@
     word-wrap: break-word;
   }
 
-  .loginwithgoogle_span {
-    color: #121212;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  .login_span {
+    color: white;
     font-size: 18px;
-    font-family: Geist;
-    font-weight: 500;
+    font-family: Quicksand;
+    font-weight: 600;
     line-height: 25.2px;
     word-wrap: break-word;
   }
 
-  .stroke {
-    flex: 1 1 0;
-    height: 2px;
-    transform: rotate(180deg);
-    background: #ededed;
+  .login {
+    text-align: center;
   }
 
-  .or_span {
-    color: #666d80;
+  .donthaveaccountsignup_span_02 {
+    color: black;
     font-size: 18px;
-    font-family: Nunito;
-    font-weight: 400;
+    font-family: Quicksand;
+    font-weight: 600;
     line-height: 25.2px;
     word-wrap: break-word;
   }
 
-  .stroke_01 {
-    flex: 1 1 0;
-    height: 2px;
-    transform: rotate(180deg);
-    background: #ededed;
-  }
-
-  .phonenumber_span {
-    color: #141414;
-    font-size: 16px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .email_span {
-    color: #666d80;
-    font-size: 16px;
-    font-family: Quicksand;
-    font-weight: 400;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .phonenumber_01_span {
-    color: #0d0d12;
-    font-size: 16px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
 
   .background-image {
     width: 48%;
@@ -468,6 +357,41 @@
     display: flex;
   }
 
+  .continue_btn {
+    align-self: stretch;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    background: #438bff;
+    border-radius: 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: inline-flex;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .back_btn {
+    align-self: stretch;
+    border: 2px solid #438bff;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    color: #438bff;
+    background-color: white;
+    border-radius: 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: inline-flex;
+    width: 100%;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
   .logo-text-full {
     width: 290px;
     min-height: 54.2px;
@@ -477,131 +401,12 @@
     justify-content: center;
   }
 
-  .icon-l {
-    width: 20px;
-    height: 20px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .frame-1410103989 {
-    align-self: stretch;
-    justify-content: center;
-    align-items: center;
-    gap: 24px;
-    display: inline-flex;
-  }
-
-  .phone {
-    width: 18px;
-    height: 18px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .envelope {
-    width: 18px;
-    height: 18px;
-    position: relative;
-    overflow: hidden;
-  }
-
   .frame-1410104077 {
     align-self: stretch;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
     gap: 4px;
-    display: flex;
-  }
-
-  .button-social {
-    align-self: stretch;
-    height: 57px;
-    padding-left: 24px;
-    padding-right: 24px;
-    padding-top: 16px;
-    padding-bottom: 16px;
-    background: white;
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
-    border-radius: 20px;
-    outline: 1px #d2d6db solid;
-    outline-offset: -1px;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-    display: inline-flex;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .button-social:hover {
-    background: #f8fafc;
-    transform: translateY(-1px);
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .button {
-    flex: 1 1 0;
-    padding: 8px;
-    background: white;
-    border-radius: 8px;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    display: flex;
-  }
-
-  .switch {
-    align-self: stretch;
-    padding: 4px;
-    background: #f6f8fa;
-    border-radius: 8px;
-    outline: 1px #ededed solid;
-    outline-offset: -1px;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 4px;
-    display: inline-flex;
-  }
-
-  .email-input {
-    width: 100%;
-    height: 50px;
-    padding-left: 12px;
-    padding-right: 12px;
-    border-radius: 10px;
-    border: 1px solid #bbb;
-    font-size: 16px;
-    outline: none;
-  }
-  .text-field {
-    align-self: stretch;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 8px;
-    display: flex;
-  }
-
-  .frame-1410103988 {
-    align-self: stretch;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 12px;
-    display: flex;
-  }
-
-  .frame-1410103986 {
-    align-self: stretch;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 24px;
     display: flex;
   }
 
@@ -646,30 +451,6 @@
     flex-wrap: nowrap;
   }
 
-  /* New interactive styles */
-  .button.active {
-    background: white !important;
-    color: #141414 !important;
-  }
-
-  .button{
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border: none;
-    background: transparent;
-  }
-
-  .button:hover{
-    background: rgba(255, 255, 255, 0.8) !important;
-  }
-
-  .error-text {
-    color: #dc2626;
-    font-size: 12px;
-    margin-top: 4px;
-    display: block;
-  }
-
   .error-banner {
     background-color: #fee2e2;
     color: #dc2626;
@@ -680,42 +461,49 @@
     font-size: 14px;
   }
 
-
-
-  .select-wrapper {
-    display: flex;
-    flex-direction: column;
-    /* font-family: Nunito; */
-    width: 100%;
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
   }
-
-  .select-wrapper label {
-    margin-bottom: 6px;
-    font-size: 16px;
-    color: #333;
-  }
-
-
-  .policy_terms_1 {
-    color: #666d80;
-    font-size: 18px;
+  .f_span {
+    color: #141414;
+    font-size: 32px;
     font-family: Nunito;
     font-weight: 400;
-    line-height: 25.2px;
+    line-height: 44.8px;
     word-wrap: break-word;
   }
-  .policy_terms_2 {
-    color: #141414;
-    font-size: 18px;
-    font-family: Nunito;
-    font-weight: 500;
-    text-decoration: underline;
-    line-height: 25.2px;
-    word-wrap: break-word;
-    cursor: pointer;
-  }
-  .by-creating-an-account-you-agree-to-our-terms-of-service-and-privacy-policy {
+
+  .input-placeholder {
+    flex: 1 1 0;
+    text-align: center;
+    height: 75px;
     width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    background: white;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid #bbb;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: flex;
+  }
+
+  .frame-1410103856 {
+    width: 100%;
+    height: 100%;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 24px;
+    display: inline-flex;
   }
 
   @keyframes spin {
@@ -725,6 +513,37 @@
     100% {
       transform: rotate(360deg);
     }
+  }
+
+  .continue_btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .continue_btn {
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+  }
+
+  .continue_btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(67, 139, 255, 0.3);
+  }
+
+  .back_btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .back_btn {
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .back_btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(67, 139, 255, 0.3);
   }
 
   @media (max-width: 768px) {
