@@ -24,7 +24,7 @@
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    background-image: url("../../assets/CaretDown.svg");
+    background-image: url("../assets/CaretDown.svg");
     background-repeat: no-repeat;
     background-position: right 10px center;
     background-size: 20px;
@@ -42,5 +42,6 @@
     font-weight: 400;
     line-height: 22.4px;
     word-wrap: break-word;
+    width: 100%;
   }
 </style>
