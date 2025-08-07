@@ -10,6 +10,8 @@
   import TextBtn from "../../components/TextBtn.svelte";
   import PrimaryBtn from "../../components/PrimaryBtn.svelte";
   import PrimaryInput from "../../components/PrimaryInput.svelte";
+  import { signUpWithEmail, signUpWithPhone } from "../../lib/auth";
+  import { goto } from "$app/navigation";
   // Any Country Code Alpha-2 (ISO 3166)
   let selectedCountry: CountryCode | null = "HU";
 
@@ -23,17 +25,19 @@
   let detailedValue: DetailedValue | null = null;
   let email = "";
   let phoneNumber = "";
-  let password = "";
-  let rememberMe = false;
+  let password = "123456";
+  let firstName = "";
+  let lastName = "";
   let isLoading = false;
   let errors: { [key: string]: string } = {};
   let loginMethod: "phone" | "email" = "phone";
+  let acceptedTerms = false;
   // let selectedCountry = { name: 'United States', code: '+1', flag: '🇺🇸' };
   let showCountryDropdown = false;
   let selectedOption = "";
   let options = [
-    { value: "personal", label: "Personal" },
-    { value: "business", label: "Business" },
+    { value: "adult", label: "Adult" },
+    { value: "child", label: "Child" },
   ];
   const countries = [
     { name: "United States", code: "+1", flag: "🇺🇸" },
@@ -62,6 +66,14 @@
   const validateForm = () => {
     errors = {};
 
+    if (!firstName.trim()) {
+      errors.firstName = "First name is required";
+    }
+
+    if (!lastName.trim()) {
+      errors.lastName = "Last name is required";
+    }
+
     if (loginMethod === "email") {
       if (!email) {
         errors.email = "Email is required";
@@ -69,9 +81,9 @@
         errors.email = "Please enter a valid email";
       }
     } else {
-      if (!phoneNumber) {
+      if (!value) {
         errors.phone = "Phone number is required";
-      } else if (!/^\d{10,15}$/.test(phoneNumber.replace(/\s/g, ""))) {
+      } else if (!valid) {
         errors.phone = "Please enter a valid phone number";
       }
     }
@@ -82,29 +94,72 @@
       errors.password = "Password must be at least 6 characters";
     }
 
+    if (!acceptedTerms) {
+      errors.terms = "You must accept the terms and conditions";
+    }
+
     return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (event: Event) => {
-    // event.preventDefault();
-    // if (!validateForm()) return;
-    // isLoading = true;
-    // try {
-    // 	// TODO: Replace with actual API call
-    // 	const loginData = loginMethod === 'email'
-    // 		? { email, password, rememberMe }
-    // 		: { phone: selectedCountry.code + phoneNumber, password, rememberMe };
-    // 	console.log('Login attempt:', loginData);
-    // 	// Simulate API call
-    // 	await new Promise(resolve => setTimeout(resolve, 1000));
-    // 	// TODO: Handle successful login (redirect, store token, etc.)
-    // 	alert('Login successful! (This is a demo)');
-    // } catch (error) {
-    // 	console.error('Login error:', error);
-    // 	errors.general = 'Login failed. Please try again.';
-    // } finally {
-    // 	isLoading = false;
-    // }
+    event.preventDefault();
+    console.log("value", value);
+    if (!validateForm()) return;
+
+    isLoading = true;
+    errors = {}; // Clear previous errors
+
+    try {
+      let result;
+
+      if (loginMethod === "email") {
+        result = await signUpWithEmail(email, password, firstName, lastName);
+        console.log("Signup result:", result);
+      } else {
+        // Use the formatted phone number from the TelInput component
+        const phoneToUse = value || phoneNumber;
+        result = await signUpWithPhone(
+          phoneToUse,
+          password,
+          firstName,
+          lastName
+        );
+      }
+
+      if (result.success) {
+        // Success! User has been created
+        console.log("Signup successful:", result.user);
+
+        // Check if email confirmation is required
+        if (result.user && !result.session) {
+          // Email verification required
+          alert(
+            "Please check your email for a verification code before signing in."
+          );
+        } else {
+          // User is automatically signed in
+          alert(
+            "Account created successfully! Redirecting to verification page..."
+          );
+        }
+
+        // Store email for verification if using email method
+        if (loginMethod === "email") {
+          localStorage.setItem('pendingEmailVerification', email);
+          goto(`/otp-email?email=${encodeURIComponent(email)}`);
+        } else {
+          goto("/otp-phone");
+        }
+      } else {
+        // Handle signup error
+        errors.general = result.error || "Signup failed. Please try again.";
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      errors.general = "An unexpected error occurred. Please try again.";
+    } finally {
+      isLoading = false;
+    }
   };
 
   // Function to get country flag emoji from ISO code
@@ -300,14 +355,49 @@
                 <div><span class="email_span">Email</span></div>
               </button>
             </div>
+            <div class="text-field">
+              <div><span class="phonenumber_01_span">Name</span></div>
+              <div class="name-inputs-row">
+                <div class="name-input-wrapper">
+                  <PrimaryInput
+                    type="text"
+                    bind:value={firstName}
+                    placeholder="First name"
+                    {errors}
+                    disabled={isLoading}
+                  />
+                  {#if errors.firstName}
+                    <span class="error-text">{errors.firstName}</span>
+                  {/if}
+                </div>
+                <div class="name-input-wrapper">
+                  <PrimaryInput
+                    type="text"
+                    bind:value={lastName}
+                    placeholder="Last name"
+                    {errors}
+                    disabled={isLoading}
+                  />
+                  {#if errors.lastName}
+                    <span class="error-text">{errors.lastName}</span>
+                  {/if}
+                </div>
+              </div>
+            </div>
+
             <div class="select-wrapper">
               <label for="accountType">Account Type</label>
-              <PrimarySelect options={options} selectedOption={selectedOption} onChange={() => {}} />
+              <PrimarySelect {options} {selectedOption} onChange={() => {}} />
             </div>
             {#if loginMethod === "phone"}
               <div class="text-field">
                 <div><span class="phonenumber_01_span">Phone Number</span></div>
-                <PhoneNumber phoneNumber={phoneNumber} valid={valid} detailedValue={detailedValue} selectedCountry={selectedCountry} value={value} />
+                <PhoneNumber
+                  bind:valid
+                  bind:detailedValue
+                  bind:selectedCountry
+                  bind:value
+                />
                 {#if errors.phone}
                   <span class="error-text">{errors.phone}</span>
                 {/if}
@@ -315,23 +405,49 @@
             {:else}
               <div class="text-field">
                 <div><span class="phonenumber_01_span">Email</span></div>
-                <PrimaryInput type="email" value={email} placeholder="Enter your Email Here" errors={errors} disabled={isLoading} />
+                <PrimaryInput
+                  type="email"
+                  bind:value={email}
+                  placeholder="Enter your Email Here"
+                  {errors}
+                  disabled={isLoading}
+                />
                 {#if errors.email}
                   <span class="error-text">{errors.email}</span>
                 {/if}
               </div>
             {/if}
+
+            <!-- <div class="text-field">
+              <div><span class="phonenumber_01_span">Password</span></div>
+              <PrimaryInput type="password" bind:value={password} placeholder="Enter your password" errors={errors} disabled={isLoading} />
+              {#if errors.password}
+                <span class="error-text">{errors.password}</span>
+              {/if}
+            </div> -->
           </div>
         </div>
       </div>
       <div
         class="by-creating-an-account-you-agree-to-our-terms-of-service-and-privacy-policy"
       >
-      <input type="checkbox" id="terms" style="width: 16px; height: 16px;"/>&nbsp;
-        <span class="policy_terms_1">By creating an account, you agree to our </span>
+        <input
+          type="checkbox"
+          id="terms"
+          bind:checked={acceptedTerms}
+          style="width: 16px; height: 16px;"
+        />&nbsp;
+        <span class="policy_terms_1"
+          >By creating an account, you agree to our
+        </span>
         <span class="policy_terms_2">Terms of Service</span>
         <span class="policy_terms_1">and </span>
         <span class="policy_terms_2">Privacy Policy</span>
+        {#if errors.terms}
+          <div style="margin-top: 4px;">
+            <span class="error-text">{errors.terms}</span>
+          </div>
+        {/if}
       </div>
 
       <form on:submit={handleSubmit} style="width: 100%;">
@@ -339,8 +455,17 @@
           {#if errors.general}
             <div class="error-banner">{errors.general}</div>
           {/if}
-          <PrimaryBtn text="Create Account" isLoading={isLoading} spinner_name="Creating account..." onClick={handleSubmit} />
-          <TextBtn text="Already have an account?" linkText="Login" link="/login" />
+          <PrimaryBtn
+            text="Create Account"
+            {isLoading}
+            spinner_name="Creating account..."
+            onClick={handleSubmit}
+          />
+          <TextBtn
+            text="Already have an account?"
+            linkText="Login"
+            link="/login"
+          />
         </div>
       </form>
     </div>
@@ -652,14 +777,14 @@
     color: #141414 !important;
   }
 
-  .button{
+  .button {
     cursor: pointer;
     transition: all 0.2s ease;
     border: none;
     background: transparent;
   }
 
-  .button:hover{
+  .button:hover {
     background: rgba(255, 255, 255, 0.8) !important;
   }
 
@@ -680,8 +805,6 @@
     font-size: 14px;
   }
 
-
-
   .select-wrapper {
     display: flex;
     flex-direction: column;
@@ -694,7 +817,6 @@
     font-size: 16px;
     color: #333;
   }
-
 
   .policy_terms_1 {
     color: #666d80;
@@ -716,6 +838,18 @@
   }
   .by-creating-an-account-you-agree-to-our-terms-of-service-and-privacy-policy {
     width: 100%;
+  }
+
+  .name-inputs-row {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .name-input-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   @keyframes spin {

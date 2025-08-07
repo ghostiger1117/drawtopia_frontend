@@ -9,6 +9,10 @@
   import PrimaryBtn from "../../components/PrimaryBtn.svelte";
   import TextBtn from "../../components/TextBtn.svelte";
   import PrimaryInput from "../../components/PrimaryInput.svelte";
+  import { signInWithEmail, signInWithPhone } from "../../lib/auth";
+  import { goto } from "$app/navigation";
+
+
   // Any Country Code Alpha-2 (ISO 3166)
   let selectedCountry: CountryCode | null = "HU";
 
@@ -22,14 +26,15 @@
   let detailedValue: DetailedValue | null = null;
   let email = "";
   let phoneNumber = "";
-  let password = "";
+  let password = "123456";
   let rememberMe = false;
   let isLoading = false;
   let errors: { [key: string]: string } = {};
   let loginMethod: "phone" | "email" = "phone";
   // let selectedCountry = { name: 'United States', code: '+1', flag: '🇺🇸' };
   let showCountryDropdown = false;
-
+  const supabase_url = import.meta.env.VITE_SUPABASE_URL;
+  console.log("Supabase URL:", supabase_url);
   const countries = [
     { name: "United States", code: "+1", flag: "🇺🇸" },
     { name: "United Kingdom", code: "+44", flag: "🇬🇧" },
@@ -64,9 +69,9 @@
         errors.email = "Please enter a valid email";
       }
     } else {
-      if (!phoneNumber) {
+      if (!value || !phoneNumber) {
         errors.phone = "Phone number is required";
-      } else if (!/^\d{10,15}$/.test(phoneNumber.replace(/\s/g, ""))) {
+      } else if (!valid) {
         errors.phone = "Please enter a valid phone number";
       }
     }
@@ -81,25 +86,45 @@
   };
 
   const handleSubmit = async (event: Event) => {
-    // event.preventDefault();
-    // if (!validateForm()) return;
-    // isLoading = true;
-    // try {
-    // 	// TODO: Replace with actual API call
-    // 	const loginData = loginMethod === 'email'
-    // 		? { email, password, rememberMe }
-    // 		: { phone: selectedCountry.code + phoneNumber, password, rememberMe };
-    // 	console.log('Login attempt:', loginData);
-    // 	// Simulate API call
-    // 	await new Promise(resolve => setTimeout(resolve, 1000));
-    // 	// TODO: Handle successful login (redirect, store token, etc.)
-    // 	alert('Login successful! (This is a demo)');
-    // } catch (error) {
-    // 	console.error('Login error:', error);
-    // 	errors.general = 'Login failed. Please try again.';
-    // } finally {
-    // 	isLoading = false;
-    // }
+    event.preventDefault();
+
+    if (!validateForm()) return;
+
+    isLoading = true;
+    errors = {}; // Clear previous errors
+
+    try {
+      let result;
+
+      if (loginMethod === "email") {
+        result = await signInWithEmail(email, password);
+        console.log("result", result);
+      } else {
+        // Use the formatted phone number from the TelInput component
+        const phoneToUse = value || phoneNumber;
+        result = await signInWithPhone(phoneToUse, password);
+      }
+
+      if (result.success) {
+        // Success! User is signed in
+        console.log("Login successful:", result.user);
+        console.log("Session:", result.session);
+
+        // Redirect to dashboard or home page
+        alert("Login successful! Redirecting...");
+        goto("/"); // You can change this to your dashboard route
+      } else {
+        // Handle login error
+        errors.general =
+          result.error ||
+          "Login failed. Please check your credentials and try again.";
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      errors.general = "An unexpected error occurred. Please try again.";
+    } finally {
+      isLoading = false;
+    }
   };
 
   // Function to get country flag emoji from ISO code
@@ -207,7 +232,12 @@
             {#if loginMethod === "phone"}
               <div class="text-field">
                 <div><span class="phonenumber_01_span">Phone Number</span></div>
-                <PhoneNumber phoneNumber={phoneNumber} valid={valid} detailedValue={detailedValue} selectedCountry={selectedCountry} value={value} />
+                <PhoneNumber
+                  bind:valid
+                  bind:detailedValue
+                  bind:selectedCountry
+                  bind:value
+                />
                 {#if errors.phone}
                   <span class="error-text">{errors.phone}</span>
                 {/if}
@@ -215,7 +245,13 @@
             {:else}
               <div class="text-field">
                 <div><span class="phonenumber_01_span">Email</span></div>
-                <PrimaryInput type="email" value={email} placeholder="Enter your Email Here" errors={errors} disabled={isLoading} />
+                <PrimaryInput
+                  type="email"
+                  bind:value={email}
+                  placeholder="Enter your Email Here"
+                  {errors}
+                  disabled={isLoading}
+                />
                 {#if errors.email}
                   <span class="error-text">{errors.email}</span>
                 {/if}
@@ -224,13 +260,22 @@
           </div>
         </div>
       </div>
-      <form on:submit={handleSubmit} style="width: 100%;">
+      <form style="width: 100%;">
         <div class="frame-1410104077">
           {#if errors.general}
             <div class="error-banner">{errors.general}</div>
           {/if}
-          <PrimaryBtn text="Login" isLoading={isLoading} spinner_name="Logging in..." onClick={handleSubmit} />
-          <TextBtn text="Don't have account?" linkText="Sign Up" link="/signup" />
+          <PrimaryBtn
+            text="Login"
+            {isLoading}
+            spinner_name="Logging in..."
+            onClick={handleSubmit}
+          />
+          <TextBtn
+            text="Don't have account?"
+            linkText="Sign Up"
+            link="/signup"
+          />
         </div>
       </form>
     </div>
@@ -579,15 +624,6 @@
     margin-bottom: 16px;
     text-align: center;
     font-size: 14px;
-  }
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
   }
 
   @media (max-width: 768px) {

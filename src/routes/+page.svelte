@@ -1,12 +1,43 @@
+<script lang="ts">
+	import { env } from '$lib/env';
+	import { user, isAuthenticated } from '$lib/stores/auth';
+	import { signOut } from '$lib/auth';
+	import { goto } from '$app/navigation';
+
+	async function handleSignOut() {
+		const result = await signOut();
+		if (result.success) {
+			alert('Signed out successfully!');
+		} else {
+			alert('Error signing out: ' + result.error);
+		}
+	}
+</script>
+
 <div class="welcome-container">
 	<div class="welcome-card">
-		<h1>Welcome to Drawtopia</h1>
+		<h1>Welcome to {env.APP_NAME}</h1>
 		<p>Your creative drawing platform awaits!</p>
 		
-		<div class="auth-buttons">
-			<a href="/login" class="btn btn-primary">Sign In</a>
-			<a href="/signup" class="btn btn-secondary">Create Account</a>
-		</div>
+{#if env.DEV_MODE}
+			<div class="dev-info">
+				<small>🔧 Development Mode | API: {env.API_BASE_URL}</small>
+			</div>
+		{/if}
+
+		{#if $isAuthenticated}
+			<div class="user-info">
+				<p>Welcome back, {$user?.user_metadata?.full_name || $user?.email || 'User'}!</p>
+			</div>
+			<div class="auth-buttons">
+				<button on:click={handleSignOut} class="btn btn-primary">Sign Out</button>
+			</div>
+		{:else}
+			<div class="auth-buttons">
+				<a href="/login" class="btn btn-primary">Sign In</a>
+				<a href="/signup" class="btn btn-secondary">Create Account</a>
+			</div>
+		{/if}
 	</div>
 </div>
 
@@ -41,6 +72,19 @@
 		color: #6b7280;
 		font-size: 1.125rem;
 		margin: 0 0 2rem 0;
+	}
+
+	.dev-info {
+		background: #f3f4f6;
+		padding: 0.5rem 1rem;
+		border-radius: 6px;
+		margin: 1rem 0;
+		border-left: 3px solid #10b981;
+	}
+
+	.dev-info small {
+		color: #374151;
+		font-family: monospace;
 	}
 
 	.auth-buttons {

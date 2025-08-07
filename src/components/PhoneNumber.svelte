@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let phoneNumber: string;
+  // export let phoneNumber: string;
   export let valid: boolean;
   export let detailedValue: DetailedValue | null;
   export let selectedCountry: CountryCode | null;

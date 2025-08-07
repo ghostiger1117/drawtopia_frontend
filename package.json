@@ -24,6 +24,7 @@
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
+		"@supabase/supabase-js": "^2.53.1",
 		"svelte-tel-input": "^3.6.0"
 	}
 }

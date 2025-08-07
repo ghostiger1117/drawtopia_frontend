@@ -1,113 +1,156 @@
 <script lang="ts">
-  import type {
-    DetailedValue,
-    CountryCode,
-    E164Number,
-  } from "svelte-tel-input/types";
   import PrimaryBtn from "../../components/PrimaryBtn.svelte";
   import OutlineBtn from "../../components/OutlineBtn.svelte";
-  // Any Country Code Alpha-2 (ISO 3166)
-  let selectedCountry: CountryCode | null = "HU";
+  import { verifyEmail, resendEmailOTP } from "../../lib/auth";
+  import { goto } from "$app/navigation";
+  import { onMount } from "svelte";
 
-  // You must use E164 number format. It's guarantee the parsing and storing consistency.
-  let value: E164Number | null = "+36301234567";
-
-  // Validity
-  let valid = true;
-
-  // Optional - Extended details about the parsed phone number
-  let detailedValue: DetailedValue | null = null;
+  // OTP related variables
+  let otpValues: string[] = ["", "", "", "", "", ""];
+  let otpInputs: HTMLInputElement[] = [];
   let email = "";
-  let phoneNumber = "";
-  let password = "";
-  let rememberMe = false;
   let isLoading = false;
   let errors: { [key: string]: string } = {};
-  let loginMethod: "phone" | "email" = "phone";
-  // let selectedCountry = { name: 'United States', code: '+1', flag: '🇺🇸' };
-  let showCountryDropdown = false;
+  let isResendingOTP = false;
 
-  const countries = [
-    { name: "United States", code: "+1", flag: "🇺🇸" },
-    { name: "United Kingdom", code: "+44", flag: "🇬🇧" },
-    { name: "Canada", code: "+1", flag: "🇨🇦" },
-    { name: "Australia", code: "+61", flag: "🇦🇺" },
-    { name: "Germany", code: "+49", flag: "🇩🇪" },
-    { name: "France", code: "+33", flag: "🇫🇷" },
-    { name: "Japan", code: "+81", flag: "🇯🇵" },
-    { name: "India", code: "+91", flag: "🇮🇳" },
-    { name: "China", code: "+86", flag: "🇨🇳" },
-    { name: "Brazil", code: "+55", flag: "🇧🇷" },
-    { name: "Mexico", code: "+52", flag: "🇲🇽" },
-  ];
-
-  const switchLoginMethod = (method: "phone" | "email") => {
-    loginMethod = method;
-    errors = {}; // Clear errors when switching
-  };
-
-  const selectCountry = (country: (typeof countries)[0]) => {
-    // selectedCountry = country;
-    // showCountryDropdown = false;
-  };
-
-  const validateForm = () => {
-    errors = {};
-
-    if (loginMethod === "email") {
-      if (!email) {
-        errors.email = "Email is required";
-      } else if (!/\S+@\S+\.\S+/.test(email)) {
-        errors.email = "Please enter a valid email";
-      }
+  // Get email from URL params or localStorage
+  onMount(() => {
+    // Try to get email from URL params first
+    const urlParams = new URLSearchParams(window.location.search);
+    const emailParam = urlParams.get('email');
+    
+    if (emailParam) {
+      email = emailParam;
     } else {
-      if (!phoneNumber) {
-        errors.phone = "Phone number is required";
-      } else if (!/^\d{10,15}$/.test(phoneNumber.replace(/\s/g, ""))) {
-        errors.phone = "Please enter a valid phone number";
+      // Fallback to localStorage if available
+      const storedEmail = localStorage.getItem('pendingEmailVerification');
+      if (storedEmail) {
+        email = storedEmail;
       }
     }
+  });
 
-    if (!password) {
-      errors.password = "Password is required";
-    } else if (password.length < 6) {
-      errors.password = "Password must be at least 6 characters";
+  // Handle OTP input changes
+  const handleOTPInput = (index: number, event: Event) => {
+    const target = event.target as HTMLInputElement;
+    const value = target.value;
+    
+    // Only allow single digit
+    if (value.length > 1) {
+      target.value = value.slice(-1);
     }
+    
+    otpValues[index] = target.value;
+    
+    // Move to next input if current is filled
+    if (target.value && index < 5) {
+      otpInputs[index + 1]?.focus();
+    }
+    
+    // Clear errors when user types
+    if (errors.otp) {
+      errors.otp = "";
+    }
+  };
 
-    return Object.keys(errors).length === 0;
+  // Handle backspace in OTP inputs
+  const handleOTPKeydown = (index: number, event: KeyboardEvent) => {
+    if (event.key === 'Backspace' && !otpValues[index] && index > 0) {
+      otpInputs[index - 1]?.focus();
+    }
+  };
+
+  // Validate OTP
+  const validateOTP = () => {
+    const otpCode = otpValues.join('');
+    
+    if (otpCode.length !== 6) {
+      errors.otp = "Please enter the complete 6-digit code";
+      return false;
+    }
+    
+    if (!/^\d{6}$/.test(otpCode)) {
+      errors.otp = "OTP must contain only numbers";
+      return false;
+    }
+    
+    return true;
   };
 
   const handleSubmit = async (event: Event) => {
-    // event.preventDefault();
-    // if (!validateForm()) return;
-    // isLoading = true;
-    // try {
-    // 	// TODO: Replace with actual API call
-    // 	const loginData = loginMethod === 'email'
-    // 		? { email, password, rememberMe }
-    // 		: { phone: selectedCountry.code + phoneNumber, password, rememberMe };
-    // 	console.log('Login attempt:', loginData);
-    // 	// Simulate API call
-    // 	await new Promise(resolve => setTimeout(resolve, 1000));
-    // 	// TODO: Handle successful login (redirect, store token, etc.)
-    // 	alert('Login successful! (This is a demo)');
-    // } catch (error) {
-    // 	console.error('Login error:', error);
-    // 	errors.general = 'Login failed. Please try again.';
-    // } finally {
-    // 	isLoading = false;
-    // }
-  };
-
-  // Function to get country flag emoji from ISO code
-
-  // Close dropdown when clicking outside
-  const handleClickOutside = (event: MouseEvent) => {
-    const target = event.target as Element;
-    if (!target.closest(".country-selector")) {
-      showCountryDropdown = false;
+    event.preventDefault();
+    
+    if (!validateOTP()) return;
+    
+    if (!email) {
+      errors.general = "Email address is required";
+      return;
+    }
+    
+    isLoading = true;
+    errors = {};
+    
+    try {
+      const otpCode = otpValues.join('');
+      console.log('Verifying OTP:', otpCode, 'for email:', email);
+      
+      const result = await verifyEmail(email, otpCode);
+      
+      if (result.success) {
+        console.log('Email verification successful');
+        
+        // Clear any stored pending verification data
+        localStorage.removeItem('pendingEmailVerification');
+        
+        // Show success message
+        alert('Email verified successfully! Redirecting to dashboard...');
+        
+        // Redirect to dashboard or main page
+        goto('/');
+      } else {
+        console.error('Email verification failed:', result.error);
+        errors.general = result.error || 'Invalid verification code. Please try again.';
+      }
+    } catch (error) {
+      console.error('Email verification error:', error);
+      errors.general = 'An unexpected error occurred. Please try again.';
+    } finally {
+      isLoading = false;
     }
   };
+
+  // Handle back button
+  const handleBack = () => {
+    goto('/signup');
+  };
+
+  // Resend OTP function
+  const handleResendOTP = async () => {
+    if (!email) {
+      errors.general = "Email address is required to resend code";
+      return;
+    }
+    
+    isResendingOTP = true;
+    errors = {};
+    
+    try {
+      const result = await resendEmailOTP(email);
+      
+      if (result.success) {
+        alert('A new verification code has been sent to your email address.');
+      } else {
+        errors.general = result.error || 'Failed to resend verification code. Please try again.';
+      }
+    } catch (error) {
+      console.error('Resend OTP error:', error);
+      errors.general = 'Failed to resend verification code. Please try again.';
+    } finally {
+      isResendingOTP = false;
+    }
+  };
+
+
 </script>
 
 <svelte:head>
@@ -115,7 +158,7 @@
   <meta name="description" content="Verify your email" />
 </svelte:head>
 
-<svelte:window on:click={handleClickOutside} />
+
 
 <div class="login-with-phone-number">
   <div class="form">
@@ -133,26 +176,49 @@
               >We've sent a 6-digit code to your email address</span
             >
             <span class="donthaveaccountsignup_span_02"
-              >logoipsum@gmail.com</span
+              >{email || 'your email'}</span
             >
           </div>
         </div>
       </div>
       <div class="frame-1410103856">
-        <input class="input-placeholder f_span" type="text" value="1" />
-        <input class="input-placeholder f_span" type="text" value="1" />
-        <input class="input-placeholder f_span" type="text" value="1" />
-        <input class="input-placeholder f_span" type="text" value="1" />
-        <input class="input-placeholder f_span" type="text" value="2" />
-        <input class="input-placeholder f_span" type="text" value="2" />
+        {#each otpValues as value, index}
+          <input 
+            bind:this={otpInputs[index]}
+            class="input-placeholder f_span" 
+            type="text" 
+            maxlength="1"
+            bind:value={otpValues[index]}
+            on:input={(e) => handleOTPInput(index, e)}
+            on:keydown={(e) => handleOTPKeydown(index, e)}
+            disabled={isLoading}
+          />
+        {/each}
       </div>
-      <form style="width: 100%;">
+      
+      {#if errors.otp}
+        <div class="error-text-center">{errors.otp}</div>
+      {/if}
+      <form on:submit={handleSubmit} style="width: 100%;">
         <div class="frame-1410104077">
           {#if errors.general}
             <div class="error-banner">{errors.general}</div>
           {/if}
-          <PrimaryBtn text="Continue" isLoading={isLoading} spinner_name="Logging in..." onClick={handleSubmit} />
-          <OutlineBtn text="Back" isLoading={isLoading} spinner_name="Logging in..." onClick={handleSubmit} />
+          <PrimaryBtn text="Continue" isLoading={isLoading} spinner_name="Verifying..." onClick={handleSubmit} />
+          <OutlineBtn text="Back" isLoading={false} spinner_name="" onClick={handleBack} />
+          
+          <!-- Resend OTP option -->
+          <div class="resend-section">
+            <span class="resend-text">Didn't receive the code?</span>
+            <button 
+              type="button" 
+              class="resend-btn" 
+              on:click={handleResendOTP}
+              disabled={isResendingOTP}
+            >
+              {isResendingOTP ? 'Resending...' : 'Resend Code'}
+            </button>
+          </div>
         </div>
       </form>
     </div>
@@ -290,6 +356,50 @@
     margin-bottom: 16px;
     text-align: center;
     font-size: 14px;
+  }
+
+  .error-text-center {
+    color: #dc2626;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 8px;
+    margin-bottom: 16px;
+  }
+
+  .resend-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .resend-text {
+    color: #666d80;
+    font-size: 14px;
+    font-family: Nunito;
+  }
+
+  .resend-btn {
+    background: none;
+    border: none;
+    color: #141414;
+    font-size: 14px;
+    font-family: Nunito;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+
+  .resend-btn:hover:not(:disabled) {
+    color: #0066cc;
+  }
+
+  .resend-btn:disabled {
+    color: #999;
+    cursor: not-allowed;
   }
 
 

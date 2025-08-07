@@ -47,6 +47,15 @@
     box-shadow: 0 4px 8px rgba(67, 139, 255, 0.3);
   }
 
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
   .spinner {
     width: 16px;
     height: 16px;
