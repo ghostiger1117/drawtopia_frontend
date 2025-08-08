@@ -4,6 +4,8 @@
   import PrimarySelect from "./PrimarySelect.svelte";
   import PrimaryInput from "./PrimaryInput.svelte";
   export let showPhotoGuideModal = false;
+  export let selectedAgeGroup = "";
+  export let selectedRelationship = "parent";
   let errors = {
     firstName: "",
     ageGroup: "",
@@ -147,8 +149,14 @@
         <span class="agegroup_span">Age Group*</span>
       </div>
       <PrimarySelect
-        options={["0-2", "3-5", "6-8", "9-11", "12-14", "15-17"]}
-        selectedOption="0-2"
+        options={[
+          { value: "0-2", label: "👶 Ages 0-2 (tiny - Explorers)" },
+          { value: "3-5", label: "👧 Ages 3-5 (Imagination Builders)" },
+          { value: "6-7", label: "🧒 Ages 6-7 (Early Adventurers)" },
+          { value: "8-10", label: "👦 Ages 8-10 (Creative Storyteller)" },
+          { value: "11-12", label: "👦🏽 Ages 11-12 (Young Authors)" },
+        ]}
+        bind:selectedOption={selectedAgeGroup}
         onChange={() => {}}
       />
     </div>
@@ -174,8 +182,16 @@
       </div>
       <!-- <div class="input-placeholder_02"> -->
       <PrimarySelect
-        options={["Parent", "Grandparent", "Aunt", "Uncle", "Other"]}
-        selectedOption="Parent"
+        options={[
+          { value: "parent", label: "Parent" },
+          { value: "aunt_uncle", label: "Aunt/Uncle" },
+          { value: "grandparent", label: "Grandparent" },
+          { value: "sibling", label: "Sibling" },
+          { value: "cousin", label: "Cousin" },
+          { value: "family_friend", label: "Family Friend" },
+          { value: "guardian", label: "Guardian" },
+        ]}
+        bind:selectedOption={selectedRelationship}
         onChange={() => {}}
       />
       <!-- </div> -->

@@ -1,13 +1,21 @@
-<script>
-  export let options;
-  export let selectedOption;
-  export let onChange;
+<script lang="ts">
+  export let options: Array<{value: string, label: string}>;
+  export let selectedOption: string;
+  export let onChange: (event: Event) => void;
 </script>
 
-<select id="accountType" required class="selectyouraccount_span select-wrapper" on:change={onChange}>
-  <option value="" disabled selected hidden
-    >Select your account</option
-  >
+<select
+  id="accountType"
+  required
+  class="selectyouraccount_span select-wrapper"
+  on:change={(e) => {
+    const target = e.target as HTMLSelectElement;
+    selectedOption = target.value;
+    onChange(e);
+  }}
+  value={selectedOption}
+>
+  <option value="" disabled selected hidden>Select your account</option>
   {#each options as option}
     <option value={option.value}>{option.label}</option>
   {/each}

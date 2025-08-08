@@ -693,7 +693,7 @@
     display: inline-flex;
   }
 
-  .email-input {
+  /* .email-input {
     width: 100%;
     height: 50px;
     padding-left: 12px;
@@ -702,7 +702,7 @@
     border: 1px solid #bbb;
     font-size: 16px;
     outline: none;
-  }
+  } */
   .text-field {
     align-self: stretch;
     flex-direction: column;

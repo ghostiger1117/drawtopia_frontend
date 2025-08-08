@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import BackBtn from "../../components/BackBtn.svelte";
 
   import PhotoGuideModal from "../../components/PhotoGuideModal.svelte";
@@ -6,6 +6,7 @@
   import StoryPreview from "../../components/StoryPreview.svelte";
   
   let showPhotoGuideModal = false;
+  let selectedAgeGroup = "";
   
   const closePhotoGuideModal = () => {
     showPhotoGuideModal = false;
@@ -54,8 +55,8 @@
     </div>
   </div>
   <div class="frame-1410103818">
-    <PersonInfo bind:showPhotoGuideModal />
-    <StoryPreview />
+    <PersonInfo bind:showPhotoGuideModal bind:selectedAgeGroup />
+    <StoryPreview {selectedAgeGroup} />
   </div>
   <div class="frame-1410103821">
     <div class="contact-us-hellodrawtopiacom">
