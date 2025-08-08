@@ -412,10 +412,7 @@
     width: 50%;
   }
   .frame-1410103822 {
-    width: 251px;
-    left: 212px;
-    top: 17.14px;
-    position: absolute;
+    width: 100%;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;

@@ -11,14 +11,12 @@
   import PrimaryInput from "../../components/PrimaryInput.svelte";
   import { signInWithEmail, signInWithPhone } from "../../lib/auth";
   import { goto } from "$app/navigation";
-
-
+  
   // Any Country Code Alpha-2 (ISO 3166)
   let selectedCountry: CountryCode | null = "HU";
-
+  // let isMobile = false;
   // You must use E164 number format. It's guarantee the parsing and storing consistency.
   let value: E164Number | null = "+36301234567";
-
   // Validity
   let valid = true;
 
@@ -33,8 +31,6 @@
   let loginMethod: "phone" | "email" = "phone";
   // let selectedCountry = { name: 'United States', code: '+1', flag: '🇺🇸' };
   let showCountryDropdown = false;
-  const supabase_url = import.meta.env.VITE_SUPABASE_URL;
-  console.log("Supabase URL:", supabase_url);
   const countries = [
     { name: "United States", code: "+1", flag: "🇺🇸" },
     { name: "United Kingdom", code: "+44", flag: "🇬🇧" },
@@ -636,13 +632,11 @@
     .form {
       width: 100%;
       height: auto;
-      min-height: 50vh;
+      min-height: 100vh;
     }
 
     .background-image {
-      width: 100%;
-      height: 50vh;
-      min-height: 300px;
+      display: none;
     }
   }
 </style>

@@ -871,13 +871,11 @@
     .form {
       width: 100%;
       height: auto;
-      min-height: 50vh;
+      min-height: 100vh;
     }
 
     .background-image {
-      width: 100%;
-      height: 50vh;
-      min-height: 300px;
+      display: none;
     }
   }
 </style>

@@ -53,6 +53,49 @@
     }
   };
 
+  // Handle paste event for automatic OTP filling
+  const handleOTPPaste = (index: number, event: ClipboardEvent) => {
+    event.preventDefault();
+    
+    const pastedData = event.clipboardData?.getData('text') || '';
+    const cleanedData = pastedData.replace(/\D/g, ''); // Remove non-digits
+    
+    if (cleanedData.length === 6) {
+      // Fill all 6 inputs with the pasted digits
+      for (let i = 0; i < 6; i++) {
+        otpValues[i] = cleanedData[i];
+        if (otpInputs[i]) {
+          otpInputs[i].value = cleanedData[i];
+        }
+      }
+      
+      // Focus the last input
+      otpInputs[5]?.focus();
+      
+      // Clear any existing errors
+      if (errors.otp) {
+        errors.otp = "";
+      }
+    } else if (cleanedData.length > 0) {
+      // If partial digits, fill from current position
+      const remainingSlots = 6 - index;
+      const digitsToFill = Math.min(cleanedData.length, remainingSlots);
+      
+      for (let i = 0; i < digitsToFill; i++) {
+        if (index + i < 6) {
+          otpValues[index + i] = cleanedData[i];
+          if (otpInputs[index + i]) {
+            otpInputs[index + i].value = cleanedData[i];
+          }
+        }
+      }
+      
+      // Focus the next empty input or last filled input
+      const nextIndex = Math.min(index + digitsToFill, 5);
+      otpInputs[nextIndex]?.focus();
+    }
+  };
+
   // Handle backspace in OTP inputs
   const handleOTPKeydown = (index: number, event: KeyboardEvent) => {
     if (event.key === 'Backspace' && !otpValues[index] && index > 0) {
@@ -191,6 +234,7 @@
             bind:value={otpValues[index]}
             on:input={(e) => handleOTPInput(index, e)}
             on:keydown={(e) => handleOTPKeydown(index, e)}
+            on:paste={(e) => handleOTPPaste(index, e)}
             disabled={isLoading}
           />
         {/each}
@@ -460,13 +504,11 @@
     .form {
       width: 100%;
       height: auto;
-      min-height: 50vh;
+      min-height: 100vh;
     }
 
     .background-image {
-      width: 100%;
-      height: 50vh;
-      min-height: 300px;
+      display: none;
     }
   }
 </style>

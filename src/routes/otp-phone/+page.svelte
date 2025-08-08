@@ -24,6 +24,10 @@
   let isLoading = false;
   let errors: { [key: string]: string } = {};
   let loginMethod: "phone" | "email" = "phone";
+
+  // OTP related variables
+  let otpValues: string[] = ["", "", "", "", "", ""];
+  let otpInputs: HTMLInputElement[] = [];
   // let selectedCountry = { name: 'United States', code: '+1', flag: '🇺🇸' };
   let showCountryDropdown = false;
 
@@ -77,26 +81,115 @@
     return Object.keys(errors).length === 0;
   };
 
+  // Handle OTP input changes
+  const handleOTPInput = (index: number, event: Event) => {
+    const target = event.target as HTMLInputElement;
+    const value = target.value;
+    
+    // Only allow single digit
+    if (value.length > 1) {
+      target.value = value.slice(-1);
+    }
+    
+    otpValues[index] = target.value;
+    
+    // Move to next input if current is filled
+    if (target.value && index < 5) {
+      otpInputs[index + 1]?.focus();
+    }
+    
+    // Clear errors when user types
+    if (errors.otp) {
+      errors.otp = "";
+    }
+  };
+
+  // Handle paste event for automatic OTP filling
+  const handleOTPPaste = (index: number, event: ClipboardEvent) => {
+    event.preventDefault();
+    
+    const pastedData = event.clipboardData?.getData('text') || '';
+    const cleanedData = pastedData.replace(/\D/g, ''); // Remove non-digits
+    
+    if (cleanedData.length === 6) {
+      // Fill all 6 inputs with the pasted digits
+      for (let i = 0; i < 6; i++) {
+        otpValues[i] = cleanedData[i];
+        if (otpInputs[i]) {
+          otpInputs[i].value = cleanedData[i];
+        }
+      }
+      
+      // Focus the last input
+      otpInputs[5]?.focus();
+      
+      // Clear any existing errors
+      if (errors.otp) {
+        errors.otp = "";
+      }
+    } else if (cleanedData.length > 0) {
+      // If partial digits, fill from current position
+      const remainingSlots = 6 - index;
+      const digitsToFill = Math.min(cleanedData.length, remainingSlots);
+      
+      for (let i = 0; i < digitsToFill; i++) {
+        if (index + i < 6) {
+          otpValues[index + i] = cleanedData[i];
+          if (otpInputs[index + i]) {
+            otpInputs[index + i].value = cleanedData[i];
+          }
+        }
+      }
+      
+      // Focus the next empty input or last filled input
+      const nextIndex = Math.min(index + digitsToFill, 5);
+      otpInputs[nextIndex]?.focus();
+    }
+  };
+
+  // Handle backspace in OTP inputs
+  const handleOTPKeydown = (index: number, event: KeyboardEvent) => {
+    if (event.key === 'Backspace' && !otpValues[index] && index > 0) {
+      otpInputs[index - 1]?.focus();
+    }
+  };
+
   const handleSubmit = async (event: Event) => {
-    // event.preventDefault();
-    // if (!validateForm()) return;
-    // isLoading = true;
-    // try {
-    // 	// TODO: Replace with actual API call
-    // 	const loginData = loginMethod === 'email'
-    // 		? { email, password, rememberMe }
-    // 		: { phone: selectedCountry.code + phoneNumber, password, rememberMe };
-    // 	console.log('Login attempt:', loginData);
-    // 	// Simulate API call
-    // 	await new Promise(resolve => setTimeout(resolve, 1000));
-    // 	// TODO: Handle successful login (redirect, store token, etc.)
-    // 	alert('Login successful! (This is a demo)');
-    // } catch (error) {
-    // 	console.error('Login error:', error);
-    // 	errors.general = 'Login failed. Please try again.';
-    // } finally {
-    // 	isLoading = false;
-    // }
+    event.preventDefault();
+    
+    // Validate OTP
+    const otpCode = otpValues.join('');
+    if (otpCode.length !== 6) {
+      errors.otp = "Please enter the complete 6-digit code";
+      return;
+    }
+    
+    if (!/^\d{6}$/.test(otpCode)) {
+      errors.otp = "OTP must contain only numbers";
+      return;
+    }
+    
+    isLoading = true;
+    errors = {};
+    
+    try {
+      console.log('Verifying OTP:', otpCode, 'for phone:', value);
+      
+      // TODO: Replace with actual API call for phone verification
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      console.log('Phone verification successful');
+      alert('Phone verified successfully! Redirecting to dashboard...');
+      
+      // TODO: Redirect to dashboard or main page
+      // goto('/');
+    } catch (error) {
+      console.error('Phone verification error:', error);
+      errors.general = 'An unexpected error occurred. Please try again.';
+    } finally {
+      isLoading = false;
+    }
   };
 
   // Function to get country flag emoji from ISO code
@@ -232,13 +325,24 @@
         </div>
       </div>
       <div class="frame-1410103856">
-        <input class="input-placeholder f_span" type="text" value="1" />
-        <input class="input-placeholder f_span" type="text" value="1" />
-        <input class="input-placeholder f_span" type="text" value="1" />
-        <input class="input-placeholder f_span" type="text" value="1" />
-        <input class="input-placeholder f_span" type="text" value="2" />
-        <input class="input-placeholder f_span" type="text" value="2" />
+        {#each otpValues as value, index}
+          <input 
+            bind:this={otpInputs[index]}
+            class="input-placeholder f_span" 
+            type="text" 
+            maxlength="1"
+            bind:value={otpValues[index]}
+            on:input={(e) => handleOTPInput(index, e)}
+            on:keydown={(e) => handleOTPKeydown(index, e)}
+            on:paste={(e) => handleOTPPaste(index, e)}
+            disabled={isLoading}
+          />
+        {/each}
       </div>
+      
+      {#if errors.otp}
+        <div class="error-text-center">{errors.otp}</div>
+      {/if}
       <form on:submit={handleSubmit} style="width: 100%;">
         <div class="frame-1410104077">
           {#if errors.general}
@@ -461,6 +565,14 @@
     font-size: 14px;
   }
 
+  .error-text-center {
+    color: #dc2626;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 8px;
+    margin-bottom: 16px;
+  }
+
   .spinner {
     width: 16px;
     height: 16px;
@@ -556,13 +668,11 @@
     .form {
       width: 100%;
       height: auto;
-      min-height: 50vh;
+      min-height: 100vh;
     }
 
     .background-image {
-      width: 100%;
-      height: 50vh;
-      min-height: 300px;
+      display: none;
     }
   }
 </style>

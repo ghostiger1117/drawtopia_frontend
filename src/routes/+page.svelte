@@ -32,6 +32,7 @@
 			<div class="auth-buttons">
 				<button on:click={handleSignOut} class="btn btn-primary">Sign Out</button>
 			</div>
+			<a href="/create-child-profile" class="btn btn-primary">Create Child Profile</a>
 		{:else}
 			<div class="auth-buttons">
 				<a href="/login" class="btn btn-primary">Sign In</a>
