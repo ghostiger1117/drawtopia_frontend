@@ -1,17 +1,26 @@
 <script lang="ts">
   export let selectedAgeGroup = "";
+  import img02 from '../assets/0-2.png';
+  import img35 from '../assets/3-5.png';
+  import img671 from '../assets/6-7-1.png';
+  import img672 from '../assets/6-7-2.png';
+  import img8101 from '../assets/8-10-1.png';
+  import img8102 from '../assets/8-10-2.png';
+  import img11121 from '../assets/11-12-1.png';
+  import img11122 from '../assets/11-12-2.png';
+  
 
   // Map age groups to their corresponding images
   const getPreviewImage = (ageGroup: string) => {
     const imageMap: { [key: string]: [string, string] } = {
-      "0-2": ["src/assets/0-2.png", "x"],
-      "3-5": ["src/assets/3-5.png", "x"],
-      "6-7": ["src/assets/6-7-1.png", "src/assets/6-7-2.png"],
-      "8-10": ["src/assets/8-10-1.png", "src/assets/8-10-2.png"],
-      "11-12": ["src/assets/11-12-1.png", "src/assets/11-12-2.png"],
+      "0-2": [img02, "x"],
+      "3-5": [img35, "x"],
+      "6-7": [img671, img672],
+      "8-10": [img8101, img8102],
+      "11-12": [img11121, img11122],
     };
 
-    return imageMap[ageGroup] || ["src/assets/0-2.png", "x"]; // Default to 02 image
+    return imageMap[ageGroup] || [img02, "x"]; // Default to 02 image
   };
 
   // Get story text based on age group
