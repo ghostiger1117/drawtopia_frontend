@@ -599,4 +599,41 @@
     gap: 8px;
     display: inline-flex;
   }
+
+  /* Mobile responsive styles */
+  @media (max-width: 768px) {
+    .frame-1410103991 {
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .personalinformation_span {
+      font-size: 24px;
+      line-height: 28px;
+    }
+
+    .form {
+      gap: 16px;
+    }
+    .frame-10 {
+      width: 100%;
+    }
+  }
+
+  /* Extra small mobile devices */
+  @media (max-width: 480px) {
+    .frame-1410103991 {
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .personalinformation_span {
+      font-size: 24px;
+      line-height: 33.6px;
+    }
+
+    .form {
+      gap: 12px;
+    }
+  }
 </style>

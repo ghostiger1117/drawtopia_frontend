@@ -58,4 +58,33 @@
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(67, 139, 255, 0.3);
   }
+
+  /* Mobile responsive styles */
+  @media (max-width: 768px) {
+    .outline_btn {
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-top: 14px;
+      padding-bottom: 14px;
+      font-size: 16px;
+    }
+    
+    .outline_span {
+      font-size: 16px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .outline_btn {
+      padding-left: 16px;
+      padding-right: 16px;
+      padding-top: 12px;
+      padding-bottom: 12px;
+      font-size: 15px;
+    }
+    
+    .outline_span {
+      font-size: 16px;
+    }
+  }
 </style>

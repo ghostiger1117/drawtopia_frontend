@@ -17,6 +17,16 @@
   import arrowUpDown from "../../../assets/CaretUpDown.svg";
   import check from "../../../assets/Check.svg";
   import purple_check from "../../../assets/purple-check.svg";
+  import { goto } from "$app/navigation";
+  import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
+  import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";
+  import { browser } from "$app/environment";
+
+  let isMobile = false;
+
+  $: if (browser) {
+    isMobile = window.innerWidth < 800;
+  }
 </script>
 
 <div class="character-creation-default">
@@ -25,6 +35,9 @@
       <div class="logo-img"></div>
     </div>
   </div>
+  {#if isMobile}
+    <MobileBackBtn backRoute="/create-character/3" />
+  {/if}
   <div class="frame-1410103818">
     <div class="heading">
       <div class="create-your-character">
@@ -47,7 +60,11 @@
         </div>
       </div>
     </div>
-    <ProgressBar currentStep={4} />
+    {#if isMobile}
+      <MobileStepProgressBar currentStep={4} />
+    {:else}
+      <ProgressBar currentStep={4} />
+    {/if}
     <div class="frame-1410104027">
       <div class="star-container">
         <StarEmoticon />
@@ -134,16 +151,16 @@
         </div>
         <div class="frame-1410104074_01">
           <div class="frame-16_01">
-            <div class="rectangle-33_01"></div>
-            <div class="frame-1410103721_01">
+            <div class="rectangle-33"></div>
+            <div class="frame-1410103721">
               <img src={arrowUpDown} alt="arrowUpDown" />
             </div>
-            <div class="frame-1410103722_01">
+            <div class="frame-1410103722">
               <div class="before_01">
                 <span class="before_01_span">Before</span>
               </div>
             </div>
-            <div class="frame-1410103723_01">
+            <div class="frame-1410103723">
               <div class="after_01">
                 <span class="after_01_span">After</span>
               </div>
@@ -196,16 +213,16 @@
       </div>
       <div class="frame-1410104075_02">
         <div class="frame-16_02">
-          <div class="rectangle-33_02"></div>
-          <div class="frame-1410103721_02">
+          <div class="rectangle-33"></div>
+          <div class="frame-1410103721">
             <img src={arrowUpDown} alt="arrowUpDown" />
           </div>
-          <div class="frame-1410103722_02">
+          <div class="frame-1410103722">
             <div class="before_02">
               <span class="before_02_span">Before</span>
             </div>
           </div>
-          <div class="frame-1410103723_02">
+          <div class="frame-1410103723">
             <div class="after_02"><span class="after_02_span">After</span></div>
           </div>
         </div>
@@ -256,8 +273,9 @@
       </div>
     </div>
 
-    <div style="display: flex; justify-content: space-between; width: 100%;">
-      <button class="button_01">
+    <div style="display: flex; justify-content: {isMobile ? 'center' : 'space-between'}; width: 100%;">
+      {#if !isMobile}
+      <button class="button_01" on:click={() => goto('/create-character/3')}>
         <div class="arrowleft">
           <img src={arrowLeft} alt="arrowLeft" />
         </div>
@@ -265,10 +283,11 @@
           <span class="backtostep_span">Back To Step</span>
         </div>
       </button>
-      <button class="button-fill">
+      {/if}
+      <button class="button-fill" class:mobile-full-width={isMobile} on:click={() => goto('/create-character/5')}>
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"
-            >Continue to Style Selection</span
+            >Continue to Enhancement Selection</span
           >
         </div>
       </button>
@@ -576,7 +595,7 @@
   }
 
   .frame-1410103818 {
-    width: 1240px;
+    width: 100%;
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
@@ -648,7 +667,7 @@
   .rectangle-33 {
     width: 2px;
     height: 346px;
-    left: 203px;
+    left: 50%;
     top: 0px;
     position: absolute;
     background: #eef6ff;
@@ -759,17 +778,6 @@
     text-align: center;
   }
 
-  .rectangle-33_01 {
-    width: 2px;
-    height: 346px;
-    left: 201px;
-    top: 0px;
-    position: absolute;
-    background: #eef6ff;
-  }
-
-
-
   .before_01_span {
     color: black;
     font-size: 16px;
@@ -867,15 +875,6 @@
     flex: 1 1 0;
   }
 
-  .rectangle-33_02 {
-    width: 2px;
-    height: 346px;
-    left: 203px;
-    top: 0px;
-    position: absolute;
-    background: #eef6ff;
-  }
-
   .before_02_span {
     color: black;
     font-size: 16px;
@@ -964,8 +963,8 @@
     padding-right: 16px;
     padding-top: 4px;
     padding-bottom: 4px;
-    left: 60px;
-    top: 299px;
+    left: 25%;
+    bottom: 30px;
     position: absolute;
     background: white;
     border-radius: 20px;
@@ -982,8 +981,8 @@
     padding-right: 16px;
     padding-top: 4px;
     padding-bottom: 4px;
-    left: 275px;
-    top: 299px;
+    left: 75%;
+    bottom: 30px;
     position: absolute;
     background: white;
     border-radius: 20px;
@@ -1004,42 +1003,6 @@
     display: flex;
   }
 
-  .frame-1410103722_01 {
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    left: 60px;
-    top: 299px;
-    position: absolute;
-    background: white;
-    border-radius: 20px;
-    outline: 1px #cacaca solid;
-    outline-offset: -1px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    display: inline-flex;
-  }
-
-  .frame-1410103723_01 {
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    left: 275px;
-    top: 299px;
-    position: absolute;
-    background: white;
-    border-radius: 20px;
-    outline: 1px #cacaca solid;
-    outline-offset: -1px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    display: inline-flex;
-  }
-
   .frame-1410104074_02 {
     align-self: stretch;
     flex-direction: column;
@@ -1047,42 +1010,6 @@
     align-items: flex-start;
     gap: 8px;
     display: flex;
-  }
-
-  .frame-1410103722_02 {
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    left: 60px;
-    top: 299px;
-    position: absolute;
-    background: white;
-    border-radius: 20px;
-    outline: 1px #cacaca solid;
-    outline-offset: -1px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    display: inline-flex;
-  }
-
-  .frame-1410103723_02 {
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    left: 275px;
-    top: 299px;
-    position: absolute;
-    background: white;
-    border-radius: 20px;
-    outline: 1px #cacaca solid;
-    outline-offset: -1px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    display: inline-flex;
   }
 
   .frame-1410104074_03 {
@@ -1096,8 +1023,8 @@
 
   .frame-1410103721 {
     padding: 4px;
-    left: 183.07px;
-    top: 153.32px;
+    left: calc(50% - 20px);
+    top: calc(50% - 20px);
     position: absolute;
     background: #438bff;
     border-radius: 24px;
@@ -1144,19 +1071,6 @@
     display: inline-flex;
   }
 
-  .frame-1410103721_01 {
-    padding: 4px;
-    left: 181.07px;
-    top: 153.32px;
-    position: absolute;
-    background: #438bff;
-    border-radius: 24px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    display: inline-flex;
-  }
-
   .check_06 {
     width: 18px;
     height: 18px;
@@ -1182,19 +1096,6 @@
     background: #141414;
     overflow: hidden;
     border-radius: 99999px;
-  }
-
-  .frame-1410103721_02 {
-    padding: 4px;
-    left: 183.07px;
-    top: 153.32px;
-    position: absolute;
-    background: #438bff;
-    border-radius: 24px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    display: inline-flex;
   }
 
   .check_12 {
@@ -1444,5 +1345,41 @@
     position: absolute;
     top: 10px;
     right: 10px;
+  }
+
+  .mobile-full-width {
+    width: 100% !important;
+  }
+
+  @media (max-width: 800px) {
+    .frame-1410104073 {
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .frame-1410104071, .frame-1410104076, .frame-1410104075_02 {
+      width: 100%;
+      flex: none;
+    }
+    
+    .character-creation-default {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .createyourcharacter_span {
+      font-size: 32px;
+      line-height: 44.8px;
+    }
+
+    .uploadyourdrawingordrawyourowncharacterrighthere_span {
+      font-size: 16px;
+      line-height: 19.2px;
+    }
+
+    .message-content {
+      margin-left: 12px;
+      max-width: 300px;
+    }
   }
 </style>

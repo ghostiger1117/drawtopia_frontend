@@ -8,6 +8,15 @@
   import camera from "../../../assets/Camera-black.svg";
   import arrowLeft from "../../../assets/ArrowLeft.svg";
   import shieldStar from "../../../assets/ShieldStar.svg";
+  import { goto } from "$app/navigation";
+  import { browser } from "$app/environment";
+  import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";
+  import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
+  let isMobile = false;
+
+  $: if (browser) {
+    isMobile = window.innerWidth < 800;
+  }
 </script>
 
 <div class="character-creation-default">
@@ -16,6 +25,9 @@
       <div class="logo-img"></div>
     </div>
   </div>
+  {#if isMobile}
+  <MobileBackBtn />
+  {/if}
   <div class="frame-1410103818">
     <div class="heading">
       <div class="create-your-character">
@@ -35,7 +47,12 @@
         </div>
       </div>
     </div>
-    <ProgressBar currentStep={1} />
+    {#if isMobile}
+      <MobileStepProgressBar currentStep={1} />
+    {:else}
+      <ProgressBar currentStep={1} />
+    {/if}
+    <!-- <ProgressBar currentStep={1} /> -->
     <div class="frame-1410104027">
       <div class="star-container">
         <StarEmoticon />
@@ -69,10 +86,9 @@
                   <div class="frame-1410103823">
                     <div class="click-to-choose-file-or-drag-and-drop">
                       <span class="clicktochoosefileordraganddrop_span_01"
-                        >Click to Choose File 
+                        >Click to Choose File
                       </span>
-                      <span
-                        class="clicktochoosefileordraganddrop_span_02"
+                      <span class="clicktochoosefileordraganddrop_span_02"
                         >or drag and drop
                       </span>
                     </div>
@@ -138,14 +154,16 @@
         </div>
       </div>
     </div>
-    <div class="button_01">
-      <div class="arrowleft">
-        <img src={arrowLeft} alt="arrowLeft" />
-      </div>
-      <div class="back-to-step">
-        <span class="backtostep_span">Back To Step</span>
-      </div>
-    </div>
+    {#if !isMobile}
+      <button class="button_01" on:click={() => goto("/")}>
+        <div class="arrowleft">
+          <img src={arrowLeft} alt="arrowLeft" />
+        </div>
+        <div class="back-to-step">
+          <span class="backtostep_span">Back To Step</span>
+        </div>
+      </button>
+    {/if}
   </div>
   <div class="frame-1410103821">
     <div class="contact-us-hellodrawtopiacom">
@@ -412,8 +430,6 @@
     text-align: center;
   }
 
-
-
   .frame-1410103823 {
     align-self: stretch;
     flex-direction: column;
@@ -479,8 +495,6 @@
     position: relative;
     overflow: hidden;
   }
-
-
 
   .star-container {
     flex-shrink: 0;
@@ -548,9 +562,6 @@
   }
 
   .frame-1410103822 {
-    left: 143.5px;
-    top: 77.14px;
-    position: absolute;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
@@ -618,14 +629,13 @@
     box-shadow: 0px 4px 4px rgba(98.89, 98.89, 98.89, 0.25);
     border-radius: 20px;
     outline: 1px #dcdcdc solid;
+    background-color: white;
     outline-offset: -1px;
     justify-content: center;
     align-items: center;
     gap: 10px;
     display: inline-flex;
   }
-
-
 
   .heading {
     align-self: stretch;
@@ -647,12 +657,14 @@
   .image {
     align-self: stretch;
     height: 254px;
-    position: relative;
     background: #f8fafb;
     overflow: hidden;
     border-radius: 10px;
     outline: 2px #ededed solid;
     outline-offset: -2px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
   }
 
   .checklist-container {
@@ -663,8 +675,6 @@
     gap: 4px;
     display: flex;
   }
-
-
 
   .form {
     align-self: stretch;
@@ -744,7 +754,7 @@
   }
 
   .frame-1410103818 {
-    width: 1240px;
+    width: 100%;
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
@@ -783,5 +793,20 @@
     background-position: center;
     width: 100%;
     height: 100%;
+  }
+  @media (max-width: 800px) {
+    .frame-1410104031 {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .frame-10 {
+      width: 100%;
+    }
+    .frame-1410104032 {
+      width: 100%;
+    }
   }
 </style>

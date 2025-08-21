@@ -17,6 +17,16 @@
   import arrowUpDown from "../../../assets/CaretUpDown.svg";
   import check from "../../../assets/Check.svg";
   import purple_check from "../../../assets/purple-check.svg";
+  import { goto } from "$app/navigation";
+  import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
+  import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";
+  import { browser } from "$app/environment";
+
+  let isMobile = false;
+
+  $: if (browser) {
+    isMobile = window.innerWidth < 800;
+  }
 </script>
 
 <div class="character-creation-default">
@@ -25,6 +35,9 @@
       <div class="logo-img"></div>
     </div>
   </div>
+  {#if isMobile}
+    <MobileBackBtn backRoute="/create-character/4" />
+  {/if}
   <div class="frame-1410103818">
     <div class="heading">
       <div class="create-your-character">
@@ -46,7 +59,11 @@
         </div>
       </div>
     </div>
-    <ProgressBar currentStep={5} />
+    {#if isMobile}
+      <MobileStepProgressBar currentStep={5} />
+    {:else}
+      <ProgressBar currentStep={5} />
+    {/if}
     <div class="frame-1410104027">
       <div class="star-container">
         <StarEmoticon />
@@ -104,8 +121,9 @@
       </div>
   </div>
 
-    <div style="display: flex; justify-content: space-between; width: 100%;">
-      <button class="button_01">
+    <div style="display: flex; justify-content: {isMobile ? 'center' : 'space-between'}; width: 100%;">
+      {#if !isMobile}
+      <button class="button_01" on:click={() => goto('/create-character/4')}>
         <div class="arrowleft">
           <img src={arrowLeft} alt="arrowLeft" />
         </div>
@@ -113,10 +131,11 @@
           <span class="backtostep_span">Back To Step</span>
         </div>
       </button>
-      <button class="button-fill">
+      {/if}
+      <button class="button-fill" class:mobile-full-width={isMobile} on:click={() => goto('/create-character/6')}>
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"
-            >Continue to Style Selection</span
+            >Continue to Character Creation</span
           >
         </div>
       </button>
@@ -393,7 +412,7 @@
   }
 
   .frame-1410103818 {
-    width: 1240px;
+    width: 100%;
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
@@ -834,5 +853,49 @@ outline: 2px #6912C5 solid;
     position: absolute;
     top: 10px;
     right: 10px;
+  }
+
+  .mobile-full-width {
+    width: 100% !important;
+  }
+
+  @media (max-width: 800px) {
+    .frame-1410103852 {
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .card, .card_01, .card_02 {
+      width: 100%;
+    }
+    
+    .character-creation-default {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .createyourcharacter_span {
+      font-size: 32px;
+      line-height: 44.8px;
+    }
+
+    .uploadyourdrawingordrawyourowncharacterrighthere_span {
+      font-size: 16px;
+      line-height: 19.2px;
+    }
+
+    .lets-bring-your-character-to-life-upload-a-drawing-or-photo {
+      width: auto;
+      max-width: 300px;
+    }
+
+    .message-content {
+      margin-left: 12px;
+      max-width: 300px;
+    }
+
+    .star-container {
+      align-self: center;
+    }
   }
 </style>

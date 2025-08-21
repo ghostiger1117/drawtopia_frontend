@@ -1,22 +1,17 @@
 <script>
-  import StarEmoticon from "../../../components/StarEmoticon.svelte";
-  import ProgressBar from "../../../components/ProgressBar.svelte";
-  import uploadSimple from "../../../assets/upload-icon.svg";
-  import darkColors from "../../../assets/day.svg";
-  import pen from "../../../assets/pen.svg";
-  import picture from "../../../assets/picture.svg";
-  import cameraBlue from "../../../assets/Camera-blue.svg";
-  import arrowLeft from "../../../assets/ArrowLeft.svg";
-  import shieldStar from "../../../assets/ShieldStar.svg";
-  import sealCheck from "../../../assets/SealCheck.svg";
-  import person from "../../../assets/human.svg";
-  import animal from "../../../assets/animal.svg";
-  import magical from "../../../assets/monster.svg";
-  import PrimarySelect from "../../../components/PrimarySelect.svelte";
-  import purple_check from "../../../assets/purple-check.svg";
+  import StarEmoticon from "../../../../components/StarEmoticon.svelte";
+  import ProgressBar from "../../../../components/ProgressBar.svelte";
+  import arrowLeft from "../../../../assets/ArrowLeft.svg";
+  import shieldStar from "../../../../assets/ShieldStar.svg";
+  import bookOpen from "../../../../assets/BookOpenText.svg";
+  import palette from "../../../../assets/Palette.svg";
+  import globe from "../../../../assets/GlobeHemisphereWest.svg";
+  import globeStand from "../../../../assets/GlobeStand.svg";
+  import printReady from "../../../../assets/Check_blue.svg";
+  import FloppyDiskBack from "../../../../assets/FloppyDiskBack.svg";
   import { goto } from "$app/navigation";
-  import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
-  import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";
+  import MobileBackBtn from "../../../../components/MobileBackBtn.svelte";
+  import MobileStepProgressBar from "../../../../components/MobileStepProgressBar.svelte";
   import { browser } from "$app/environment";
 
   let isMobile = false;
@@ -33,7 +28,7 @@
     </div>
   </div>
   {#if isMobile}
-    <MobileBackBtn backRoute="/create-character/6" />
+    <MobileBackBtn backRoute="/create-character/7" />
   {/if}
   <div class="frame-1410103818">
     <div class="heading">
@@ -61,126 +56,70 @@
     {:else}
       <ProgressBar currentStep={7} />
     {/if}
-    <div class="frame-1410104027">
-      <div class="star-container">
-        <StarEmoticon />
-      </div>
-      <div class="message-container">
-        <div class="polygon-1"></div>
-        <div class="message-content">
-          <div
-            class="lets-bring-your-character-to-life-upload-a-drawing-or-photo"
-          >
-            <span class="letsbringyourcharactertolifeuploadadrawingorphoto_span"
-              >Let's design the perfect cover for your story!</span
-            >
-          </div>
-        </div>
-      </div>
-    </div>
     <div class="frame-1410104031">
       <div class="frame-8">
           <div class="frame-1410104034">
-              <div class="cover-book-preview"><span class="coverbookpreview_span">Cover Book Preview</span></div>
+              <div class="dedication-pages-preview"><span class="dedicationpagespreview_span">Dedication Pages Preview</span></div>
           </div>
-          <img class="image" src="https://placehold.co/569x837" alt="image_card_1"/>
+          <img class="image" src="https://placehold.co/588x579" alt="image_card_1"/>
       </div>
       <div class="frame-9">
-          <div class="information-cover"><span class="informationcover_span">Information Cover</span></div>
+          <div><span class="informationdedicationpages_span">Information Dedication Pages</span></div>
           <div class="form">
               <div class="form_01">
-                  <div><span class="titleselection_span">TItle Selection</span></div>
+                  <div><span class="selectiondedicationmessages_span"> Selection Dedication Messages</span></div>
                   <div class="frame-1410103942">
                       <div class="selected">
                           <div class="frame-1410103940">
                               <div class="frame-1410103939">
-                                  <div><span class="thegreataddventureyourname_span">The Great Addventure [Your Name] </span></div>
+                                  <div class="may-you-always-believe-in-magic-wonder-and-your-beautiful-imagination-with-love-grandma"><span class="mayyoualwaysbelieveinmagicwonderandyourbeautifulimaginationwithlovegrandma_span">May you always believe in magic, wonder, and your beautiful imagination.                 — With love, Grandma</span></div>
                               </div>
                           </div>
                           <div class="ellipse-13"></div>
-                          <div class="frame-1410104043">
-                              <div class="ellipse-14"></div>
-                              <div class="ellipse-13_01"></div>
-                          </div>
                       </div>
                       <div class="selected_01">
                           <div class="frame-1410103940_01">
                               <div class="frame-1410103939_01">
-                                  <div><span class="theamazingofjourneyyourname_span">The Amazing of Journey [Your Name]  </span></div>
+                                  <div class="every-page-is-a-hug-from-me-to-you-with-love-grandma"><span class="everypageisahugfrommetoyouwithlovegrandma_span">Every page is a hug from me to you.                 — With love, Grandma</span></div>
                               </div>
                           </div>
-                          <div class="ellipse-13_02"></div>
+                          <div class="ellipse-13_01"></div>
                       </div>
                       <div class="selected_02">
                           <div class="frame-1410103940_02">
                               <div class="frame-1410103939_02">
-                                  <div><span class="yournameandthespaceadventure_span">[Your Name] and the Space Adventure</span></div>
+                                  <div><span class="shinebrightdreambigandneverstopbeingyouwithlovegrandma_span">Shine bright, dream big, and never stop being you.                 — With love, Grandma</span></div>
                               </div>
                           </div>
-                          <div class="ellipse-13_03"></div>
+                          <div class="ellipse-13_02"></div>
                       </div>
                       <div class="selected_03">
                           <div class="frame-1410104084">
                               <div class="frame-1410103940_03">
                                   <div class="frame-1410103939_03">
-                                      <div><span class="customtitle_span">Custom Title</span></div>
+                                      <div><span class="customdedicationmessage_span">Custom Dedication Message</span></div>
                                   </div>
                               </div>
                           </div>
-                          <div class="ellipse-13_04"></div>
-                      </div>
-                  </div>
-              </div>
-              <div class="form_02">
-                  <div class="select-your-book-cover-design"><span class="selectyourbookcoverdesign_span">Select your Book Cover Design</span></div>
-                  <div class="frame-1410103942_01">
-                      <div class="selected_04">
-                          <img class="frame-1410104088" src="https://placehold.co/80x91" alt="image_card_2"/>
-                          <div class="frame-1410103940_04">
-                              <div class="frame-1410103939_04">
-                                  <div><span class="classicstorybook_span">Classic Storybook</span></div>
-                                  <div><span class="ornateborderwithtraditionalcharm_span">Ornate border with traditional charm</span></div>
-                              </div>
-                          </div>
-                          <div class="ellipse-13_05"></div>
-                          <div class="frame-1410104043_01">
-                              <div class="ellipse-14_01"></div>
-                              <div class="ellipse-13_06"></div>
+                          <div class="frame-1410104043">
+                              <div class="ellipse-14"></div>
+                              <div class="ellipse-13_03"></div>
                           </div>
                       </div>
-                      <div class="selected_05">
-                          <div class="frame-1410103940_05">
-                              <img class="frame-1410104088_01" src="https://placehold.co/80x91" alt="image_card_3"/>
-                              <div class="frame-1410103939_05">
-                                  <div><span class="modernminimalist_span">Modern Minimalist</span></div>
-                                  <div><span class="characterfocuswithcleandesign_span">Character focus with clean design</span></div>
-                              </div>
+                      <div class="frame-1410104041">
+                          <div class="input-placeholder">
+                              <div class="dear-emma-adventure-awaits-for-the-bravest-of-hearts-just-like-yours-from-papa"><span class="dearemmaadventureawaitsforthebravestofheartsjustlikeyoursfrompapa_span">Dear Emma, Adventure awaits for the bravest of hearts — just like yours.               — From Papa</span></div>
                           </div>
-                          <div class="ellipse-13_07"></div>
-                      </div>
-                      <div class="selected_06">
-                          <div class="frame-1410103940_06">
-                              <img class="frame-1410104088_02" src="https://placehold.co/80x91" alt="image_card_4"/>
-                              <div class="frame-1410103939_06">
-                                  <div><span class="adventuretheme_span">Adventure Theme</span></div>
-                                  <div><span class="worldelementsanddynamiclayout_span">World elements and dynamic layout</span></div>
-                              </div>
-                          </div>
-                          <div class="ellipse-13_08"></div>
+                          <div class="text-42200-characters"><span class="f2200characters_span">42/200 Characters</span></div>
                       </div>
                   </div>
               </div>
           </div>
       </div>
-  </div>
-  
-
-  
- 
-
+  </div>  
     <div style="display: flex; justify-content: {isMobile ? 'center' : 'space-between'}; width: 100%;">
       {#if !isMobile}
-      <button class="button_01" on:click={() => goto('/create-character/6')}>
+      <button class="button_01" on:click={() => goto('/create-character/7')}>
         <div class="arrowleft">
           <img src={arrowLeft} alt="arrowLeft" />
         </div>
@@ -189,10 +128,10 @@
         </div>
       </button>
       {/if}
-      <button class="button-fill" class:mobile-full-width={isMobile} on:click={() => goto('/create-character/7/preview')}>
+      <button class="button-fill" class:mobile-full-width={isMobile} on:click={() => goto('/')}>
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"
-            >Preview Your Story</span
+            >Complete Story Creation</span
           >
         </div>
       </button>
@@ -251,31 +190,6 @@
     font-family: Quicksand;
     font-weight: 600;
     word-wrap: break-word;
-  }
-
-  .polygon-1 {
-    width: 0;
-    height: 0;
-    position: absolute;
-    left: 0px;
-    top: 50%;
-    transform: translateY(-50%);
-    border-top: 12px solid transparent;
-    /* border-bottom: 12px solid transparent; */
-    border-right: 18px solid #d9eaff;
-  }
-
-  .letsbringyourcharactertolifeuploadadrawingorphoto_span {
-    color: black;
-    font-size: 18px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 25.2px;
-    word-wrap: break-word;
-  }
-
-  .lets-bring-your-character-to-life-upload-a-drawing-or-photo {
-    width: 417px;
   }
 
   .backtostep_span {
@@ -358,33 +272,6 @@
     overflow: hidden;
   }
 
-  .star-container {
-    flex-shrink: 0;
-    width: 88px;
-    height: 88px;
-  }
-
-  .message-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    margin-left: 12px;
-  }
-
-  .message-content {
-    padding-left: 12px;
-    padding-right: 12px;
-    padding-top: 16px;
-    padding-bottom: 16px;
-    background: #d9eaff;
-    border-radius: 24px;
-    margin-left: 22px;
-    max-width: 446px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
   .frame-1410103821 {
     align-self: stretch;
     flex-direction: column;
@@ -449,14 +336,6 @@
     display: flex;
   }
 
-  .frame-1410104027 {
-    justify-content: center;
-    align-items: center;
-    gap: 24px;
-    display: flex;
-    width: 100%;
-  }
-
   .frame-1410103818 {
     width: 100%;
     flex-direction: column;
@@ -491,7 +370,7 @@
     justify-content: center;
   }
   .logo-img {
-    background-image: url("../../../assets/logo.png");
+    background-image: url("../../../../assets/logo.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -534,8 +413,79 @@
       border-top-left-radius: 12px;
       border-top-right-radius: 12px;
   }
+
   
-  .coverbookpreview_span {
+  .form {
+      align-self: stretch;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      gap: 12px;
+      display: flex;
+  }
+  
+  .frame-9 {
+      width: 627px;
+      padding: 16px;
+      background: white;
+      border-radius: 20px;
+      outline: 1px #EDEDED solid;
+      outline-offset: -1px;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      gap: 24px;
+      display: inline-flex;
+  }
+
+  
+  
+  .image {
+      width: 287px;
+      height: 431px;
+      position: relative;
+      border-radius: 12px;
+  }
+  
+  .form {
+      flex: 1 1 0;
+      padding: 16px;
+      border-radius: 20px;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+      display: inline-flex;
+  }
+  
+  .frame-9 {
+      width: 627px;
+      padding: 16px;
+      background: white;
+      border-radius: 20px;
+      outline: 1px #EDEDED solid;
+      outline-offset: -1px;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      gap: 24px;
+      display: inline-flex;
+  }
+  
+  .frame-1410104031 {
+      width: 100%;
+      height: 100%;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 24px;
+      display: inline-flex;
+  }
+
+  .mobile-full-width {
+    width: 100% !important;
+  }
+
+  .dedicationpagespreview_span {
       color: black;
       font-size: 20px;
       font-family: Quicksand;
@@ -544,18 +494,18 @@
       word-wrap: break-word;
   }
   
-  .cover-book-preview {
+  .dedication-pages-preview {
       text-align: center;
   }
   
   .image {
       align-self: stretch;
-      height: 837px;
+      height: 579px;
       position: relative;
       border-radius: 12px;
   }
   
-  .informationcover_span {
+  .informationdedicationpages_span {
       color: #141414;
       font-size: 20px;
       font-family: Quicksand;
@@ -564,11 +514,7 @@
       word-wrap: break-word;
   }
   
-  .information-cover {
-      align-self: stretch;
-  }
-  
-  .titleselection_span {
+  .selectiondedicationmessages_span {
       color: #141414;
       font-size: 16px;
       font-family: Quicksand;
@@ -577,7 +523,7 @@
       word-wrap: break-word;
   }
   
-  .thegreataddventureyourname_span {
+  .mayyoualwaysbelieveinmagicwonderandyourbeautifulimaginationwithlovegrandma_span {
       color: #141414;
       font-size: 16px;
       font-family: Nunito;
@@ -586,35 +532,38 @@
       word-wrap: break-word;
   }
   
+  .may-you-always-believe-in-magic-wonder-and-your-beautiful-imagination-with-love-grandma {
+      align-self: stretch;
+  }
+  
   .ellipse-13 {
       width: 24px;
       height: 24px;
       border-radius: 9999px;
-      border: 1px #EDEDED solid;
+      border: 2px #EDEDED solid;
   }
   
-  .ellipse-14 {
-      width: 24px;
-      height: 24px;
-      left: 0px;
-      top: 0px;
-      position: absolute;
-      border-radius: 9999px;
-      border: 1px #438BFF solid;
+  .everypageisahugfrommetoyouwithlovegrandma_span {
+      color: #141414;
+      font-size: 16px;
+      font-family: Nunito;
+      font-weight: 400;
+      line-height: 22.40px;
+      word-wrap: break-word;
+  }
+  
+  .every-page-is-a-hug-from-me-to-you-with-love-grandma {
+      align-self: stretch;
   }
   
   .ellipse-13_01 {
-      width: 12px;
-      height: 12px;
-      left: 6px;
-      top: 6px;
-      position: absolute;
-      background: #438BFF;
+      width: 24px;
+      height: 24px;
       border-radius: 9999px;
-      border: 1px #438BFF solid;
+      border: 2px #EDEDED solid;
   }
   
-  .theamazingofjourneyyourname_span {
+  .shinebrightdreambigandneverstopbeingyouwithlovegrandma_span {
       color: #141414;
       font-size: 16px;
       font-family: Nunito;
@@ -630,7 +579,7 @@
       border: 2px #EDEDED solid;
   }
   
-  .yournameandthespaceadventure_span {
+  .customdedicationmessage_span {
       color: #141414;
       font-size: 16px;
       font-family: Nunito;
@@ -639,76 +588,7 @@
       word-wrap: break-word;
   }
   
-  .ellipse-13_03 {
-      width: 24px;
-      height: 24px;
-      border-radius: 9999px;
-      border: 2px #EDEDED solid;
-  }
-  
-  .customtitle_span {
-      color: #141414;
-      font-size: 16px;
-      font-family: Nunito;
-      font-weight: 400;
-      line-height: 22.40px;
-      word-wrap: break-word;
-  }
-  
-  .ellipse-13_04 {
-      width: 24px;
-      height: 24px;
-      border-radius: 9999px;
-      border: 2px #EDEDED solid;
-  }
-  
-  .selectyourbookcoverdesign_span {
-      color: #141414;
-      font-size: 16px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 22.40px;
-      word-wrap: break-word;
-  }
-  
-  .select-your-book-cover-design {
-      align-self: stretch;
-  }
-  
-  .frame-1410104088 {
-      width: 80px;
-      height: 91px;
-      position: relative;
-      background: white;
-      border-radius: 4px;
-  }
-  
-  .classicstorybook_span {
-      color: #141414;
-      font-size: 16px;
-      font-family: Nunito;
-      font-weight: 500;
-      line-height: 22.40px;
-      word-wrap: break-word;
-  }
-  
-  .ornateborderwithtraditionalcharm_span {
-      color: #666D80;
-      font-size: 16px;
-      font-family: Nunito;
-      font-weight: 400;
-      line-height: 22.40px;
-      word-wrap: break-word;
-  }
-  
-  .ellipse-13_05 {
-      width: 24px;
-      height: 24px;
-      border-radius: 9999px;
-      border: 1px #EDEDED solid;
-  }
-  
-  .ellipse-14_01 {
+  .ellipse-14 {
       width: 24px;
       height: 24px;
       left: 0px;
@@ -718,7 +598,7 @@
       border: 1px #438BFF solid;
   }
   
-  .ellipse-13_06 {
+  .ellipse-13_03 {
       width: 12px;
       height: 12px;
       left: 6px;
@@ -729,24 +609,20 @@
       border: 1px #438BFF solid;
   }
   
-  .frame-1410104088_01 {
-      width: 80px;
-      height: 91px;
-      position: relative;
-      background: white;
-      border-radius: 4px;
-  }
-  
-  .modernminimalist_span {
+  .dearemmaadventureawaitsforthebravestofheartsjustlikeyoursfrompapa_span {
       color: #141414;
       font-size: 16px;
       font-family: Nunito;
-      font-weight: 500;
+      font-weight: 400;
       line-height: 22.40px;
       word-wrap: break-word;
   }
   
-  .characterfocuswithcleandesign_span {
+  .dear-emma-adventure-awaits-for-the-bravest-of-hearts-just-like-yours-from-papa {
+      flex: 1 1 0;
+  }
+  
+  .f2200characters_span {
       color: #666D80;
       font-size: 16px;
       font-family: Nunito;
@@ -755,44 +631,8 @@
       word-wrap: break-word;
   }
   
-  .ellipse-13_07 {
-      width: 24px;
-      height: 24px;
-      border-radius: 9999px;
-      border: 1px #EDEDED solid;
-  }
-  
-  .frame-1410104088_02 {
-      width: 80px;
-      height: 91px;
-      position: relative;
-      background: white;
-      border-radius: 4px;
-  }
-  
-  .adventuretheme_span {
-      color: #141414;
-      font-size: 16px;
-      font-family: Nunito;
-      font-weight: 500;
-      line-height: 22.40px;
-      word-wrap: break-word;
-  }
-  
-  .worldelementsanddynamiclayout_span {
-      color: #666D80;
-      font-size: 16px;
-      font-family: Nunito;
-      font-weight: 400;
-      line-height: 22.40px;
-      word-wrap: break-word;
-  }
-  
-  .ellipse-13_08 {
-      width: 24px;
-      height: 24px;
-      border-radius: 9999px;
-      border: 1px #EDEDED solid;
+  .text-42200-characters {
+      align-self: stretch;
   }
   
   .frame-1410104034 {
@@ -840,40 +680,22 @@
       display: inline-flex;
   }
   
-  .frame-1410103939_04 {
-      flex: 1 1 0;
-      flex-direction: column;
-      justify-content: center;
+  .input-placeholder {
+      align-self: stretch;
+      height: 168px;
+      padding: 12px;
+      background: white;
+      overflow: hidden;
+      border-radius: 12px;
+      outline: 1px #EDEDED solid;
+      outline-offset: -1px;
+      justify-content: flex-start;
       align-items: flex-start;
-      gap: 2px;
-      display: inline-flex;
-  }
-  
-  .frame-1410103939_05 {
-      flex: 1 1 0;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 2px;
-      display: inline-flex;
-  }
-  
-  .frame-1410103939_06 {
-      flex: 1 1 0;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 2px;
+      gap: 10px;
       display: inline-flex;
   }
   
   .frame-1410104043 {
-      width: 24px;
-      height: 24px;
-      position: relative;
-  }
-  
-  .frame-1410104043_01 {
       width: 24px;
       height: 24px;
       position: relative;
@@ -925,37 +747,19 @@
       display: inline-flex;
   }
   
-  .frame-1410103940_04 {
-      flex: 1 1 0;
+  .frame-1410104041 {
+      align-self: stretch;
+      flex-direction: column;
       justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      display: flex;
-  }
-  
-  .frame-1410103940_05 {
-      flex: 1 1 0;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      display: flex;
-  }
-  
-  .frame-1410103940_06 {
-      flex: 1 1 0;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
+      align-items: flex-start;
+      gap: 4px;
       display: flex;
   }
   
   .selected {
       align-self: stretch;
       padding: 12px;
-      background: #EEF6FF;
       border-radius: 12px;
-      outline: 1px #438BFF solid;
-      outline-offset: -1px;
       justify-content: flex-start;
       align-items: center;
       gap: 12px;
@@ -995,55 +799,10 @@
       display: inline-flex;
   }
   
-  .selected_04 {
-      align-self: stretch;
-      padding-top: 8px;
-      padding-bottom: 8px;
-      padding-left: 8px;
-      padding-right: 12px;
-      background: #EEF6FF;
-      border-radius: 12px;
-      outline: 1px #438BFF solid;
-      outline-offset: -1px;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      display: inline-flex;
-  }
-  
-  .selected_05 {
-      align-self: stretch;
-      padding-top: 8px;
-      padding-bottom: 8px;
-      padding-left: 8px;
-      padding-right: 12px;
-      border-radius: 12px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      display: inline-flex;
-  }
-  
-  .selected_06 {
-      align-self: stretch;
-      padding-top: 8px;
-      padding-bottom: 8px;
-      padding-left: 8px;
-      padding-right: 12px;
-      border-radius: 12px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      display: inline-flex;
-  }
-  
   .selected_03 {
       align-self: stretch;
       padding: 12px;
+      background: #EEF6FF;
       border-radius: 12px;
       outline: 1px #EDEDED solid;
       outline-offset: -1px;
@@ -1051,15 +810,6 @@
       align-items: center;
       gap: 12px;
       display: inline-flex;
-  }
-  
-  .frame-1410103942_01 {
-      align-self: stretch;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 12px;
-      display: flex;
   }
   
   .frame-1410103942 {
@@ -1068,19 +818,6 @@
       justify-content: flex-start;
       align-items: flex-start;
       gap: 12px;
-      display: flex;
-  }
-  
-  .form_02 {
-      align-self: stretch;
-      padding: 12px;
-      border-radius: 10px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 8px;
       display: flex;
   }
   
@@ -1107,7 +844,7 @@
   }
   
   .frame-9 {
-      width: 627px;
+      flex: 1 1 0;
       padding: 16px;
       background: white;
       border-radius: 20px;
@@ -1128,18 +865,13 @@
       gap: 24px;
       display: inline-flex;
   }
-
-  .mobile-full-width {
-    width: 100% !important;
-  }
-
   @media (max-width: 800px) {
     .frame-1410104031 {
       flex-direction: column;
       gap: 16px;
     }
     
-    .frame-8, .frame-9 {
+    .frame-9, .form {
       width: 100%;
       flex: none;
     }
@@ -1163,60 +895,13 @@
       line-height: 19.2px;
     }
 
-    .lets-bring-your-character-to-life-upload-a-drawing-or-photo {
-      width: auto;
-      max-width: 300px;
-    }
-
-    .message-content {
-      margin-left: 12px;
-      max-width: 300px;
-    }
-
-    .star-container {
-      align-self: center;
-    }
-
-    .message-container {
-      margin-left: 0;
-      justify-content: center;
-    }
-
     .image {
-      height: 400px;
+      width: 100%;
+      height: 300px;
     }
-
-    .coverbookpreview_span, .informationcover_span {
-      font-size: 18px;
-      line-height: 25.2px;
-    }
-
-    .titleselection_span, .selectyourbookcoverdesign_span {
-      font-size: 14px;
-      line-height: 19.6px;
-    }
-
-    .selected, .selected_01, .selected_02, .selected_03, 
-    .selected_04, .selected_05, .selected_06 {
-      padding: 8px;
-    }
-
-    .frame-1410104088, .frame-1410104088_01, .frame-1410104088_02 {
-      width: 60px;
-      height: 68px;
-    }
-
-    .thegreataddventureyourname_span, .theamazingofjourneyyourname_span,
-    .yournameandthespaceadventure_span, .customtitle_span,
-    .classicstorybook_span, .modernminimalist_span, .adventuretheme_span {
-      font-size: 14px;
-      line-height: 19.6px;
-    }
-
-    .ornateborderwithtraditionalcharm_span, .characterfocuswithcleandesign_span,
-    .worldelementsanddynamiclayout_span {
-      font-size: 12px;
-      line-height: 16.8px;
+    .frame-8 {
+      width: 100%;
+      flex: none;
     }
   }
 </style>

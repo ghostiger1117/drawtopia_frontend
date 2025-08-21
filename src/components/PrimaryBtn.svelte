@@ -72,4 +72,35 @@
     line-height: 25.2px;
     word-wrap: break-word;
   }
+
+  /* Mobile responsive styles */
+  @media (max-width: 768px) {
+    .primary_btn {
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-top: 14px;
+      padding-bottom: 14px;
+      margin-bottom: 8px;
+    }
+    
+    .primary_span {
+      font-size: 18px;
+      line-height: 25.2px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .primary_btn {
+      padding-left: 16px;
+      padding-right: 16px;
+      padding-top: 12px;
+      padding-bottom: 12px;
+      margin-bottom: 6px;
+    }
+    
+    .primary_span {
+      font-size: 18px;
+      line-height: 25.2px;
+    }
+  }
 </style>

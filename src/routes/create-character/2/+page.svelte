@@ -13,6 +13,15 @@
   import animal from "../../../assets/animal.svg";
   import magical from "../../../assets/monster.svg";
   import PrimarySelect from "../../../components/PrimarySelect.svelte";
+  import { goto } from "$app/navigation";
+  import { browser } from "$app/environment";
+  import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";
+  import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
+  let isMobile = false;
+
+  $: if (browser) {
+    isMobile = window.innerWidth < 800;
+  }
 </script>
 
 <div class="character-creation-default">
@@ -21,6 +30,9 @@
       <div class="logo-img"></div>
     </div>
   </div>
+  {#if isMobile}
+  <MobileBackBtn />
+  {/if}
   <div class="frame-1410103818">
     <div class="heading">
       <div class="create-your-character">
@@ -42,7 +54,11 @@
         </div>
       </div>
     </div>
-    <ProgressBar currentStep={2} />
+    {#if isMobile}
+        <MobileStepProgressBar currentStep={2} />
+    {:else}
+      <ProgressBar currentStep={2} />
+  {/if}
     <div class="frame-1410104027">
       <div class="star-container">
         <StarEmoticon />
@@ -212,7 +228,9 @@
       </div>
     </div>
     <div style="display: flex; justify-content: space-between; width: 100%;">
-      <button class="button_01">
+      
+      {#if !isMobile}
+      <button class="button_01" on:click={() => goto('/create-character/1')}>
         <div class="arrowleft">
           <img src={arrowLeft} alt="arrowLeft" />
         </div>
@@ -220,7 +238,9 @@
           <span class="backtostep_span">Back To Step</span>
         </div>
       </button>
-      <button class="button-fill">
+      {/if}
+
+      <button class="button-fill" on:click={() => goto('/create-character/3')}>
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"
             >Continue to Style Selection</span
@@ -537,10 +557,12 @@
     align-items: flex-start;
     gap: 24px;
     display: inline-flex;
+    width: 100%;
+    height: 100%;
   }
 
   .frame-1410103818 {
-    width: 1240px;
+    width: 100%;
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
@@ -1129,14 +1151,7 @@
     display: inline-flex;
   }
 
-  .frame-1410104031 {
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 24px;
-    display: inline-flex;
-  }
+
   .meetleoneetheanimalwhocanflying_span {
     color: black;
     font-size: 16px;
@@ -1153,7 +1168,6 @@
 
   .frame-1410104037 {
     width: 100%;
-    height: 100%;
     padding: 12px;
     background: #f5f2ff;
     border-radius: 10px;
@@ -1190,5 +1204,23 @@
     align-items: center;
     gap: 10px;
     display: inline-flex;
+  }
+  @media (max-width: 800px) {
+    .frame-1410104031 {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .frame-1410104032{
+      width: 100%;
+    }
+    .frame-8 {
+      width: 100%;
+    }
+    .button-fill {
+      width: 100%;
+    }
   }
 </style>

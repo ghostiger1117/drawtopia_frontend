@@ -14,6 +14,16 @@
   import magical from "../../../assets/monster.svg";
   import PrimarySelect from "../../../components/PrimarySelect.svelte";
   import purple_check from "../../../assets/purple-check.svg";
+  import { goto } from "$app/navigation";
+  import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
+  import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";
+  import { browser } from "$app/environment";
+
+  let isMobile = false;
+
+  $: if (browser) {
+    isMobile = window.innerWidth < 800;
+  }
 </script>
 
 <div class="character-creation-default">
@@ -22,6 +32,9 @@
       <div class="logo-img"></div>
     </div>
   </div>
+  {#if isMobile}
+    <MobileBackBtn backRoute="/create-character/2" />
+  {/if}
   <div class="frame-1410103818">
     <div class="heading">
       <div class="create-your-character">
@@ -43,7 +56,11 @@
         </div>
       </div>
     </div>
-    <ProgressBar currentStep={3} />
+    {#if isMobile}
+      <MobileStepProgressBar currentStep={3} />
+    {:else}
+      <ProgressBar currentStep={3} />
+    {/if}
     <div class="frame-1410104027">
       <div class="star-container">
         <StarEmoticon />
@@ -138,8 +155,9 @@
       </div>
     </div>
 
-    <div style="display: flex; justify-content: space-between; width: 100%;">
-      <button class="button_01">
+    <div style="display: flex; justify-content: {isMobile ? 'center' : 'space-between'}; width: 100%;">
+      {#if !isMobile}
+      <button class="button_01" on:click={() => goto('/create-character/2')}>
         <div class="arrowleft">
           <img src={arrowLeft} alt="arrowLeft" />
         </div>
@@ -147,7 +165,8 @@
           <span class="backtostep_span">Back To Step</span>
         </div>
       </button>
-      <button class="button-fill">
+      {/if}
+      <button class="button-fill" class:mobile-full-width={isMobile} on:click={() => goto('/create-character/4')}>
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"
             >Continue to Style Selection</span
@@ -416,7 +435,7 @@
   }
 
   .frame-1410103818 {
-    width: 1240px;
+    width: 100%;
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
@@ -643,5 +662,26 @@
     position: absolute;
     top: 10px;
     right: 10px;
+  }
+
+  .mobile-full-width {
+    width: 100% !important;
+  }
+
+  @media (max-width: 800px) {
+    .frame-1410103852 {
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .card_02, .card_02_selected {
+      width: 100%;
+      /* max-width: 350px; */
+    }
+    
+    .character-creation-default {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
   }
 </style>

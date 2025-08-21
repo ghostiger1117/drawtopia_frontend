@@ -9,6 +9,16 @@
   import globeStand from "../../../../assets/GlobeStand.svg";
   import printReady from "../../../../assets/Check_blue.svg";
   import FloppyDiskBack from "../../../../assets/FloppyDiskBack.svg";
+  import { goto } from "$app/navigation";
+  import MobileBackBtn from "../../../../components/MobileBackBtn.svelte";
+  import MobileStepProgressBar from "../../../../components/MobileStepProgressBar.svelte";
+  import { browser } from "$app/environment";
+
+  let isMobile = false;
+
+  $: if (browser) {
+    isMobile = window.innerWidth < 800;
+  }
 </script>
 
 <div class="character-creation-default">
@@ -17,6 +27,9 @@
       <div class="logo-img"></div>
     </div>
   </div>
+  {#if isMobile}
+    <MobileBackBtn backRoute="/create-character/7" />
+  {/if}
   <div class="frame-1410103818">
     <div class="heading">
       <div class="create-your-character">
@@ -38,7 +51,11 @@
         </div>
       </div>
     </div>
-    <ProgressBar currentStep={7} />
+    {#if isMobile}
+      <MobileStepProgressBar currentStep={7} />
+    {:else}
+      <ProgressBar currentStep={7} />
+    {/if}
     <div class="frame-1410104031">
       <div class="frame-9">
           <div class="story-summary"><span class="storysummary_span">Story Summary</span></div>
@@ -159,8 +176,9 @@
       </div>
   </div>
   
-    <div style="display: flex; justify-content: space-between; width: 100%;">
-      <button class="button_01">
+    <div style="display: flex; justify-content: {isMobile ? 'center' : 'space-between'}; width: 100%;">
+      {#if !isMobile}
+      <button class="button_01" on:click={() => goto('/create-character/7')}>
         <div class="arrowleft">
           <img src={arrowLeft} alt="arrowLeft" />
         </div>
@@ -168,10 +186,11 @@
           <span class="backtostep_span">Back To Step</span>
         </div>
       </button>
-      <button class="button-fill">
+      {/if}
+      <button class="button-fill" class:mobile-full-width={isMobile} on:click={() => goto('/')}>
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"
-            >Continue to Style Selection</span
+            >Complete Story Creation</span
           >
         </div>
       </button>
@@ -377,7 +396,7 @@
   }
 
   .frame-1410103818 {
-    width: 1240px;
+    width: 100%;
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
@@ -410,7 +429,7 @@
     justify-content: center;
   }
   .logo-img {
-    background-image: url("../../../assets/logo.png");
+    background-image: url("../../../../assets/logo.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -477,15 +496,6 @@
       gap: 24px;
       display: inline-flex;
   }
-  
-  .frame-1410104031 {
-      width: 100%;
-      height: 100%;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 24px;
-      display: inline-flex;
-  }
 
   .storysummary_span {
       color: #141414;
@@ -539,16 +549,7 @@
       height: 1px;
       background: #EDEDED;
   }
-  
-  .vector {
-      width: 21px;
-      height: 18px;
-      left: 1.50px;
-      top: 4.50px;
-      position: absolute;
-      background: white;
-  }
-  
+
   .style_span {
       color: #666D80;
       font-size: 16px;
@@ -573,15 +574,6 @@
   
   .anime {
       align-self: stretch;
-  }
-  
-  .vector_01 {
-      width: 19.50px;
-      height: 18.75px;
-      left: 2.25px;
-      top: 2.25px;
-      position: absolute;
-      background: white;
   }
   
   .enhancement_span {
@@ -609,16 +601,7 @@
   .normal {
       align-self: stretch;
   }
-  
-  .vector_02 {
-      width: 19.50px;
-      height: 19.50px;
-      left: 2.25px;
-      top: 2.25px;
-      position: absolute;
-      background: white;
-  }
-  
+
   .world_span {
       color: #666D80;
       font-size: 16px;
@@ -645,15 +628,7 @@
       align-self: stretch;
   }
   
-  .vector_03 {
-      width: 18px;
-      height: 21.01px;
-      left: 2.25px;
-      top: 2.24px;
-      position: absolute;
-      background: white;
-  }
-  
+
   .adventure_span {
       color: #666D80;
       font-size: 16px;
@@ -803,15 +778,7 @@
       border-radius: 12px;
   }
   
-  .vector_04 {
-      width: 12.50px;
-      height: 9px;
-      left: 2px;
-      top: 4px;
-      position: absolute;
-      background: #438BFF;
-  }
-  
+
   .digitalbook_span {
       color: #727272;
       font-size: 18px;
@@ -821,15 +788,7 @@
       word-wrap: break-word;
   }
   
-  .vector_05 {
-      width: 12.50px;
-      height: 9px;
-      left: 2px;
-      top: 4px;
-      position: absolute;
-      background: #438BFF;
-  }
-  
+
   .audioversion_span {
       color: #727272;
       font-size: 18px;
@@ -839,15 +798,7 @@
       word-wrap: break-word;
   }
   
-  .vector_06 {
-      width: 12.50px;
-      height: 9px;
-      left: 2px;
-      top: 4px;
-      position: absolute;
-      background: #438BFF;
-  }
-  
+
   .print-readypdf_span {
       color: #727272;
       font-size: 18px;
@@ -857,15 +808,7 @@
       word-wrap: break-word;
   }
   
-  .vector_07 {
-      width: 18px;
-      height: 18px;
-      left: 3px;
-      top: 3px;
-      position: absolute;
-      background: white;
-  }
-  
+
   .previewandpurchasestory_span {
       color: white;
       font-size: 18px;
@@ -958,69 +901,7 @@
       gap: 2px;
       display: flex;
   }
-  
-  .bookopentext {
-      width: 24px;
-      height: 24px;
-      position: relative;
-      overflow: hidden;
-  }
-  
-  .palette {
-      width: 24px;
-      height: 24px;
-      position: relative;
-      overflow: hidden;
-  }
-  
-  .globehemispherewest {
-      width: 24px;
-      height: 24px;
-      position: relative;
-      overflow: hidden;
-  }
-  
-  .globestand {
-      width: 24px;
-      height: 24px;
-      position: relative;
-      overflow: hidden;
-  }
-  
-  .check_01 {
-      width: 16px;
-      height: 16px;
-      left: 1px;
-      top: 1px;
-      position: absolute;
-      overflow: hidden;
-  }
-  
-  .check_03 {
-      width: 16px;
-      height: 16px;
-      left: 1px;
-      top: 1px;
-      position: absolute;
-      overflow: hidden;
-  }
-  
-  .check_05 {
-      width: 16px;
-      height: 16px;
-      left: 1px;
-      top: 1px;
-      position: absolute;
-      overflow: hidden;
-  }
-  
-  .floppydiskback {
-      width: 24px;
-      height: 24px;
-      position: relative;
-      overflow: hidden;
-  }
-  
+
   .frame-1410104091 {
       align-self: stretch;
       justify-content: flex-start;
@@ -1355,5 +1236,134 @@
       align-items: flex-start;
       gap: 24px;
       display: inline-flex;
+  }
+
+  .mobile-full-width {
+    width: 100% !important;
+  }
+
+  @media (max-width: 800px) {
+    .frame-1410104031 {
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .frame-9, .form {
+      width: 100%;
+      flex: none;
+    }
+    
+    .frame-9 {
+      width: 100%;
+    }
+    
+    .character-creation-default {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .createyourcharacter_span {
+      font-size: 32px;
+      line-height: 44.8px;
+    }
+
+    .uploadyourdrawingordrawyourowncharacterrighthere_span {
+      font-size: 16px;
+      line-height: 19.2px;
+    }
+
+    .storysummary_span, .informationbookcover_span {
+      font-size: 18px;
+      line-height: 25.2px;
+    }
+
+    .frame-1410104089 {
+      width: 70px;
+      height: 69px;
+    }
+
+    .your-name-character {
+      width: auto;
+    }
+
+    .frame-1410104094, .frame-1410104095 {
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .frame-1410104092, .frame-1410104093, 
+    .frame-1410104092_01, .frame-1410104093_01 {
+      padding: 8px;
+      width: 100%;
+      align-items: flex-start;
+    }
+
+    .frame-1410104094_01 {
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .frame-1410104092_02, .frame-1410104094_02, .frame-1410104093_02 {
+      padding: 8px;
+      width: 100%;
+    }
+
+    .frame-1410104099, .frame-1410104099_01, 
+    .frame-1410104099_02, .frame-1410104099_03 {
+      padding: 6px;
+    }
+
+    .yournamecharacter_span, .storydetails_span {
+      font-size: 14px;
+      line-height: 19.6px;
+    }
+
+    .personwithspecialability_span, .style_span, .enhancement_span,
+    .world_span, .adventure_span, .pages_span, .minread_span, .minaudio_span {
+      font-size: 14px;
+      line-height: 19.6px;
+    }
+
+    .anime_span, .normal_span, .cartoon_span, .makingfriends_span {
+      font-size: 14px;
+      line-height: 19.6px;
+    }
+
+    .f_span, .f-7min_span, .f2min_span {
+      font-size: 20px;
+      line-height: 28px;
+    }
+
+    .image {
+      width: 200px;
+      height: 300px;
+    }
+
+    .frame-1410104075 {
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .digitalbook_span, .audioversion_span, .print-readypdf_span {
+      font-size: 16px;
+      line-height: 22.4px;
+    }
+
+    .previewandpurchasestory_span {
+      font-size: 16px;
+      line-height: 22.4px;
+    }
+
+    .button {
+      padding: 12px 20px;
+    }
+
+    .adventure, .min-audio {
+      width: auto;
+    }
+
+    .making-friends, .story-details {
+      width: auto;
+    }
   }
 </style>

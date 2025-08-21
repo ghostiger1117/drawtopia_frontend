@@ -328,12 +328,11 @@
 
   .frame-1410103818 {
     width: 100%;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: flex-start;
     align-items: flex-start;
     gap: 24px;
     display: inline-flex;
-    flex-direction: row;
   }
 
   .profile-creation-default {
@@ -350,6 +349,117 @@
     align-items: center;
     gap: 48px;
     display: inline-flex;
+  }
+
+  /* Mobile responsive styles */
+  @media (max-width: 768px) {
+    .profile-creation-default {
+      padding-left: 16px;
+      padding-right: 16px;
+      gap: 24px;
+      padding-top: 16px;
+      padding-bottom: 40px;
+    }
+
+    .frame-1410103818 {
+      flex-direction: column-reverse;
+      gap: 32px;
+    }
+
+    .createchildprofile_span {
+      font-size: 48px;
+      line-height: 67.2px;
+      text-align: center;
+    }
+
+    .tellusaboutyourchildsowecanpersonalizetheirdrawtopiaexperience_span {
+      font-size: 18px;
+      line-height: 21.6px;
+      text-align: center;
+    }
+
+    .navbar {
+      padding-left: 16px;
+      padding-right: 16px;
+      height: 64px;
+    }
+
+    .logo-text-full {
+      width: 160px;
+      height: 32px;
+    }
+
+    .progress-bar {
+      padding: 12px;
+    }
+
+    .step1_span,
+    .f2_span,
+    .settingupprofile_span {
+      font-size: 18px;
+      line-height: 25.2px;
+    }
+
+    .frame-5 {
+      gap: 24px;
+    }
+
+    .heading {
+      gap: 12px;
+    }
+
+    .back-btn-container {
+      padding: 0 8px;
+    }
+
+    .modal-container {
+      min-width: 90vw;
+      min-height: 300px;
+      margin: 16px;
+    }
+  }
+
+  /* Extra small mobile devices */
+  @media (max-width: 480px) {
+    .profile-creation-default {
+      padding-left: 12px;
+      padding-right: 12px;
+      gap: 16px;
+    }
+
+    .createchildprofile_span {
+      font-size: 48px;
+      line-height: 67.2px;
+    }
+
+    .tellusaboutyourchildsowecanpersonalizetheirdrawtopiaexperience_span {
+      font-size: 18px;
+      line-height: 21.6px;
+    }
+
+    .navbar {
+      padding-left: 12px;
+      padding-right: 12px;
+      height: 56px;
+    }
+
+    .logo-text-full {
+      width: 140px;
+      height: 28px;
+    }
+
+    .progress-bar {
+      padding: 8px;
+    }
+
+    .frame-1410103818 {
+      gap: 24px;
+    }
+
+    .modal-container {
+      min-width: 95vw;
+      margin: 8px;
+    }
   }
 
   .modal-overlay {

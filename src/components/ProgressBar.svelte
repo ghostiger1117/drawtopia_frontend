@@ -56,7 +56,7 @@
 
 <style>
   .progress-bar {
-    width: 1240px;
+    width: 100%;
     padding: 8px;
     background: white;
     border-radius: 12px;
