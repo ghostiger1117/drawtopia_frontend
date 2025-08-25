@@ -410,7 +410,6 @@
   .frame-1410104027 {
     justify-content: center;
     align-items: center;
-    gap: 24px;
     display: flex;
     width: 100%;
   }
@@ -923,6 +922,15 @@
     .tags, .tags_01, .tags_02, .tags_03, .tags_04, .tags_05 {
       padding: 8px;
       font-size: 14px;
+    }
+    .star-container {
+      width: 25%;
+    }
+    .message-container {
+      max-width: 75%;
+    }
+    .message-content {
+      width: 90%;
     }
   }
 </style>

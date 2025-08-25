@@ -26,7 +26,7 @@
     </div>
   </div>
   {#if isMobile}
-  <MobileBackBtn />
+    <MobileBackBtn />
   {/if}
   <div class="frame-1410103818">
     <div class="heading">
@@ -649,7 +649,6 @@
   .frame-1410104027 {
     justify-content: center;
     align-items: center;
-    gap: 24px;
     display: flex;
     width: 100%;
   }
@@ -807,6 +806,19 @@
     }
     .frame-1410104032 {
       width: 100%;
+    }
+    .character-creation-default {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+    .star-container {
+      width: 25%;
+    }
+    .message-container {
+      max-width: 75%;
+    }
+    .message-content {
+      width: 90%;
     }
   }
 </style>

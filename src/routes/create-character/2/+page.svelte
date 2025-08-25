@@ -517,7 +517,6 @@
   .frame-1410104027 {
     justify-content: center;
     align-items: center;
-    gap: 24px;
     display: flex;
     width: 100%;
   }
@@ -1221,6 +1220,19 @@
     }
     .button-fill {
       width: 100%;
+    }
+    .character-creation-default {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+    .star-container {
+      width: 25%;
+    }
+    .message-container {
+      max-width: 75%;
+    }
+    .message-content {
+      width: 90%;
     }
   }
 </style>

@@ -395,7 +395,6 @@
   .frame-1410104027 {
     justify-content: center;
     align-items: center;
-    gap: 24px;
     display: flex;
     width: 100%;
   }
@@ -889,13 +888,14 @@ outline: 2px #6912C5 solid;
       max-width: 300px;
     }
 
-    .message-content {
-      margin-left: 12px;
-      max-width: 300px;
-    }
-
     .star-container {
-      align-self: center;
+      width: 25%;
+    }
+    .message-container {
+      max-width: 75%;
+    }
+    .message-content {
+      width: 90%;
     }
   }
 </style>

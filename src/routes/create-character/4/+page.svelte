@@ -589,7 +589,6 @@
   .frame-1410104027 {
     justify-content: center;
     align-items: center;
-    gap: 24px;
     display: flex;
     width: 100%;
   }
@@ -1062,7 +1061,7 @@
   }
 
   .tag_card {
-    width: 402px;
+    width: 100%;
     padding: 4px;
     border-radius: 99px;
     justify-content: center;
@@ -1377,9 +1376,14 @@
       line-height: 19.2px;
     }
 
+    .star-container {
+      width: 25%;
+    }
+    .message-container {
+      max-width: 75%;
+    }
     .message-content {
-      margin-left: 12px;
-      max-width: 300px;
+      width: 90%;
     }
   }
 </style>
