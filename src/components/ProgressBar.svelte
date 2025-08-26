@@ -8,19 +8,19 @@
     { number: 4, label: "Enhancement Level" },
     { number: 5, label: "Story World" },
     { number: 6, label: "Adventure Type" },
-    { number: 7, label: "Story Generate" }
+    { number: 7, label: "Story Generate" },
   ];
 
   const getBarClass = (stepNumber: number) => {
-    return stepNumber <= currentStep ? 'bar-active' : 'bar-inactive';
+    return stepNumber <= currentStep ? "bar-active" : "bar-inactive";
   };
 
   const getStepClass = (stepNumber: number) => {
-    return stepNumber === currentStep ? 'step-current' : 'step-normal';
+    return stepNumber === currentStep ? "step-current" : "step-normal";
   };
 
   const getLabelClass = (stepNumber: number) => {
-    return stepNumber === currentStep ? 'label-current' : 'label-normal';
+    return stepNumber === currentStep ? "label-current" : "label-normal";
   };
 </script>
 
@@ -30,23 +30,23 @@
       <div class="progress-bar_0{index + 2}">
         {#if index === 0}
           <div class="step-{step.number}">
-            <span class="{getStepClass(step.number)}">Step {step.number}</span>
+            <span class={getStepClass(step.number)}>Step {step.number}</span>
           </div>
-          <div class="{getBarClass(step.number)}"></div>
+          <div class={getBarClass(step.number)}></div>
           <div class="frame-1410103829">
             <div class="step-label">
-              <span class="{getLabelClass(step.number)}">{step.label}</span>
+              <span class={getLabelClass(step.number)}>{step.label}</span>
             </div>
           </div>
         {:else}
           <div class="frame-1410103829_0{index}">
             <div class="step-{step.number}">
-              <span class="{getStepClass(step.number)}">Step {step.number}</span>
+              <span class={getStepClass(step.number)}>Step {step.number}</span>
             </div>
           </div>
-          <div class="{getBarClass(step.number)}"></div>
+          <div class={getBarClass(step.number)}></div>
           <div class="step-label">
-            <span class="{getLabelClass(step.number)}">{step.label}</span>
+            <span class={getLabelClass(step.number)}>{step.label}</span>
           </div>
         {/if}
       </div>
@@ -179,5 +179,10 @@
     align-items: flex-start;
     gap: 4px;
     display: flex;
+  }
+  @media (max-width: 800px) {
+    .progress-bar {
+      display: none;
+    }
   }
 </style>

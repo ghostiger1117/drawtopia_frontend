@@ -30,9 +30,7 @@
       <div class="logo-img"></div>
     </div>
   </div>
-  {#if isMobile}
   <MobileBackBtn />
-  {/if}
   <div class="frame-1410103818">
     <div class="heading">
       <div class="create-your-character">
@@ -54,11 +52,8 @@
         </div>
       </div>
     </div>
-    {#if isMobile}
-        <MobileStepProgressBar currentStep={2} />
-    {:else}
-      <ProgressBar currentStep={2} />
-  {/if}
+    <MobileStepProgressBar currentStep={2} />
+    <ProgressBar currentStep={2} />
     <div class="frame-1410104027">
       <div class="star-container">
         <StarEmoticon />
@@ -228,19 +223,18 @@
       </div>
     </div>
     <div style="display: flex; justify-content: space-between; width: 100%;">
-      
       {#if !isMobile}
-      <button class="button_01" on:click={() => goto('/create-character/1')}>
-        <div class="arrowleft">
-          <img src={arrowLeft} alt="arrowLeft" />
-        </div>
-        <div class="back-to-step">
-          <span class="backtostep_span">Back To Step</span>
-        </div>
-      </button>
+        <button class="button_01" on:click={() => goto("/create-character/1")}>
+          <div class="arrowleft">
+            <img src={arrowLeft} alt="arrowLeft" />
+          </div>
+          <div class="back-to-step">
+            <span class="backtostep_span">Back To Step</span>
+          </div>
+        </button>
       {/if}
 
-      <button class="button-fill" on:click={() => goto('/create-character/3')}>
+      <button class="button-fill" on:click={() => goto("/create-character/3")}>
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"
             >Continue to Style Selection</span
@@ -248,7 +242,6 @@
         </div>
       </button>
     </div>
-
   </div>
   <div class="frame-1410103821">
     <div class="contact-us-hellodrawtopiacom">
@@ -1150,7 +1143,6 @@
     display: inline-flex;
   }
 
-
   .meetleoneetheanimalwhocanflying_span {
     color: black;
     font-size: 16px;
@@ -1212,7 +1204,7 @@
       align-items: center;
       justify-content: center;
     }
-    .frame-1410104032{
+    .frame-1410104032 {
       width: 100%;
     }
     .frame-8 {

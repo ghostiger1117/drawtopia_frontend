@@ -32,9 +32,7 @@
       <div class="logo-img"></div>
     </div>
   </div>
-  {#if isMobile}
-    <MobileBackBtn backRoute="/create-character/2" />
-  {/if}
+  <MobileBackBtn backRoute="/create-character/2" />
   <div class="frame-1410103818">
     <div class="heading">
       <div class="create-your-character">
@@ -44,7 +42,8 @@
       </div>
       <div class="upload-your-drawing-or-draw-your-own-character-right-here">
         <span class="uploadyourdrawingordrawyourowncharacterrighthere_span"
-          >Choose the artistic style that will bring your character to life. Each style offers a unique way to tell your story.</span
+          >Choose the artistic style that will bring your character to life.
+          Each style offers a unique way to tell your story.</span
         >
       </div>
       <div class="tag">
@@ -56,11 +55,8 @@
         </div>
       </div>
     </div>
-    {#if isMobile}
-      <MobileStepProgressBar currentStep={3} />
-    {:else}
-      <ProgressBar currentStep={3} />
-    {/if}
+    <MobileStepProgressBar currentStep={3} />
+    <ProgressBar currentStep={3} />
     <div class="frame-1410104027">
       <div class="star-container">
         <StarEmoticon />
@@ -80,7 +76,11 @@
     </div>
     <div class="frame-1410103852">
       <div class="card_02">
-        <img class="image_02" src="https://placehold.co/402x375" alt="3D Realistic" />
+        <img
+          class="image_02"
+          src="https://placehold.co/402x375"
+          alt="3D Realistic"
+        />
         <div class="frame-10_02">
           <div class="heading_02">
             <div class="anime">
@@ -106,7 +106,11 @@
         </div>
       </div>
       <div class="card_02">
-        <img class="image_02" src="https://placehold.co/402x375" alt="Cartoon" />
+        <img
+          class="image_02"
+          src="https://placehold.co/402x375"
+          alt="Cartoon"
+        />
         <div class="frame-10_02">
           <div class="heading_02">
             <div class="anime"><span class="anime_span">Cartoon</span></div>
@@ -151,22 +155,30 @@
             </div>
           </div>
         </div>
-        <img src={purple_check} alt="purple_check" class="purple_check"/>
+        <img src={purple_check} alt="purple_check" class="purple_check" />
       </div>
     </div>
 
-    <div style="display: flex; justify-content: {isMobile ? 'center' : 'space-between'}; width: 100%;">
+    <div
+      style="display: flex; justify-content: {isMobile
+        ? 'center'
+        : 'space-between'}; width: 100%;"
+    >
       {#if !isMobile}
-      <button class="button_01" on:click={() => goto('/create-character/2')}>
-        <div class="arrowleft">
-          <img src={arrowLeft} alt="arrowLeft" />
-        </div>
-        <div class="back-to-step">
-          <span class="backtostep_span">Back To Step</span>
-        </div>
-      </button>
+        <button class="button_01" on:click={() => goto("/create-character/2")}>
+          <div class="arrowleft">
+            <img src={arrowLeft} alt="arrowLeft" />
+          </div>
+          <div class="back-to-step">
+            <span class="backtostep_span">Back To Step</span>
+          </div>
+        </button>
       {/if}
-      <button class="button-fill" class:mobile-full-width={isMobile} on:click={() => goto('/create-character/4')}>
+      <button
+        class="button-fill"
+        class:mobile-full-width={isMobile}
+        on:click={() => goto("/create-character/4")}
+      >
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"
             >Continue to Style Selection</span
@@ -672,12 +684,13 @@
       flex-direction: column;
       gap: 12px;
     }
-    
-    .card_02, .card_02_selected {
+
+    .card_02,
+    .card_02_selected {
       width: 100%;
       /* max-width: 350px; */
     }
-    
+
     .character-creation-default {
       padding-left: 20px;
       padding-right: 20px;

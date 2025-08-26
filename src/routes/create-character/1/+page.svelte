@@ -25,9 +25,7 @@
       <div class="logo-img"></div>
     </div>
   </div>
-  {#if isMobile}
-    <MobileBackBtn />
-  {/if}
+  <MobileBackBtn />
   <div class="frame-1410103818">
     <div class="heading">
       <div class="create-your-character">
@@ -47,11 +45,8 @@
         </div>
       </div>
     </div>
-    {#if isMobile}
-      <MobileStepProgressBar currentStep={1} />
-    {:else}
-      <ProgressBar currentStep={1} />
-    {/if}
+    <MobileStepProgressBar currentStep={1} />
+    <ProgressBar currentStep={1} />
     <!-- <ProgressBar currentStep={1} /> -->
     <div class="frame-1410104027">
       <div class="star-container">

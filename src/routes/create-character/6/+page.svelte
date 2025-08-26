@@ -32,9 +32,7 @@
       <div class="logo-img"></div>
     </div>
   </div>
-  {#if isMobile}
-    <MobileBackBtn backRoute="/create-character/5" />
-  {/if}
+  <MobileBackBtn backRoute="/create-character/5" />
   <div class="frame-1410103818">
     <div class="heading">
       <div class="create-your-character">
@@ -44,7 +42,8 @@
       </div>
       <div class="upload-your-drawing-or-draw-your-own-character-right-here">
         <span class="uploadyourdrawingordrawyourowncharacterrighthere_span"
-          >Choose the artistic style that will bring your character to life. Each style offers a unique way to tell your story.</span
+          >Choose the artistic style that will bring your character to life.
+          Each style offers a unique way to tell your story.</span
         >
       </div>
       <div class="tag">
@@ -56,11 +55,8 @@
         </div>
       </div>
     </div>
-    {#if isMobile}
-      <MobileStepProgressBar currentStep={6} />
-    {:else}
-      <ProgressBar currentStep={6} />
-    {/if}
+    <MobileStepProgressBar currentStep={6} />
+    <ProgressBar currentStep={6} />
     <div class="frame-1410104027">
       <div class="star-container">
         <StarEmoticon />
@@ -80,74 +76,122 @@
     </div>
     <div class="frame-1410103852">
       <div class="card">
-          <img class="image" src="https://placehold.co/468x280" alt="image_card_1"/>
-          <div class="frame-10">
-              <div class="treasure-hunt"><span class="treasurehunt_span">Treasure Hunt</span></div>
-              <div class="frame-1410104045">
-                  <div class="your-story-preview"><span class="yourstorypreview_span">Your Story Preview</span></div>
-                  <div class="rectangle-35"></div>
-                  <div class="character-name-will-search-for-a-legendary-treasure-hidden-in-the-selected-world"><span class="characternamewillsearchforalegendarytreasurehiddenintheselectedworld_span">“[Character Name] will search for a legendary treasure hidden in the [Selected World]”</span></div>
-              </div>
-              <div class="frame-1410104048">
-                  <div class="story-focus"><span class="storyfocus_span">Story Focus</span></div>
-                  <div class="frame-1410104047">
-                      <div class="tags">
-                          <div><span class="problem-solving_span"> Problem-solving</span></div>
-                      </div>
-                      <div class="tags_01">
-                          <div><span class="discovery_span">discovery</span></div>
-                      </div>
-                      <div class="tags_02">
-                          <div><span class="perseverance_span">perseverance</span></div>
-                      </div>
-                  </div>
-              </div>
+        <img
+          class="image"
+          src="https://placehold.co/468x280"
+          alt="image_card_1"
+        />
+        <div class="frame-10">
+          <div class="treasure-hunt">
+            <span class="treasurehunt_span">Treasure Hunt</span>
           </div>
-          <!-- <img src={purple_check} alt="purple_check" class="purple_check"/> -->
+          <div class="frame-1410104045">
+            <div class="your-story-preview">
+              <span class="yourstorypreview_span">Your Story Preview</span>
+            </div>
+            <div class="rectangle-35"></div>
+            <div
+              class="character-name-will-search-for-a-legendary-treasure-hidden-in-the-selected-world"
+            >
+              <span
+                class="characternamewillsearchforalegendarytreasurehiddenintheselectedworld_span"
+                >“[Character Name] will search for a legendary treasure hidden
+                in the [Selected World]”</span
+              >
+            </div>
+          </div>
+          <div class="frame-1410104048">
+            <div class="story-focus">
+              <span class="storyfocus_span">Story Focus</span>
+            </div>
+            <div class="frame-1410104047">
+              <div class="tags">
+                <div>
+                  <span class="problem-solving_span"> Problem-solving</span>
+                </div>
+              </div>
+              <div class="tags_01">
+                <div><span class="discovery_span">discovery</span></div>
+              </div>
+              <div class="tags_02">
+                <div><span class="perseverance_span">perseverance</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <img src={purple_check} alt="purple_check" class="purple_check"/> -->
       </div>
       <div class="card_01">
-          <div class="image_01">
-              <img class="image-6" src="https://placehold.co/471x471" alt="image_card_2"/>
+        <div class="image_01">
+          <img
+            class="image-6"
+            src="https://placehold.co/471x471"
+            alt="image_card_2"
+          />
+        </div>
+        <div class="frame-10_01">
+          <div class="helping-a-friend">
+            <span class="helpingafriend_span">Helping a Friend</span>
           </div>
-          <div class="frame-10_01">
-              <div class="helping-a-friend"><span class="helpingafriend_span">Helping a Friend</span></div>
-              <div class="frame-1410104045_01">
-                  <div class="your-story-preview_01"><span class="yourstorypreview_01_span">Your Story Preview</span></div>
-                  <div class="rectangle-35_01"></div>
-                  <div class="character-name-will-help-a-friend-in-need-using-their-special-ability"><span class="characternamewillhelpafriendinneedusingtheirspecialability_span">"[Character Name] will help a friend in need using their special [Ability]"</span></div>
-              </div>
-              <div class="frame-1410104048_01">
-                  <div class="story-focus_01"><span class="storyfocus_01_span">Story Focus</span></div>
-                  <div class="frame-1410104047_01">
-                      <div class="tags_03">
-                          <div><span class="kindness_span">Kindness</span></div>
-                      </div>
-                      <div class="tags_04">
-                          <div><span class="cooperation_span">cooperation</span></div>
-                      </div>
-                      <div class="tags_05">
-                          <div><span class="usingtalentsforgood_span">using talents for good</span></div>
-                      </div>
-                  </div>
-              </div>
+          <div class="frame-1410104045_01">
+            <div class="your-story-preview_01">
+              <span class="yourstorypreview_01_span">Your Story Preview</span>
+            </div>
+            <div class="rectangle-35_01"></div>
+            <div
+              class="character-name-will-help-a-friend-in-need-using-their-special-ability"
+            >
+              <span
+                class="characternamewillhelpafriendinneedusingtheirspecialability_span"
+                >"[Character Name] will help a friend in need using their
+                special [Ability]"</span
+              >
+            </div>
           </div>
+          <div class="frame-1410104048_01">
+            <div class="story-focus_01">
+              <span class="storyfocus_01_span">Story Focus</span>
+            </div>
+            <div class="frame-1410104047_01">
+              <div class="tags_03">
+                <div><span class="kindness_span">Kindness</span></div>
+              </div>
+              <div class="tags_04">
+                <div><span class="cooperation_span">cooperation</span></div>
+              </div>
+              <div class="tags_05">
+                <div>
+                  <span class="usingtalentsforgood_span"
+                    >using talents for good</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-  </div>
-  
- 
+    </div>
 
-    <div style="display: flex; justify-content: {isMobile ? 'center' : 'space-between'}; width: 100%;">
+    <div
+      style="display: flex; justify-content: {isMobile
+        ? 'center'
+        : 'space-between'}; width: 100%;"
+    >
       {#if !isMobile}
-      <button class="button_01" on:click={() => goto('/create-character/5')}>
-        <div class="arrowleft">
-          <img src={arrowLeft} alt="arrowLeft" />
-        </div>
-        <div class="back-to-step">
-          <span class="backtostep_span">Back To Step</span>
-        </div>
-      </button>
+        <button class="button_01" on:click={() => goto("/create-character/5")}>
+          <div class="arrowleft">
+            <img src={arrowLeft} alt="arrowLeft" />
+          </div>
+          <div class="back-to-step">
+            <span class="backtostep_span">Back To Step</span>
+          </div>
+        </button>
       {/if}
-      <button class="button-fill" class:mobile-full-width={isMobile} on:click={() => goto('/create-character/7')}>
+      <button
+        class="button-fill"
+        class:mobile-full-width={isMobile}
+        on:click={() => goto("/create-character/7")}
+      >
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"
             >Continue to Final Step</span
@@ -493,375 +537,375 @@
     display: inline-flex;
   }
   .image {
-      align-self: stretch;
-      height: 280px;
-      position: relative;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
+    align-self: stretch;
+    height: 280px;
+    position: relative;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
   }
-  
+
   .treasurehunt_span {
-      color: #141414;
-      font-size: 24px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 33.60px;
-      word-wrap: break-word;
+    color: #141414;
+    font-size: 24px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 33.6px;
+    word-wrap: break-word;
   }
-  
+
   .treasure-hunt {
-      align-self: stretch;
+    align-self: stretch;
   }
-  
+
   .yourstorypreview_span {
-      color: #06A1B4;
-      font-size: 16px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: #06a1b4;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .your-story-preview {
-      align-self: stretch;
+    align-self: stretch;
   }
-  
+
   .rectangle-35 {
-      align-self: stretch;
-      height: 1px;
-      background: #CEFFFF;
+    align-self: stretch;
+    height: 1px;
+    background: #ceffff;
   }
-  
+
   .characternamewillsearchforalegendarytreasurehiddenintheselectedworld_span {
-      color: #06A1B4;
-      font-size: 16px;
-      font-family: Quicksand;
-      font-weight: 700;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: #06a1b4;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 700;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .character-name-will-search-for-a-legendary-treasure-hidden-in-the-selected-world {
-      align-self: stretch;
+    align-self: stretch;
   }
-  
+
   .storyfocus_span {
-      color: #666D80;
-      font-size: 16px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: #666d80;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .story-focus {
-      align-self: stretch;
+    align-self: stretch;
   }
-  
+
   .problem-solving_span {
-      color: black;
-      font-size: 16px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: black;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .discovery_span {
-      color: black;
-      font-size: 16px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: black;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .perseverance_span {
-      color: black;
-      font-size: 16px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: black;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .image-6 {
-      width: 471px;
-      height: 471px;
-      left: -3px;
-      top: -49px;
-      position: absolute;
+    width: 471px;
+    height: 471px;
+    left: -3px;
+    top: -49px;
+    position: absolute;
   }
-  
+
   .helpingafriend_span {
-      color: #141414;
-      font-size: 24px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 33.60px;
-      word-wrap: break-word;
+    color: #141414;
+    font-size: 24px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 33.6px;
+    word-wrap: break-word;
   }
-  
+
   .helping-a-friend {
-      align-self: stretch;
+    align-self: stretch;
   }
-  
+
   .yourstorypreview_01_span {
-      color: #06A1B4;
-      font-size: 16px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: #06a1b4;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .your-story-preview_01 {
-      align-self: stretch;
+    align-self: stretch;
   }
-  
+
   .rectangle-35_01 {
-      align-self: stretch;
-      height: 1px;
-      background: #CEFFFF;
+    align-self: stretch;
+    height: 1px;
+    background: #ceffff;
   }
-  
+
   .characternamewillhelpafriendinneedusingtheirspecialability_span {
-      color: #06A1B4;
-      font-size: 16px;
-      font-family: Quicksand;
-      font-weight: 700;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: #06a1b4;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 700;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .character-name-will-help-a-friend-in-need-using-their-special-ability {
-      align-self: stretch;
+    align-self: stretch;
   }
-  
+
   .storyfocus_01_span {
-      color: #666D80;
-      font-size: 16px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: #666d80;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .story-focus_01 {
-      align-self: stretch;
+    align-self: stretch;
   }
-  
+
   .kindness_span {
-      color: black;
-      font-size: 16px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: black;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .cooperation_span {
-      color: black;
-      font-size: 16px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: black;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .usingtalentsforgood_span {
-      color: black;
-      font-size: 16px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: black;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .tags {
-      padding: 10px;
-      border-radius: 12px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      display: flex;
+    padding: 10px;
+    border-radius: 12px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: flex;
   }
-  
+
   .tags_01 {
-      padding: 10px;
-      border-radius: 12px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      display: flex;
+    padding: 10px;
+    border-radius: 12px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: flex;
   }
-  
+
   .tags_02 {
-      padding: 10px;
-      border-radius: 12px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      display: flex;
+    padding: 10px;
+    border-radius: 12px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: flex;
   }
-  
+
   .tags_03 {
-      padding: 10px;
-      border-radius: 12px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      display: flex;
+    padding: 10px;
+    border-radius: 12px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: flex;
   }
-  
+
   .tags_04 {
-      padding: 10px;
-      border-radius: 12px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      display: flex;
+    padding: 10px;
+    border-radius: 12px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: flex;
   }
-  
+
   .tags_05 {
-      padding: 10px;
-      border-radius: 12px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      display: flex;
+    padding: 10px;
+    border-radius: 12px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: flex;
   }
-  
+
   .frame-1410104045 {
-      align-self: stretch;
-      padding: 12px;
-      background: #ECFFFF;
-      border-radius: 8px;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      display: flex;
+    align-self: stretch;
+    padding: 12px;
+    background: #ecffff;
+    border-radius: 8px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: flex;
   }
-  
+
   .image_01 {
-      align-self: stretch;
-      height: 280px;
-      position: relative;
-      overflow: hidden;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
-      background-image: url(https://placehold.co/468x280);
+    align-self: stretch;
+    height: 280px;
+    position: relative;
+    overflow: hidden;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    background-image: url(https://placehold.co/468x280);
   }
-  
+
   .frame-1410104045_01 {
-      align-self: stretch;
-      padding: 12px;
-      background: #ECFFFF;
-      border-radius: 8px;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      display: flex;
+    align-self: stretch;
+    padding: 12px;
+    background: #ecffff;
+    border-radius: 8px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: flex;
   }
-  
+
   .frame-1410104047 {
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 12px;
-      display: inline-flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    display: inline-flex;
   }
-  
+
   .frame-1410104047_01 {
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 12px;
-      display: inline-flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    display: inline-flex;
   }
-  
+
   .frame-1410104048 {
-      align-self: stretch;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 12px;
-      display: flex;
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    display: flex;
   }
-  
+
   .frame-1410104048_01 {
-      align-self: stretch;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 12px;
-      display: flex;
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    display: flex;
   }
-  
+
   .frame-10 {
-      align-self: stretch;
-      padding-top: 8px;
-      padding-bottom: 12px;
-      padding-left: 12px;
-      padding-right: 12px;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 12px;
-      display: flex;
+    align-self: stretch;
+    padding-top: 8px;
+    padding-bottom: 12px;
+    padding-left: 12px;
+    padding-right: 12px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    display: flex;
   }
-  
+
   .frame-10_01 {
-      align-self: stretch;
-      padding-top: 8px;
-      padding-bottom: 12px;
-      padding-left: 12px;
-      padding-right: 12px;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 12px;
-      display: flex;
+    align-self: stretch;
+    padding-top: 8px;
+    padding-bottom: 12px;
+    padding-left: 12px;
+    padding-right: 12px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    display: flex;
   }
-  
+
   .card {
-      flex: 1 1 0;
-      padding-bottom: 10px;
-      background: white;
-      border-radius: 20px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 12px;
-      display: inline-flex;
+    flex: 1 1 0;
+    padding-bottom: 10px;
+    background: white;
+    border-radius: 20px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    display: inline-flex;
   }
-  
+
   .card_01 {
-      flex: 1 1 0;
-      padding-bottom: 10px;
-      background: white;
-      border-radius: 20px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 12px;
-      display: inline-flex;
+    flex: 1 1 0;
+    padding-bottom: 10px;
+    background: white;
+    border-radius: 20px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    display: inline-flex;
   }
 
   .mobile-full-width {
@@ -874,12 +918,13 @@
       gap: 12px;
       width: 100%;
     }
-    
-    .card, .card_01 {
+
+    .card,
+    .card_01 {
       width: 100%;
       flex: none;
     }
-    
+
     .character-creation-default {
       padding-left: 20px;
       padding-right: 20px;
@@ -914,12 +959,18 @@
       justify-content: center;
     }
 
-    .frame-1410104047, .frame-1410104047_01 {
+    .frame-1410104047,
+    .frame-1410104047_01 {
       flex-wrap: wrap;
       gap: 8px;
     }
 
-    .tags, .tags_01, .tags_02, .tags_03, .tags_04, .tags_05 {
+    .tags,
+    .tags_01,
+    .tags_02,
+    .tags_03,
+    .tags_04,
+    .tags_05 {
       padding: 8px;
       font-size: 14px;
     }

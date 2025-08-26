@@ -35,9 +35,7 @@
       <div class="logo-img"></div>
     </div>
   </div>
-  {#if isMobile}
-    <MobileBackBtn backRoute="/create-character/3" />
-  {/if}
+  <MobileBackBtn backRoute="/create-character/3" />
   <div class="frame-1410103818">
     <div class="heading">
       <div class="create-your-character">
@@ -60,11 +58,8 @@
         </div>
       </div>
     </div>
-    {#if isMobile}
-      <MobileStepProgressBar currentStep={4} />
-    {:else}
-      <ProgressBar currentStep={4} />
-    {/if}
+    <MobileStepProgressBar currentStep={4} />
+    <ProgressBar currentStep={4} />
     <div class="frame-1410104027">
       <div class="star-container">
         <StarEmoticon />
@@ -121,7 +116,6 @@
             <div class="checklist_01">
               <div class="check_02">
                 <img src={check} alt="check" />
-
               </div>
               <div>
                 <span class="preservesoriginaldrawingstyle_span"
@@ -209,7 +203,7 @@
             </div>
           </div>
         </div>
-        <img src={purple_check} alt="purple_check" class="purple_check"/>
+        <img src={purple_check} alt="purple_check" class="purple_check" />
       </div>
       <div class="frame-1410104075_02">
         <div class="frame-16_02">
@@ -273,18 +267,26 @@
       </div>
     </div>
 
-    <div style="display: flex; justify-content: {isMobile ? 'center' : 'space-between'}; width: 100%;">
+    <div
+      style="display: flex; justify-content: {isMobile
+        ? 'center'
+        : 'space-between'}; width: 100%;"
+    >
       {#if !isMobile}
-      <button class="button_01" on:click={() => goto('/create-character/3')}>
-        <div class="arrowleft">
-          <img src={arrowLeft} alt="arrowLeft" />
-        </div>
-        <div class="back-to-step">
-          <span class="backtostep_span">Back To Step</span>
-        </div>
-      </button>
+        <button class="button_01" on:click={() => goto("/create-character/3")}>
+          <div class="arrowleft">
+            <img src={arrowLeft} alt="arrowLeft" />
+          </div>
+          <div class="back-to-step">
+            <span class="backtostep_span">Back To Step</span>
+          </div>
+        </button>
       {/if}
-      <button class="button-fill" class:mobile-full-width={isMobile} on:click={() => goto('/create-character/5')}>
+      <button
+        class="button-fill"
+        class:mobile-full-width={isMobile}
+        on:click={() => goto("/create-character/5")}
+      >
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"
             >Continue to Enhancement Selection</span
@@ -372,9 +374,6 @@
   .lets-bring-your-character-to-life-upload-a-drawing-or-photo {
     width: 417px;
   }
-
-
-
 
   .backtostep_span {
     color: black;
@@ -672,8 +671,6 @@
     background: #eef6ff;
   }
 
-
-
   .before_span {
     color: black;
     font-size: 16px;
@@ -726,8 +723,6 @@
     align-self: stretch;
   }
 
-
-
   .lightcleanupandcoloring_span {
     color: #727272;
     font-size: 18px;
@@ -741,8 +736,6 @@
     width: 224px;
   }
 
-
-
   .preservesoriginaldrawingstyle_span {
     color: #727272;
     font-size: 18px;
@@ -752,8 +745,6 @@
     word-wrap: break-word;
   }
 
-
-
   .perfectforyoungerkids3-6_span {
     color: #727272;
     font-size: 18px;
@@ -762,8 +753,6 @@
     line-height: 25.2px;
     word-wrap: break-word;
   }
-
-
 
   .mostpopular_span {
     color: #438bff;
@@ -829,8 +818,6 @@
     align-self: stretch;
   }
 
-
-
   .balancedenhancementwithpolish_span {
     color: #727272;
     font-size: 18px;
@@ -844,8 +831,6 @@
     flex: 1 1 0;
   }
 
-
-
   .maintainscharacterpersonality_span {
     color: #727272;
     font-size: 18px;
@@ -858,8 +843,6 @@
   .maintains-character-personality {
     flex: 1 1 0;
   }
-
-
 
   .greatforallages_span {
     color: #727272;
@@ -1338,7 +1321,7 @@
     display: inline-flex;
   }
   .selected_card {
-    outline: 2px #6912C5 solid;
+    outline: 2px #6912c5 solid;
   }
   .purple_check {
     position: absolute;
@@ -1355,12 +1338,14 @@
       flex-direction: column;
       gap: 12px;
     }
-    
-    .frame-1410104071, .frame-1410104076, .frame-1410104075_02 {
+
+    .frame-1410104071,
+    .frame-1410104076,
+    .frame-1410104075_02 {
       width: 100%;
       flex: none;
     }
-    
+
     .character-creation-default {
       padding-left: 20px;
       padding-right: 20px;

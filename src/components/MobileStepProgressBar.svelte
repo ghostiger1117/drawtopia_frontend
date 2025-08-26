@@ -100,6 +100,10 @@
 }
 
 .progress-bar {
+  display: none;
+}
+@media (max-width: 800px) {
+  .progress-bar {
   width: 100%;
   height: 100%;
   padding: 12px;
@@ -111,5 +115,6 @@
   align-items: flex-start;
   gap: 8px;
   display: inline-flex;
+}
 }
 </style>

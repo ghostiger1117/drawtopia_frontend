@@ -35,15 +35,11 @@
       <div class="logo-img"></div>
     </div>
   </div>
-  {#if isMobile}
-    <MobileBackBtn backRoute="/create-character/4" />
-  {/if}
+  <MobileBackBtn backRoute="/create-character/4" />
   <div class="frame-1410103818">
     <div class="heading">
       <div class="create-your-character">
-        <span class="createyourcharacter_span"
-          >Choose Your Story World</span
-        >
+        <span class="createyourcharacter_span">Choose Your Story World</span>
       </div>
       <div class="upload-your-drawing-or-draw-your-own-character-right-here">
         <span class="uploadyourdrawingordrawyourowncharacterrighthere_span"
@@ -59,11 +55,8 @@
         </div>
       </div>
     </div>
-    {#if isMobile}
-      <MobileStepProgressBar currentStep={5} />
-    {:else}
-      <ProgressBar currentStep={5} />
-    {/if}
+    <MobileStepProgressBar currentStep={5} />
+    <ProgressBar currentStep={5} />
     <div class="frame-1410104027">
       <div class="star-container">
         <StarEmoticon />
@@ -83,56 +76,125 @@
     </div>
     <div class="frame-1410103852">
       <div class="card">
-          <img class="image" src="https://placehold.co/402x280" alt="image_card_1"/>
-          <div class="frame-10_02">
-              <div class="story_heading_02">
-                  <div class="enchanted-forest"><span class="enchantedforest_span">Enchanted Forest</span></div>
-                  <div class="a-magical-forest-filled-with-talking-animals-and-hidden-treasures"><span class="amagicalforestfilledwithtalkinganimalsandhiddentreasures_span">A magical forest filled with talking animals and hidden treasures</span></div>
-              </div>
-              <div class="frame-1410104037">
-                  <div class="see-how-character-name-looks-in-the-selected-style-style-in-the-world-name"><span class="seehowcharacternamelooksintheselectedstylestyleintheworldname_span">See how [Character Name] looks in the [Selected Style] style in the [World Name]</span></div>
-              </div>
-          </div>
-      </div>
-      <div class="card_01">
-          <img class="image_01" src="https://placehold.co/402x280" alt="image_card_2"/>
-          <div class="frame-10_02">
-              <div class="story_heading_02">
-                  <div class="outer-space"><span class="outerspace_span">Outer Space</span></div>
-                  <div class="explore-distant-planets-and-meet-friendly-alien-creatures"><span class="exploredistantplanetsandmeetfriendlyaliencreatures_span">Explore distant planets and meet friendly alien creatures</span></div>
-              </div>
-              <div class="frame-1410104037_01">
-                  <div class="see-how-character-name-looks-in-the-selected-style-style-in-the-world-name_01"><span class="seehowcharacternamelooksintheselectedstylestyleintheworldname_01_span">See how [Character Name] looks in the [Selected Style] style in the [World Name]</span></div>
-              </div>
-          </div>
-      </div>
-      <div class="card_02 selected_card" style="position: relative;">
-        <img class="image_02" src="https://placehold.co/402x280" alt="image_card_3"/>
+        <img
+          class="image"
+          src="https://placehold.co/402x280"
+          alt="image_card_1"
+        />
         <div class="frame-10_02">
           <div class="story_heading_02">
-            <div class="underwater-kingdom"><span class="underwaterkingdom_span">Underwater Kingdom</span></div>
-            <div class="dive-deep-into-an-underwater-world-full-of-mysteries"><span class="divedeepintoanunderwaterworldfullofmysteries_span">Dive deep into an underwater world full of mysteries!</span></div>
+            <div class="enchanted-forest">
+              <span class="enchantedforest_span">Enchanted Forest</span>
+            </div>
+            <div
+              class="a-magical-forest-filled-with-talking-animals-and-hidden-treasures"
+            >
+              <span
+                class="amagicalforestfilledwithtalkinganimalsandhiddentreasures_span"
+                >A magical forest filled with talking animals and hidden
+                treasures</span
+              >
+            </div>
+          </div>
+          <div class="frame-1410104037">
+            <div
+              class="see-how-character-name-looks-in-the-selected-style-style-in-the-world-name"
+            >
+              <span
+                class="seehowcharacternamelooksintheselectedstylestyleintheworldname_span"
+                >See how [Character Name] looks in the [Selected Style] style in
+                the [World Name]</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card_01">
+        <img
+          class="image_01"
+          src="https://placehold.co/402x280"
+          alt="image_card_2"
+        />
+        <div class="frame-10_02">
+          <div class="story_heading_02">
+            <div class="outer-space">
+              <span class="outerspace_span">Outer Space</span>
+            </div>
+            <div
+              class="explore-distant-planets-and-meet-friendly-alien-creatures"
+            >
+              <span
+                class="exploredistantplanetsandmeetfriendlyaliencreatures_span"
+                >Explore distant planets and meet friendly alien creatures</span
+              >
+            </div>
+          </div>
+          <div class="frame-1410104037_01">
+            <div
+              class="see-how-character-name-looks-in-the-selected-style-style-in-the-world-name_01"
+            >
+              <span
+                class="seehowcharacternamelooksintheselectedstylestyleintheworldname_01_span"
+                >See how [Character Name] looks in the [Selected Style] style in
+                the [World Name]</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card_02 selected_card" style="position: relative;">
+        <img
+          class="image_02"
+          src="https://placehold.co/402x280"
+          alt="image_card_3"
+        />
+        <div class="frame-10_02">
+          <div class="story_heading_02">
+            <div class="underwater-kingdom">
+              <span class="underwaterkingdom_span">Underwater Kingdom</span>
+            </div>
+            <div class="dive-deep-into-an-underwater-world-full-of-mysteries">
+              <span class="divedeepintoanunderwaterworldfullofmysteries_span"
+                >Dive deep into an underwater world full of mysteries!</span
+              >
+            </div>
           </div>
           <div class="frame-1410104037_02">
-            <div class="see-how-character-name-looks-in-the-selected-style-style-in-the-world-name_02"><span class="seehowcharacternamelooksintheselectedstylestyleintheworldname_02_span">See how [Character Name] looks in the [Selected Style] style in the [World Name]</span></div>
+            <div
+              class="see-how-character-name-looks-in-the-selected-style-style-in-the-world-name_02"
+            >
+              <span
+                class="seehowcharacternamelooksintheselectedstylestyleintheworldname_02_span"
+                >See how [Character Name] looks in the [Selected Style] style in
+                the [World Name]</span
+              >
+            </div>
           </div>
         </div>
-        <img src={purple_check} alt="purple_check" class="purple_check"/>
+        <img src={purple_check} alt="purple_check" class="purple_check" />
       </div>
-  </div>
+    </div>
 
-    <div style="display: flex; justify-content: {isMobile ? 'center' : 'space-between'}; width: 100%;">
+    <div
+      style="display: flex; justify-content: {isMobile
+        ? 'center'
+        : 'space-between'}; width: 100%;"
+    >
       {#if !isMobile}
-      <button class="button_01" on:click={() => goto('/create-character/4')}>
-        <div class="arrowleft">
-          <img src={arrowLeft} alt="arrowLeft" />
-        </div>
-        <div class="back-to-step">
-          <span class="backtostep_span">Back To Step</span>
-        </div>
-      </button>
+        <button class="button_01" on:click={() => goto("/create-character/4")}>
+          <div class="arrowleft">
+            <img src={arrowLeft} alt="arrowLeft" />
+          </div>
+          <div class="back-to-step">
+            <span class="backtostep_span">Back To Step</span>
+          </div>
+        </button>
       {/if}
-      <button class="button-fill" class:mobile-full-width={isMobile} on:click={() => goto('/create-character/6')}>
+      <button
+        class="button-fill"
+        class:mobile-full-width={isMobile}
+        on:click={() => goto("/create-character/6")}
+      >
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"
             >Continue to Character Creation</span
@@ -511,7 +573,6 @@
     border: 1px #d3d3d3 solid;
   }
 
-
   .image_01 {
     align-self: stretch;
     height: 375px;
@@ -586,267 +647,266 @@
   }
 
   .image {
-      align-self: stretch;
-      height: 280px;
-      position: relative;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
-      border: 1px #D3D3D3 solid;
+    align-self: stretch;
+    height: 280px;
+    position: relative;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border: 1px #d3d3d3 solid;
   }
-  
+
   .enchantedforest_span {
-      color: #141414;
-      font-size: 24px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 33.60px;
-      word-wrap: break-word;
+    color: #141414;
+    font-size: 24px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 33.6px;
+    word-wrap: break-word;
   }
-  
+
   .enchanted-forest {
-      align-self: stretch;
+    align-self: stretch;
   }
-  
+
   .amagicalforestfilledwithtalkinganimalsandhiddentreasures_span {
-      color: #666D80;
-      font-size: 18px;
-      font-family: Nunito;
-      font-weight: 400;
-      line-height: 25.20px;
-      word-wrap: break-word;
+    color: #666d80;
+    font-size: 18px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 25.2px;
+    word-wrap: break-word;
   }
-  
+
   .a-magical-forest-filled-with-talking-animals-and-hidden-treasures {
-      align-self: stretch;
+    align-self: stretch;
   }
-  
+
   .seehowcharacternamelooksintheselectedstylestyleintheworldname_span {
-      color: black;
-      font-size: 16px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: black;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .see-how-character-name-looks-in-the-selected-style-style-in-the-world-name {
-      flex: 1 1 0;
+    flex: 1 1 0;
   }
-  
+
   .image_01 {
-      align-self: stretch;
-      height: 280px;
-      position: relative;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
-      border: 1px #D3D3D3 solid;
+    align-self: stretch;
+    height: 280px;
+    position: relative;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border: 1px #d3d3d3 solid;
   }
-  
+
   .outerspace_span {
-      color: #141414;
-      font-size: 24px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 33.60px;
-      word-wrap: break-word;
+    color: #141414;
+    font-size: 24px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 33.6px;
+    word-wrap: break-word;
   }
-  
+
   .outer-space {
-      align-self: stretch;
+    align-self: stretch;
   }
-  
+
   .exploredistantplanetsandmeetfriendlyaliencreatures_span {
-      color: #666D80;
-      font-size: 18px;
-      font-family: Nunito;
-      font-weight: 400;
-      line-height: 25.20px;
-      word-wrap: break-word;
+    color: #666d80;
+    font-size: 18px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 25.2px;
+    word-wrap: break-word;
   }
-  
+
   .explore-distant-planets-and-meet-friendly-alien-creatures {
-      align-self: stretch;
+    align-self: stretch;
   }
-  
+
   .seehowcharacternamelooksintheselectedstylestyleintheworldname_01_span {
-      color: black;
-      font-size: 16px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: black;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .see-how-character-name-looks-in-the-selected-style-style-in-the-world-name_01 {
-      flex: 1 1 0;
+    flex: 1 1 0;
   }
-  
+
   .image_02 {
-      align-self: stretch;
-      height: 280px;
-      position: relative;
-      border-top-left-radius: 18px;
-      border-top-right-radius: 18px;
-      border: 1px #D3D3D3 solid;
+    align-self: stretch;
+    height: 280px;
+    position: relative;
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    border: 1px #d3d3d3 solid;
   }
-  
+
   .underwaterkingdom_span {
-      color: #141414;
-      font-size: 24px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 33.60px;
-      word-wrap: break-word;
+    color: #141414;
+    font-size: 24px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 33.6px;
+    word-wrap: break-word;
   }
-  
+
   .underwater-kingdom {
-      align-self: stretch;
+    align-self: stretch;
   }
-  
+
   .divedeepintoanunderwaterworldfullofmysteries_span {
-      color: #666D80;
-      font-size: 18px;
-      font-family: Nunito;
-      font-weight: 400;
-      line-height: 25.20px;
-      word-wrap: break-word;
+    color: #666d80;
+    font-size: 18px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 25.2px;
+    word-wrap: break-word;
   }
-  
+
   .dive-deep-into-an-underwater-world-full-of-mysteries {
-      align-self: stretch;
+    align-self: stretch;
   }
-  
+
   .seehowcharacternamelooksintheselectedstylestyleintheworldname_02_span {
-      color: black;
-      font-size: 16px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: black;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .see-how-character-name-looks-in-the-selected-style-style-in-the-world-name_02 {
-      flex: 1 1 0;
+    flex: 1 1 0;
   }
-  
+
   .frame-1410104037 {
-      align-self: stretch;
-      padding: 12px;
-      background: #F5F2FF;
-      border-radius: 10px;
-      outline: 1px #964DFF solid;
-      outline-offset: -1px;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      display: inline-flex;
+    align-self: stretch;
+    padding: 12px;
+    background: #f5f2ff;
+    border-radius: 10px;
+    outline: 1px #964dff solid;
+    outline-offset: -1px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: inline-flex;
   }
-  
+
   .frame-1410104037_01 {
-      align-self: stretch;
-      padding: 12px;
-      background: #F5F2FF;
-      border-radius: 10px;
-      outline: 1px #964DFF solid;
-      outline-offset: -1px;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      display: inline-flex;
+    align-self: stretch;
+    padding: 12px;
+    background: #f5f2ff;
+    border-radius: 10px;
+    outline: 1px #964dff solid;
+    outline-offset: -1px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: inline-flex;
   }
-  
+
   .story_heading_02 {
-      align-self: stretch;
-      padding-top: 8px;
-      padding-left: 8px;
-      padding-right: 8px;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 8px;
-      display: flex;
+    align-self: stretch;
+    padding-top: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+    display: flex;
   }
-  
+
   .frame-1410104037_02 {
-      align-self: stretch;
-      padding: 12px;
-      background: #F5F2FF;
-      border-radius: 10px;
-      outline: 1px #964DFF solid;
-      outline-offset: -1px;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      display: inline-flex;
+    align-self: stretch;
+    padding: 12px;
+    background: #f5f2ff;
+    border-radius: 10px;
+    outline: 1px #964dff solid;
+    outline-offset: -1px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: inline-flex;
   }
-  
+
   .frame-10_02 {
-      align-self: stretch;
-      padding-top: 8px;
-      padding-bottom: 12px;
-      padding-left: 12px;
-      padding-right: 12px;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 12px;
-      display: flex;
+    align-self: stretch;
+    padding-top: 8px;
+    padding-bottom: 12px;
+    padding-left: 12px;
+    padding-right: 12px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    display: flex;
   }
-  
+
   .card {
-      width: 402px;
-      padding-bottom: 10px;
-      background: white;
-      border-radius: 20px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 12px;
-      display: inline-flex;
+    width: 402px;
+    padding-bottom: 10px;
+    background: white;
+    border-radius: 20px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    display: inline-flex;
   }
-  
+
   .card_01 {
-      width: 402px;
-      padding-bottom: 10px;
-      background: white;
-      border-radius: 20px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 12px;
-      display: inline-flex;
+    width: 402px;
+    padding-bottom: 10px;
+    background: white;
+    border-radius: 20px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    display: inline-flex;
   }
-  
+
   .card_02 {
-      width: 402px;
-      padding-bottom: 10px;
-      background: white;
-      border-radius: 20px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 12px;
-      display: inline-flex;
+    width: 402px;
+    padding-bottom: 10px;
+    background: white;
+    border-radius: 20px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    display: inline-flex;
   }
-  
+
   .frame-1410103852 {
-      width: 100%;
-      height: 100%;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 16px;
-      display: inline-flex;
+    width: 100%;
+    height: 100%;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px;
+    display: inline-flex;
   }
   .selected_card {
-    box-shadow: 0px 1px 8px #871FFF;
-outline: 2px #6912C5 solid;
-
+    box-shadow: 0px 1px 8px #871fff;
+    outline: 2px #6912c5 solid;
   }
   .purple_check {
     position: absolute;
@@ -863,11 +923,13 @@ outline: 2px #6912C5 solid;
       flex-direction: column;
       gap: 12px;
     }
-    
-    .card, .card_01, .card_02 {
+
+    .card,
+    .card_01,
+    .card_02 {
       width: 100%;
     }
-    
+
     .character-creation-default {
       padding-left: 20px;
       padding-right: 20px;

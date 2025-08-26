@@ -32,15 +32,11 @@
       <div class="logo-img"></div>
     </div>
   </div>
-  {#if isMobile}
-    <MobileBackBtn backRoute="/create-character/6" />
-  {/if}
+  <MobileBackBtn backRoute="/create-character/6" />
   <div class="frame-1410103818">
     <div class="heading">
       <div class="create-your-character">
-        <span class="createyourcharacter_span"
-          >Here your Magical Story</span
-        >
+        <span class="createyourcharacter_span">Here your Magical Story</span>
       </div>
       <div class="upload-your-drawing-or-draw-your-own-character-right-here">
         <span class="uploadyourdrawingordrawyourowncharacterrighthere_span"
@@ -56,11 +52,8 @@
         </div>
       </div>
     </div>
-    {#if isMobile}
-      <MobileStepProgressBar currentStep={7} />
-    {:else}
-      <ProgressBar currentStep={7} />
-    {/if}
+    <MobileStepProgressBar currentStep={7} />
+    <ProgressBar currentStep={7} />
     <div class="frame-1410104027">
       <div class="star-container">
         <StarEmoticon />
@@ -80,120 +73,182 @@
     </div>
     <div class="frame-1410104031">
       <div class="frame-8">
-          <div class="frame-1410104034">
-              <div class="cover-book-preview"><span class="coverbookpreview_span">Cover Book Preview</span></div>
+        <div class="frame-1410104034">
+          <div class="cover-book-preview">
+            <span class="coverbookpreview_span">Cover Book Preview</span>
           </div>
-          <img class="image" src="https://placehold.co/569x837" alt="image_card_1"/>
+        </div>
+        <img
+          class="image"
+          src="https://placehold.co/569x837"
+          alt="image_card_1"
+        />
       </div>
       <div class="frame-9">
-          <div class="information-cover"><span class="informationcover_span">Information Cover</span></div>
-          <div class="form">
-              <div class="form_01">
-                  <div><span class="titleselection_span">TItle Selection</span></div>
-                  <div class="frame-1410103942">
-                      <div class="selected">
-                          <div class="frame-1410103940">
-                              <div class="frame-1410103939">
-                                  <div><span class="thegreataddventureyourname_span">The Great Addventure [Your Name] </span></div>
-                              </div>
-                          </div>
-                          <div class="ellipse-13"></div>
-                          <div class="frame-1410104043">
-                              <div class="ellipse-14"></div>
-                              <div class="ellipse-13_01"></div>
-                          </div>
-                      </div>
-                      <div class="selected_01">
-                          <div class="frame-1410103940_01">
-                              <div class="frame-1410103939_01">
-                                  <div><span class="theamazingofjourneyyourname_span">The Amazing of Journey [Your Name]  </span></div>
-                              </div>
-                          </div>
-                          <div class="ellipse-13_02"></div>
-                      </div>
-                      <div class="selected_02">
-                          <div class="frame-1410103940_02">
-                              <div class="frame-1410103939_02">
-                                  <div><span class="yournameandthespaceadventure_span">[Your Name] and the Space Adventure</span></div>
-                              </div>
-                          </div>
-                          <div class="ellipse-13_03"></div>
-                      </div>
-                      <div class="selected_03">
-                          <div class="frame-1410104084">
-                              <div class="frame-1410103940_03">
-                                  <div class="frame-1410103939_03">
-                                      <div><span class="customtitle_span">Custom Title</span></div>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="ellipse-13_04"></div>
-                      </div>
+        <div class="information-cover">
+          <span class="informationcover_span">Information Cover</span>
+        </div>
+        <div class="form">
+          <div class="form_01">
+            <div><span class="titleselection_span">TItle Selection</span></div>
+            <div class="frame-1410103942">
+              <div class="selected">
+                <div class="frame-1410103940">
+                  <div class="frame-1410103939">
+                    <div>
+                      <span class="thegreataddventureyourname_span"
+                        >The Great Addventure [Your Name]
+                      </span>
+                    </div>
                   </div>
+                </div>
+                <div class="ellipse-13"></div>
+                <div class="frame-1410104043">
+                  <div class="ellipse-14"></div>
+                  <div class="ellipse-13_01"></div>
+                </div>
               </div>
-              <div class="form_02">
-                  <div class="select-your-book-cover-design"><span class="selectyourbookcoverdesign_span">Select your Book Cover Design</span></div>
-                  <div class="frame-1410103942_01">
-                      <div class="selected_04">
-                          <img class="frame-1410104088" src="https://placehold.co/80x91" alt="image_card_2"/>
-                          <div class="frame-1410103940_04">
-                              <div class="frame-1410103939_04">
-                                  <div><span class="classicstorybook_span">Classic Storybook</span></div>
-                                  <div><span class="ornateborderwithtraditionalcharm_span">Ornate border with traditional charm</span></div>
-                              </div>
-                          </div>
-                          <div class="ellipse-13_05"></div>
-                          <div class="frame-1410104043_01">
-                              <div class="ellipse-14_01"></div>
-                              <div class="ellipse-13_06"></div>
-                          </div>
-                      </div>
-                      <div class="selected_05">
-                          <div class="frame-1410103940_05">
-                              <img class="frame-1410104088_01" src="https://placehold.co/80x91" alt="image_card_3"/>
-                              <div class="frame-1410103939_05">
-                                  <div><span class="modernminimalist_span">Modern Minimalist</span></div>
-                                  <div><span class="characterfocuswithcleandesign_span">Character focus with clean design</span></div>
-                              </div>
-                          </div>
-                          <div class="ellipse-13_07"></div>
-                      </div>
-                      <div class="selected_06">
-                          <div class="frame-1410103940_06">
-                              <img class="frame-1410104088_02" src="https://placehold.co/80x91" alt="image_card_4"/>
-                              <div class="frame-1410103939_06">
-                                  <div><span class="adventuretheme_span">Adventure Theme</span></div>
-                                  <div><span class="worldelementsanddynamiclayout_span">World elements and dynamic layout</span></div>
-                              </div>
-                          </div>
-                          <div class="ellipse-13_08"></div>
-                      </div>
+              <div class="selected_01">
+                <div class="frame-1410103940_01">
+                  <div class="frame-1410103939_01">
+                    <div>
+                      <span class="theamazingofjourneyyourname_span"
+                        >The Amazing of Journey [Your Name]
+                      </span>
+                    </div>
                   </div>
+                </div>
+                <div class="ellipse-13_02"></div>
               </div>
+              <div class="selected_02">
+                <div class="frame-1410103940_02">
+                  <div class="frame-1410103939_02">
+                    <div>
+                      <span class="yournameandthespaceadventure_span"
+                        >[Your Name] and the Space Adventure</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="ellipse-13_03"></div>
+              </div>
+              <div class="selected_03">
+                <div class="frame-1410104084">
+                  <div class="frame-1410103940_03">
+                    <div class="frame-1410103939_03">
+                      <div>
+                        <span class="customtitle_span">Custom Title</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="ellipse-13_04"></div>
+              </div>
+            </div>
           </div>
+          <div class="form_02">
+            <div class="select-your-book-cover-design">
+              <span class="selectyourbookcoverdesign_span"
+                >Select your Book Cover Design</span
+              >
+            </div>
+            <div class="frame-1410103942_01">
+              <div class="selected_04">
+                <img
+                  class="frame-1410104088"
+                  src="https://placehold.co/80x91"
+                  alt="image_card_2"
+                />
+                <div class="frame-1410103940_04">
+                  <div class="frame-1410103939_04">
+                    <div>
+                      <span class="classicstorybook_span"
+                        >Classic Storybook</span
+                      >
+                    </div>
+                    <div>
+                      <span class="ornateborderwithtraditionalcharm_span"
+                        >Ornate border with traditional charm</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="ellipse-13_05"></div>
+                <div class="frame-1410104043_01">
+                  <div class="ellipse-14_01"></div>
+                  <div class="ellipse-13_06"></div>
+                </div>
+              </div>
+              <div class="selected_05">
+                <div class="frame-1410103940_05">
+                  <img
+                    class="frame-1410104088_01"
+                    src="https://placehold.co/80x91"
+                    alt="image_card_3"
+                  />
+                  <div class="frame-1410103939_05">
+                    <div>
+                      <span class="modernminimalist_span"
+                        >Modern Minimalist</span
+                      >
+                    </div>
+                    <div>
+                      <span class="characterfocuswithcleandesign_span"
+                        >Character focus with clean design</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="ellipse-13_07"></div>
+              </div>
+              <div class="selected_06">
+                <div class="frame-1410103940_06">
+                  <img
+                    class="frame-1410104088_02"
+                    src="https://placehold.co/80x91"
+                    alt="image_card_4"
+                  />
+                  <div class="frame-1410103939_06">
+                    <div>
+                      <span class="adventuretheme_span">Adventure Theme</span>
+                    </div>
+                    <div>
+                      <span class="worldelementsanddynamiclayout_span"
+                        >World elements and dynamic layout</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="ellipse-13_08"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-  </div>
-  
+    </div>
 
-  
- 
-
-    <div style="display: flex; justify-content: {isMobile ? 'center' : 'space-between'}; width: 100%;">
+    <div
+      style="display: flex; justify-content: {isMobile
+        ? 'center'
+        : 'space-between'}; width: 100%;"
+    >
       {#if !isMobile}
-      <button class="button_01" on:click={() => goto('/create-character/6')}>
-        <div class="arrowleft">
-          <img src={arrowLeft} alt="arrowLeft" />
-        </div>
-        <div class="back-to-step">
-          <span class="backtostep_span">Back To Step</span>
-        </div>
-      </button>
+        <button class="button_01" on:click={() => goto("/create-character/6")}>
+          <div class="arrowleft">
+            <img src={arrowLeft} alt="arrowLeft" />
+          </div>
+          <div class="back-to-step">
+            <span class="backtostep_span">Back To Step</span>
+          </div>
+        </button>
       {/if}
-      <button class="button-fill" class:mobile-full-width={isMobile} on:click={() => goto('/create-character/7/preview')}>
+      <button
+        class="button-fill"
+        class:mobile-full-width={isMobile}
+        on:click={() => goto("/create-character/7/preview")}
+      >
         <div class="continue-to-style-selection">
-          <span class="continuetostyleselection_span"
-            >Preview Your Story</span
-          >
+          <span class="continuetostyleselection_span">Preview Your Story</span>
         </div>
       </button>
     </div>
@@ -527,605 +582,605 @@
   }
 
   .image {
-      align-self: stretch;
-      height: 280px;
-      position: relative;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
+    align-self: stretch;
+    height: 280px;
+    position: relative;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
   }
-  
+
   .coverbookpreview_span {
-      color: black;
-      font-size: 20px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 28px;
-      word-wrap: break-word;
+    color: black;
+    font-size: 20px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 28px;
+    word-wrap: break-word;
   }
-  
+
   .cover-book-preview {
-      text-align: center;
+    text-align: center;
   }
-  
+
   .image {
-      align-self: stretch;
-      height: 837px;
-      position: relative;
-      border-radius: 12px;
+    align-self: stretch;
+    height: 837px;
+    position: relative;
+    border-radius: 12px;
   }
-  
+
   .informationcover_span {
-      color: #141414;
-      font-size: 20px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 28px;
-      word-wrap: break-word;
+    color: #141414;
+    font-size: 20px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 28px;
+    word-wrap: break-word;
   }
-  
+
   .information-cover {
-      align-self: stretch;
+    align-self: stretch;
   }
-  
+
   .titleselection_span {
-      color: #141414;
-      font-size: 16px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: #141414;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .thegreataddventureyourname_span {
-      color: #141414;
-      font-size: 16px;
-      font-family: Nunito;
-      font-weight: 400;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: #141414;
+    font-size: 16px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .ellipse-13 {
-      width: 24px;
-      height: 24px;
-      border-radius: 9999px;
-      border: 1px #EDEDED solid;
+    width: 24px;
+    height: 24px;
+    border-radius: 9999px;
+    border: 1px #ededed solid;
   }
-  
+
   .ellipse-14 {
-      width: 24px;
-      height: 24px;
-      left: 0px;
-      top: 0px;
-      position: absolute;
-      border-radius: 9999px;
-      border: 1px #438BFF solid;
+    width: 24px;
+    height: 24px;
+    left: 0px;
+    top: 0px;
+    position: absolute;
+    border-radius: 9999px;
+    border: 1px #438bff solid;
   }
-  
+
   .ellipse-13_01 {
-      width: 12px;
-      height: 12px;
-      left: 6px;
-      top: 6px;
-      position: absolute;
-      background: #438BFF;
-      border-radius: 9999px;
-      border: 1px #438BFF solid;
+    width: 12px;
+    height: 12px;
+    left: 6px;
+    top: 6px;
+    position: absolute;
+    background: #438bff;
+    border-radius: 9999px;
+    border: 1px #438bff solid;
   }
-  
+
   .theamazingofjourneyyourname_span {
-      color: #141414;
-      font-size: 16px;
-      font-family: Nunito;
-      font-weight: 400;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: #141414;
+    font-size: 16px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .ellipse-13_02 {
-      width: 24px;
-      height: 24px;
-      border-radius: 9999px;
-      border: 2px #EDEDED solid;
+    width: 24px;
+    height: 24px;
+    border-radius: 9999px;
+    border: 2px #ededed solid;
   }
-  
+
   .yournameandthespaceadventure_span {
-      color: #141414;
-      font-size: 16px;
-      font-family: Nunito;
-      font-weight: 400;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: #141414;
+    font-size: 16px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .ellipse-13_03 {
-      width: 24px;
-      height: 24px;
-      border-radius: 9999px;
-      border: 2px #EDEDED solid;
+    width: 24px;
+    height: 24px;
+    border-radius: 9999px;
+    border: 2px #ededed solid;
   }
-  
+
   .customtitle_span {
-      color: #141414;
-      font-size: 16px;
-      font-family: Nunito;
-      font-weight: 400;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: #141414;
+    font-size: 16px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .ellipse-13_04 {
-      width: 24px;
-      height: 24px;
-      border-radius: 9999px;
-      border: 2px #EDEDED solid;
+    width: 24px;
+    height: 24px;
+    border-radius: 9999px;
+    border: 2px #ededed solid;
   }
-  
+
   .selectyourbookcoverdesign_span {
-      color: #141414;
-      font-size: 16px;
-      font-family: Quicksand;
-      font-weight: 600;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: #141414;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .select-your-book-cover-design {
-      align-self: stretch;
+    align-self: stretch;
   }
-  
+
   .frame-1410104088 {
-      width: 80px;
-      height: 91px;
-      position: relative;
-      background: white;
-      border-radius: 4px;
+    width: 80px;
+    height: 91px;
+    position: relative;
+    background: white;
+    border-radius: 4px;
   }
-  
+
   .classicstorybook_span {
-      color: #141414;
-      font-size: 16px;
-      font-family: Nunito;
-      font-weight: 500;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: #141414;
+    font-size: 16px;
+    font-family: Nunito;
+    font-weight: 500;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .ornateborderwithtraditionalcharm_span {
-      color: #666D80;
-      font-size: 16px;
-      font-family: Nunito;
-      font-weight: 400;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: #666d80;
+    font-size: 16px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .ellipse-13_05 {
-      width: 24px;
-      height: 24px;
-      border-radius: 9999px;
-      border: 1px #EDEDED solid;
+    width: 24px;
+    height: 24px;
+    border-radius: 9999px;
+    border: 1px #ededed solid;
   }
-  
+
   .ellipse-14_01 {
-      width: 24px;
-      height: 24px;
-      left: 0px;
-      top: 0px;
-      position: absolute;
-      border-radius: 9999px;
-      border: 1px #438BFF solid;
+    width: 24px;
+    height: 24px;
+    left: 0px;
+    top: 0px;
+    position: absolute;
+    border-radius: 9999px;
+    border: 1px #438bff solid;
   }
-  
+
   .ellipse-13_06 {
-      width: 12px;
-      height: 12px;
-      left: 6px;
-      top: 6px;
-      position: absolute;
-      background: #438BFF;
-      border-radius: 9999px;
-      border: 1px #438BFF solid;
+    width: 12px;
+    height: 12px;
+    left: 6px;
+    top: 6px;
+    position: absolute;
+    background: #438bff;
+    border-radius: 9999px;
+    border: 1px #438bff solid;
   }
-  
+
   .frame-1410104088_01 {
-      width: 80px;
-      height: 91px;
-      position: relative;
-      background: white;
-      border-radius: 4px;
+    width: 80px;
+    height: 91px;
+    position: relative;
+    background: white;
+    border-radius: 4px;
   }
-  
+
   .modernminimalist_span {
-      color: #141414;
-      font-size: 16px;
-      font-family: Nunito;
-      font-weight: 500;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: #141414;
+    font-size: 16px;
+    font-family: Nunito;
+    font-weight: 500;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .characterfocuswithcleandesign_span {
-      color: #666D80;
-      font-size: 16px;
-      font-family: Nunito;
-      font-weight: 400;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: #666d80;
+    font-size: 16px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .ellipse-13_07 {
-      width: 24px;
-      height: 24px;
-      border-radius: 9999px;
-      border: 1px #EDEDED solid;
+    width: 24px;
+    height: 24px;
+    border-radius: 9999px;
+    border: 1px #ededed solid;
   }
-  
+
   .frame-1410104088_02 {
-      width: 80px;
-      height: 91px;
-      position: relative;
-      background: white;
-      border-radius: 4px;
+    width: 80px;
+    height: 91px;
+    position: relative;
+    background: white;
+    border-radius: 4px;
   }
-  
+
   .adventuretheme_span {
-      color: #141414;
-      font-size: 16px;
-      font-family: Nunito;
-      font-weight: 500;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: #141414;
+    font-size: 16px;
+    font-family: Nunito;
+    font-weight: 500;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .worldelementsanddynamiclayout_span {
-      color: #666D80;
-      font-size: 16px;
-      font-family: Nunito;
-      font-weight: 400;
-      line-height: 22.40px;
-      word-wrap: break-word;
+    color: #666d80;
+    font-size: 16px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
-  
+
   .ellipse-13_08 {
-      width: 24px;
-      height: 24px;
-      border-radius: 9999px;
-      border: 1px #EDEDED solid;
+    width: 24px;
+    height: 24px;
+    border-radius: 9999px;
+    border: 1px #ededed solid;
   }
-  
+
   .frame-1410104034 {
-      align-self: stretch;
-      padding: 8px;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 10px;
-      display: inline-flex;
+    align-self: stretch;
+    padding: 8px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    display: inline-flex;
   }
-  
+
   .frame-1410103939 {
-      flex: 1 1 0;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 2px;
-      display: inline-flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2px;
+    display: inline-flex;
   }
-  
+
   .frame-1410103939_01 {
-      flex: 1 1 0;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 2px;
-      display: inline-flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2px;
+    display: inline-flex;
   }
-  
+
   .frame-1410103939_02 {
-      flex: 1 1 0;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 2px;
-      display: inline-flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2px;
+    display: inline-flex;
   }
-  
+
   .frame-1410103939_03 {
-      flex: 1 1 0;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 2px;
-      display: inline-flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2px;
+    display: inline-flex;
   }
-  
+
   .frame-1410103939_04 {
-      flex: 1 1 0;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 2px;
-      display: inline-flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2px;
+    display: inline-flex;
   }
-  
+
   .frame-1410103939_05 {
-      flex: 1 1 0;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 2px;
-      display: inline-flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2px;
+    display: inline-flex;
   }
-  
+
   .frame-1410103939_06 {
-      flex: 1 1 0;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 2px;
-      display: inline-flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2px;
+    display: inline-flex;
   }
-  
+
   .frame-1410104043 {
-      width: 24px;
-      height: 24px;
-      position: relative;
+    width: 24px;
+    height: 24px;
+    position: relative;
   }
-  
+
   .frame-1410104043_01 {
-      width: 24px;
-      height: 24px;
-      position: relative;
+    width: 24px;
+    height: 24px;
+    position: relative;
   }
-  
+
   .frame-8 {
-      flex: 1 1 0;
-      padding: 10px;
-      background: white;
-      border-radius: 20px;
-      outline: 1px #DCDCDC solid;
-      outline-offset: -1px;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 12px;
-      display: inline-flex;
+    flex: 1 1 0;
+    padding: 10px;
+    background: white;
+    border-radius: 20px;
+    outline: 1px #dcdcdc solid;
+    outline-offset: -1px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    display: inline-flex;
   }
-  
+
   .frame-1410103940 {
-      flex: 1 1 0;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      display: flex;
+    flex: 1 1 0;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    display: flex;
   }
-  
+
   .frame-1410103940_01 {
-      flex: 1 1 0;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      display: flex;
+    flex: 1 1 0;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    display: flex;
   }
-  
+
   .frame-1410103940_02 {
-      flex: 1 1 0;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      display: flex;
+    flex: 1 1 0;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    display: flex;
   }
-  
+
   .frame-1410103940_03 {
-      align-self: stretch;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      display: inline-flex;
+    align-self: stretch;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    display: inline-flex;
   }
-  
+
   .frame-1410103940_04 {
-      flex: 1 1 0;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      display: flex;
+    flex: 1 1 0;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    display: flex;
   }
-  
+
   .frame-1410103940_05 {
-      flex: 1 1 0;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      display: flex;
+    flex: 1 1 0;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    display: flex;
   }
-  
+
   .frame-1410103940_06 {
-      flex: 1 1 0;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      display: flex;
+    flex: 1 1 0;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    display: flex;
   }
-  
+
   .selected {
-      align-self: stretch;
-      padding: 12px;
-      background: #EEF6FF;
-      border-radius: 12px;
-      outline: 1px #438BFF solid;
-      outline-offset: -1px;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      display: inline-flex;
+    align-self: stretch;
+    padding: 12px;
+    background: #eef6ff;
+    border-radius: 12px;
+    outline: 1px #438bff solid;
+    outline-offset: -1px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    display: inline-flex;
   }
-  
+
   .selected_01 {
-      align-self: stretch;
-      padding: 12px;
-      border-radius: 12px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      display: inline-flex;
+    align-self: stretch;
+    padding: 12px;
+    border-radius: 12px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    display: inline-flex;
   }
-  
+
   .selected_02 {
-      align-self: stretch;
-      padding: 12px;
-      border-radius: 12px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      display: inline-flex;
+    align-self: stretch;
+    padding: 12px;
+    border-radius: 12px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    display: inline-flex;
   }
-  
+
   .frame-1410104084 {
-      flex: 1 1 0;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 4px;
-      display: inline-flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 4px;
+    display: inline-flex;
   }
-  
+
   .selected_04 {
-      align-self: stretch;
-      padding-top: 8px;
-      padding-bottom: 8px;
-      padding-left: 8px;
-      padding-right: 12px;
-      background: #EEF6FF;
-      border-radius: 12px;
-      outline: 1px #438BFF solid;
-      outline-offset: -1px;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      display: inline-flex;
+    align-self: stretch;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 8px;
+    padding-right: 12px;
+    background: #eef6ff;
+    border-radius: 12px;
+    outline: 1px #438bff solid;
+    outline-offset: -1px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    display: inline-flex;
   }
-  
+
   .selected_05 {
-      align-self: stretch;
-      padding-top: 8px;
-      padding-bottom: 8px;
-      padding-left: 8px;
-      padding-right: 12px;
-      border-radius: 12px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      display: inline-flex;
+    align-self: stretch;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 8px;
+    padding-right: 12px;
+    border-radius: 12px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    display: inline-flex;
   }
-  
+
   .selected_06 {
-      align-self: stretch;
-      padding-top: 8px;
-      padding-bottom: 8px;
-      padding-left: 8px;
-      padding-right: 12px;
-      border-radius: 12px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      display: inline-flex;
+    align-self: stretch;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-left: 8px;
+    padding-right: 12px;
+    border-radius: 12px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    display: inline-flex;
   }
-  
+
   .selected_03 {
-      align-self: stretch;
-      padding: 12px;
-      border-radius: 12px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 12px;
-      display: inline-flex;
+    align-self: stretch;
+    padding: 12px;
+    border-radius: 12px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    display: inline-flex;
   }
-  
+
   .frame-1410103942_01 {
-      align-self: stretch;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 12px;
-      display: flex;
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    display: flex;
   }
-  
+
   .frame-1410103942 {
-      align-self: stretch;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 12px;
-      display: flex;
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    display: flex;
   }
-  
+
   .form_02 {
-      align-self: stretch;
-      padding: 12px;
-      border-radius: 10px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 8px;
-      display: flex;
+    align-self: stretch;
+    padding: 12px;
+    border-radius: 10px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+    display: flex;
   }
-  
+
   .form_01 {
-      align-self: stretch;
-      padding: 12px;
-      border-radius: 10px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 8px;
-      display: flex;
+    align-self: stretch;
+    padding: 12px;
+    border-radius: 10px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+    display: flex;
   }
-  
+
   .form {
-      align-self: stretch;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 12px;
-      display: flex;
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    display: flex;
   }
-  
+
   .frame-9 {
-      width: 627px;
-      padding: 16px;
-      background: white;
-      border-radius: 20px;
-      outline: 1px #EDEDED solid;
-      outline-offset: -1px;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 24px;
-      display: inline-flex;
+    width: 627px;
+    padding: 16px;
+    background: white;
+    border-radius: 20px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 24px;
+    display: inline-flex;
   }
-  
+
   .frame-1410104031 {
-      width: 100%;
-      height: 100%;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 24px;
-      display: inline-flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 24px;
+    display: inline-flex;
   }
 
   .mobile-full-width {
@@ -1137,16 +1192,17 @@
       flex-direction: column;
       gap: 16px;
     }
-    
-    .frame-8, .frame-9 {
+
+    .frame-8,
+    .frame-9 {
       width: 100%;
       flex: none;
     }
-    
+
     .frame-9 {
       width: 100%;
     }
-    
+
     .character-creation-default {
       padding-left: 20px;
       padding-right: 20px;
@@ -1185,34 +1241,48 @@
       height: 400px;
     }
 
-    .coverbookpreview_span, .informationcover_span {
+    .coverbookpreview_span,
+    .informationcover_span {
       font-size: 18px;
       line-height: 25.2px;
     }
 
-    .titleselection_span, .selectyourbookcoverdesign_span {
+    .titleselection_span,
+    .selectyourbookcoverdesign_span {
       font-size: 14px;
       line-height: 19.6px;
     }
 
-    .selected, .selected_01, .selected_02, .selected_03, 
-    .selected_04, .selected_05, .selected_06 {
+    .selected,
+    .selected_01,
+    .selected_02,
+    .selected_03,
+    .selected_04,
+    .selected_05,
+    .selected_06 {
       padding: 8px;
     }
 
-    .frame-1410104088, .frame-1410104088_01, .frame-1410104088_02 {
+    .frame-1410104088,
+    .frame-1410104088_01,
+    .frame-1410104088_02 {
       width: 60px;
       height: 68px;
     }
 
-    .thegreataddventureyourname_span, .theamazingofjourneyyourname_span,
-    .yournameandthespaceadventure_span, .customtitle_span,
-    .classicstorybook_span, .modernminimalist_span, .adventuretheme_span {
+    .thegreataddventureyourname_span,
+    .theamazingofjourneyyourname_span,
+    .yournameandthespaceadventure_span,
+    .customtitle_span,
+    .classicstorybook_span,
+    .modernminimalist_span,
+    .adventuretheme_span {
       font-size: 14px;
       line-height: 19.6px;
     }
 
-    .ornateborderwithtraditionalcharm_span, .characterfocuswithcleandesign_span,
+    .ornateborderwithtraditionalcharm_span,
+    .characterfocuswithcleandesign_span,
     .worldelementsanddynamiclayout_span {
       font-size: 12px;
       line-height: 16.8px;

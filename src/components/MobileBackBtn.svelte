@@ -1,25 +1,28 @@
 <script>
   import { goto } from "$app/navigation";
   import arrowLeft from "../assets/ArrowLeft.svg";
-  
+
   export let backRoute = "/";
 </script>
 
-<div style="display: flex; width: 100%; align-items: center;">
+<div class="mobile-back-btn">
   <button class="button_mobile" on:click={() => goto(backRoute)}>
     <div class="arrowleft">
       <img src={arrowLeft} alt="arrowLeft" />
     </div>
   </button>
-    <div class="back-to-step">
-      <span class="backtostep_span">Back To Step</span>
-    </div>
+  <div class="back-to-step">
+    <span class="backtostep_span">Back To Step</span>
   </div>
+</div>
 
 <style>
-    .button_mobile {
+  .mobile-back-btn {
+    display: none;
+  }
+  .button_mobile {
     margin-right: 15px;
-    padding : 6px;
+    padding: 6px;
     box-shadow: 0px 4px 4px rgba(98.89, 98.89, 98.89, 0.25);
     border-radius: 10px;
     outline: 1px #dcdcdc solid;
@@ -37,5 +40,12 @@
     font-weight: 600;
     line-height: 25.2px;
     word-wrap: break-word;
+  }
+  @media (max-width: 800px) {
+    .mobile-back-btn {
+      display: flex;
+      width: 100%;
+      align-items: center;
+    }
   }
 </style>
