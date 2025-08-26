@@ -1,409 +1,320 @@
-<div class="information-helper-text">
-  <div class="frame-1410103845">
-      <div class="frame-1410103839">
+<script>
+  import x from "../assets/X.svg";
+  import qrcode from "../assets/qr.png";
+  import download from "../assets/DownloadSimple.svg";
+  import caretright from "../assets/CaretDown.svg";
+  import video from "../assets/Video.svg";
+  import trash from "../assets/Trash.svg";
+</script>
+
+<div class="modal-overlay" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <div class="information-helper-text">
+      <div class="frame-1410103845">
+        <div class="frame-1410103839">
           <div class="logo-text-full">
-              <div class="drawtopia"></div>
-              <div class="subtract"></div>
+            <div class="logo-img"></div>
           </div>
-          <div class="x">
-              <div class="vector"></div>
-          </div>
+          <img src={x} alt="x" />
+        </div>
+        <div class="stroke"></div>
       </div>
-      <div class="stroke"></div>
-  </div>
-  <div class="frame-1410103944">
-      <div><span class="storyinformation_span">Story Information</span></div>
-  </div>
-  <img class="image-7" src="https://placehold.co/170x174" alt="info_sotry"/>
-  <div class="checklist-container">
-      <div class="checklist">
+      <div class="frame-1410103944">
+        <div><span class="storyinformation_span">Story Information</span></div>
+      </div>
+      <img class="image-7" src={qrcode} alt="info_sotry" />
+      <div class="checklist-container">
+        <div class="checklist">
           <div class="frame-1410104186">
-              <div class="check">
-                  <div class="downloadsimple">
-                      <div class="vector_01"></div>
-                  </div>
-              </div>
-              <div class="download-story"><span class="downloadstory_span">Download Story</span></div>
+            <div class="check">
+              <img src={download} alt="download" />
+            </div>
+            <div class="download-story">
+              <span class="downloadstory_span">Download Story</span>
+            </div>
           </div>
           <div class="caretright">
-              <div class="vector_02"></div>
+            <img src={caretright} alt="caretright" />
           </div>
-      </div>
-      <div class="checklist_01">
+        </div>
+        <div class="checklist_01">
           <div class="frame-1410104186_01">
-              <div class="check_01">
-                  <div class="video">
-                      <div class="vector_03"></div>
-                  </div>
-              </div>
-              <div class="preview-record-video"><span class="previewrecordvideo_span">Preview Record Video</span></div>
+            <div class="check_01">
+              <img src={video} alt="video" />
+            </div>
+            <div class="preview-record-video">
+              <span class="previewrecordvideo_span">Preview Record Video</span>
+            </div>
           </div>
-          <div class="caretright_01">
-              <div class="vector_04"></div>
+          <div class="caretright">
+            <img src={caretright} alt="caretright" />
           </div>
-      </div>
-      <div class="checklist_02">
+        </div>
+        <div class="checklist_02">
           <div class="frame-1410104187">
-              <div class="check_02">
-                  <div class="trash">
-                      <div class="vector_05"></div>
-                  </div>
-              </div>
-              <div class="delete-story"><span class="deletestory_span">Delete Story</span></div>
+            <div class="check_02">
+              <img src={trash} alt="trash" />
+            </div>
+            <div class="delete-story">
+              <span class="deletestory_span">Delete Story</span>
+            </div>
           </div>
-          <div class="caretright_02">
-              <div class="vector_06"></div>
+          <div class="caretright">
+            <img src={caretright} alt="caretright" />
           </div>
+        </div>
       </div>
+    </div>
   </div>
 </div>
 
 <style>
-.drawtopia {
-  width: 216px;
-  height: 40.37px;
-  left: 0px;
-  top: 0px;
-  position: absolute;
-  background: radial-gradient(ellipse 50.00% 50.00% at 50.00% 50.00%, #0FE3EF 44%, #438BFF 100%);
-  box-shadow: 0px 0.6032477617263794px 1.8097431659698486px #871FFF inset;
-}
+  .modal-overlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 16px;
+  }
 
-.subtract {
-  width: 30.16px;
-  height: 30.16px;
-  left: 129.13px;
-  top: 1.94px;
-  position: absolute;
-  transform: rotate(4deg);
-  transform-origin: top left;
-  background: radial-gradient(ellipse 50.00% 50.00% at 50.00% 50.00%, #0FE3EF 44%, #438BFF 100%);
-  box-shadow: 0px 0.6032479405403137px 1.8097436428070068px #871FFF inset;
-}
+  .modal-box {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+  }
 
-.vector {
-  width: 15px;
-  height: 15px;
-  left: 4.50px;
-  top: 4.50px;
-  position: absolute;
-  background: black;
-}
+  .stroke {
+    align-self: stretch;
+    height: 1px;
+    background: #dcdcdc;
+  }
 
-.stroke {
-  align-self: stretch;
-  height: 1px;
-  background: #DCDCDC;
-}
+  .storyinformation_span {
+    color: black;
+    font-size: 24px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 33.6px;
+    word-wrap: break-word;
+  }
 
-.storyinformation_span {
-  color: black;
-  font-size: 24px;
-  font-family: Quicksand;
-  font-weight: 600;
-  line-height: 33.60px;
-  word-wrap: break-word;
-}
+  .image-7 {
+    width: 170px;
+    height: 174px;
+  }
 
-.image-7 {
-  width: 170px;
-  height: 174px;
-}
+  .downloadstory_span {
+    color: #121212;
+    font-size: 18px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 25.2px;
+    word-wrap: break-word;
+  }
 
-.vector_01 {
-  width: 15px;
-  height: 15px;
-  left: 2.50px;
-  top: 1.88px;
-  position: absolute;
-  background: white;
-}
+  .download-story {
+    text-align: center;
+  }
 
-.downloadstory_span {
-  color: #121212;
-  font-size: 18px;
-  font-family: Nunito;
-  font-weight: 400;
-  line-height: 25.20px;
-  word-wrap: break-word;
-}
+  .previewrecordvideo_span {
+    color: #121212;
+    font-size: 18px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 25.2px;
+    word-wrap: break-word;
+  }
 
-.download-story {
-  text-align: center;
-}
+  .preview-record-video {
+    text-align: center;
+  }
 
-.vector_02 {
-  width: 9px;
-  height: 16.50px;
-  left: 8.25px;
-  top: 3.75px;
-  position: absolute;
-  background: black;
-}
+  .deletestory_span {
+    color: #121212;
+    font-size: 18px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 25.2px;
+    word-wrap: break-word;
+  }
 
-.vector_03 {
-  width: 16.25px;
-  height: 13.75px;
-  left: 1.88px;
-  top: 3.12px;
-  position: absolute;
-  background: white;
-}
+  .delete-story {
+    text-align: center;
+  }
 
-.previewrecordvideo_span {
-  color: #121212;
-  font-size: 18px;
-  font-family: Nunito;
-  font-weight: 400;
-  line-height: 25.20px;
-  word-wrap: break-word;
-}
+  .frame-1410103944 {
+    align-self: stretch;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    display: inline-flex;
+  }
 
-.preview-record-video {
-  text-align: center;
-}
+  .logo-text-full {
+    width: 216px;
+    height: 40.37px;
+    position: relative;
+  }
 
-.vector_04 {
-  width: 9px;
-  height: 16.50px;
-  left: 8.25px;
-  top: 3.75px;
-  position: absolute;
-  background: black;
-}
+  .caretright {
+    width: 24px;
+    height: 24px;
+    position: relative;
+    overflow: hidden;
+    transform: rotate(-90deg);
+  }
 
-.vector_05 {
-  width: 15px;
-  height: 16.25px;
-  left: 2.50px;
-  top: 1.25px;
-  position: absolute;
-  background: white;
-}
+  .frame-1410103839 {
+    align-self: stretch;
+    padding-left: 12px;
+    padding-right: 12px;
+    justify-content: space-between;
+    align-items: center;
+    display: inline-flex;
+  }
 
-.deletestory_span {
-  color: #121212;
-  font-size: 18px;
-  font-family: Nunito;
-  font-weight: 400;
-  line-height: 25.20px;
-  word-wrap: break-word;
-}
+  .check {
+    padding: 7px;
+    background: #438bff;
+    overflow: hidden;
+    border-radius: 99999px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    display: flex;
+  }
 
-.delete-story {
-  text-align: center;
-}
+  .check_01 {
+    padding: 7px;
+    background: #438bff;
+    overflow: hidden;
+    border-radius: 99999px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    display: flex;
+  }
 
-.vector_06 {
-  width: 9px;
-  height: 16.50px;
-  left: 8.25px;
-  top: 3.75px;
-  position: absolute;
-  background: black;
-}
+  .check_02 {
+    padding: 7px;
+    background: #df1c41;
+    overflow: hidden;
+    border-radius: 99999px;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    display: flex;
+  }
 
-.frame-1410103944 {
-  align-self: stretch;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  display: inline-flex;
-}
+  .frame-1410103845 {
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 16px;
+    display: flex;
+  }
 
-.logo-text-full {
-  width: 216px;
-  height: 40.37px;
-  position: relative;
-}
+  .frame-1410104186 {
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    display: flex;
+  }
 
-.x {
-  width: 24px;
-  height: 24px;
-  position: relative;
-  overflow: hidden;
-}
+  .frame-1410104186_01 {
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    display: flex;
+  }
 
-.downloadsimple {
-  width: 20px;
-  height: 20px;
-  position: relative;
-  overflow: hidden;
-}
+  .frame-1410104187 {
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    display: flex;
+  }
 
-.caretright {
-  width: 24px;
-  height: 24px;
-  position: relative;
-  overflow: hidden;
-}
+  .checklist {
+    align-self: stretch;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-left: 12px;
+    padding-right: 16px;
+    border-radius: 12px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    justify-content: space-between;
+    align-items: center;
+    display: inline-flex;
+  }
 
-.video {
-  width: 20px;
-  height: 20px;
-  position: relative;
-  overflow: hidden;
-}
+  .checklist_01 {
+    align-self: stretch;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-left: 12px;
+    padding-right: 16px;
+    border-radius: 12px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    justify-content: space-between;
+    align-items: center;
+    display: inline-flex;
+  }
 
-.caretright_01 {
-  width: 24px;
-  height: 24px;
-  position: relative;
-  overflow: hidden;
-}
+  .checklist_02 {
+    align-self: stretch;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-left: 12px;
+    padding-right: 16px;
+    border-radius: 12px;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+    justify-content: space-between;
+    align-items: center;
+    display: inline-flex;
+  }
 
-.trash {
-  width: 20px;
-  height: 20px;
-  position: relative;
-  overflow: hidden;
-}
+  .checklist-container {
+    align-self: stretch;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
+    display: flex;
+  }
 
-.caretright_02 {
-  width: 24px;
-  height: 24px;
-  position: relative;
-  overflow: hidden;
-}
-
-.frame-1410103839 {
-  align-self: stretch;
-  padding-left: 12px;
-  padding-right: 12px;
-  justify-content: space-between;
-  align-items: center;
-  display: inline-flex;
-}
-
-.check {
-  padding: 7px;
-  background: #438BFF;
-  overflow: hidden;
-  border-radius: 99999px;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 10px;
-  display: flex;
-}
-
-.check_01 {
-  padding: 7px;
-  background: #438BFF;
-  overflow: hidden;
-  border-radius: 99999px;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 10px;
-  display: flex;
-}
-
-.check_02 {
-  padding: 7px;
-  background: #DF1C41;
-  overflow: hidden;
-  border-radius: 99999px;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 10px;
-  display: flex;
-}
-
-.frame-1410103845 {
-  align-self: stretch;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 16px;
-  display: flex;
-}
-
-.frame-1410104186 {
-  justify-content: flex-start;
-  align-items: center;
-  gap: 12px;
-  display: flex;
-}
-
-.frame-1410104186_01 {
-  justify-content: flex-start;
-  align-items: center;
-  gap: 12px;
-  display: flex;
-}
-
-.frame-1410104187 {
-  justify-content: flex-start;
-  align-items: center;
-  gap: 12px;
-  display: flex;
-}
-
-.checklist {
-  align-self: stretch;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  padding-left: 12px;
-  padding-right: 16px;
-  border-radius: 12px;
-  outline: 1px #EDEDED solid;
-  outline-offset: -1px;
-  justify-content: space-between;
-  align-items: center;
-  display: inline-flex;
-}
-
-.checklist_01 {
-  align-self: stretch;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  padding-left: 12px;
-  padding-right: 16px;
-  border-radius: 12px;
-  outline: 1px #EDEDED solid;
-  outline-offset: -1px;
-  justify-content: space-between;
-  align-items: center;
-  display: inline-flex;
-}
-
-.checklist_02 {
-  align-self: stretch;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  padding-left: 12px;
-  padding-right: 16px;
-  border-radius: 12px;
-  outline: 1px #EDEDED solid;
-  outline-offset: -1px;
-  justify-content: space-between;
-  align-items: center;
-  display: inline-flex;
-}
-
-.checklist-container {
-  align-self: stretch;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 8px;
-  display: flex;
-}
-
-.information-helper-text {
-  width: 100%;
-  height: 100%;
-  padding: 16px;
-  left: 0px;
-  top: 0px;
-  position: absolute;
-  background: #FDFDFD;
-  border-radius: 12px;
-  outline: 1px #DCDCDC solid;
-  outline-offset: -1px;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 24px;
-  display: inline-flex;
-}
+  .information-helper-text {
+    width: 100%;
+    padding: 16px;
+    position: relative;
+    background: #fdfdfd;
+    border-radius: 12px;
+    outline: 1px #dcdcdc solid;
+    outline-offset: -1px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    max-height: 90vh;
+    overflow: auto;
+    display: inline-flex;
+  }
+  .logo-img {
+    background-image: url("../assets/logo.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+  }
 </style>

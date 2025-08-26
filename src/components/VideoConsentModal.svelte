@@ -1,19 +1,32 @@
+<script>
+  import shieldwarning from "../assets/ShieldWarning.svg";
+  import x from "../assets/X.svg";
+  import { createEventDispatcher } from 'svelte';
+
+  const dispatch = createEventDispatcher();
+
+  function handleClose() {
+    dispatch('close');
+  }
+
+  function handleSubmit() {
+    dispatch('submit');
+  }
+</script>
 <div class="information-helper-text">
   <div class="frame-1410103845">
     <div class="frame-1410103839">
       <div class="logo-text-full">
         <div class="logo-img"></div>
       </div>
-      <div class="x">
-        <div class="vector"></div>
-      </div>
+      <button class="x" aria-label="Close" on:click={handleClose}>
+        <img src={x} alt="" />
+      </button>
     </div>
     <div class="stroke"></div>
   </div>
   <div class="frame-1410103944">
-    <div class="shieldwarning">
-      <div class="vector_01"></div>
-    </div>
+      <img src={shieldwarning} alt="shieldwarning" />
     <div class="frame-1410104192">
       <div>
         <span class="videoconsentagreement_span">Video Consent Agreement</span>
@@ -39,40 +52,19 @@
         >
       </div>
     </div>
-    <div class="shieldwarning_01">
-      <div class="vector_02"></div>
-    </div>
   </div>
-  <div class="button">
+  <button class="button" on:click={handleSubmit}>
     <div class="submit-reaction">
       <span class="submitreaction_span">Submit Reaction</span>
     </div>
-  </div>
+  </button>
 </div>
 
 <style>
-  .vector {
-    width: 15px;
-    height: 15px;
-    left: 4.5px;
-    top: 4.5px;
-    position: absolute;
-    background: black;
-  }
-
   .stroke {
     align-self: stretch;
     height: 1px;
     background: #dcdcdc;
-  }
-
-  .vector_01 {
-    width: 48px;
-    height: 50px;
-    left: 8px;
-    top: 10px;
-    position: absolute;
-    background: #438bff;
   }
 
   .videoconsentagreement_span {
@@ -116,15 +108,6 @@
     font-weight: 400;
     line-height: 25.2px;
     word-wrap: break-word;
-  }
-
-  .vector_02 {
-    width: 18px;
-    height: 18.75px;
-    left: 3px;
-    top: 3.75px;
-    position: absolute;
-    background: black;
   }
 
   .submitreaction_span {
@@ -175,25 +158,18 @@
     height: 24px;
     position: relative;
     overflow: hidden;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
-
-  .shieldwarning {
-    width: 64px;
-    height: 64px;
-    position: relative;
-    overflow: hidden;
-  }
-
+  
   .checkbox {
     width: 20px;
     height: 20px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .shieldwarning_01 {
-    width: 24px;
-    height: 24px;
     position: relative;
     overflow: hidden;
   }
@@ -251,7 +227,7 @@
     display: inline-flex;
   }
   .logo-img {
-    background-image: url("../../../assets/logo.png");
+    background-image: url("../assets/logo.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;

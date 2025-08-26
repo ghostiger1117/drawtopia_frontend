@@ -13,7 +13,19 @@
   import Play from "../../../assets/Play.svg";
   import CaretDown from "../../../assets/CaretDown.svg";
   import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
+  import ShareStoryModal from "../../../components/ShareStoryModal.svelte";
+  import StoryInfoModal from "../../../components/StoryInfoModal.svelte";
+
+  let showStoryInfoModal = false;
+  let showShareStoryModal = false;
 </script>
+
+<svelte:window on:keydown={(e) => {
+  if (e.key === 'Escape') {
+    showStoryInfoModal = false;
+    showShareStoryModal = false;
+  }
+}} />
 
 <div class="preview-story-cover">
   <MobileBackBtn />
@@ -38,20 +50,52 @@
                 >
               </div>
               <div class="share-dots-button-group">
-                <div class="button">
+                <div
+                  class="button"
+                  role="button"
+                  tabindex="0"
+                  on:click={() => (showStoryInfoModal = true)}
+                  on:keydown={(e) =>
+                    (e.key === 'Enter' || e.key === ' ') &&
+                    (showStoryInfoModal = true)}
+                >
                   <img src={DotsThreeOutline} alt="dots" />
                 </div>
-                <div class="button_01">
+                <div
+                  class="button_01"
+                  role="button"
+                  tabindex="0"
+                  on:click={() => (showShareStoryModal = true)}
+                  on:keydown={(e) =>
+                    (e.key === 'Enter' || e.key === ' ') &&
+                    (showShareStoryModal = true)}
+                >
                   <img src={share} alt="share" />
                 </div>
               </div>
             </div>
           </div>
           <div class="mobile-share-dots-button-group">
-            <div class="button">
+            <div
+              class="button"
+              role="button"
+              tabindex="0"
+              on:click={() => (showStoryInfoModal = true)}
+              on:keydown={(e) =>
+                (e.key === 'Enter' || e.key === ' ') &&
+                (showStoryInfoModal = true)}
+            >
               <img src={DotsThreeOutline} alt="dots" />
             </div>
-            <div class="button_01">
+            <div
+              class="button_01"
+              role="button"
+              tabindex="0"
+              on:click={() => (showShareStoryModal = true)}
+              on:keydown={(e) =>
+                (e.key === 'Enter' || e.key === ' ') &&
+                (showShareStoryModal = true)}
+            >
               <img src={share} alt="share" />
             </div>
           </div>
@@ -188,6 +232,12 @@
       </div>
     </div>
   </div>
+  {#if showStoryInfoModal}
+    <StoryInfoModal />
+  {/if}
+  {#if showShareStoryModal}
+    <ShareStoryModal />
+  {/if}
 </div>
 
 <style>

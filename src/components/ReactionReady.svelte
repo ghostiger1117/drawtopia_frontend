@@ -1,5 +1,12 @@
 <script>
   import GreenCheck from "../assets/green_check.svg"
+  import { createEventDispatcher } from 'svelte';
+
+  const dispatch = createEventDispatcher();
+
+  function close() {
+    dispatch('close');
+  }
 </script>
 <div class="pop-up">
   <img src={GreenCheck} alt=""/>
@@ -7,9 +14,9 @@
       <div class="your-reaction-recording-ready"><span class="yourreactionrecordingready_span">Your Reaction Recording Ready!</span></div>
       <div class="ta-da-your-happy-face-is-ready-for-action"><span class="ta-dayourhappyfaceisreadyforaction_span">Ta-da! Your happy face is ready for action!</span></div>
   </div>
-  <div class="button">
+  <button class="button" on:click={close}>
       <div class="done"><span class="done_span">Done</span></div>
-  </div>
+  </button>
 </div>
 
 <style>
