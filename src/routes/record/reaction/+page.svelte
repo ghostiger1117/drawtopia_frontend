@@ -4,6 +4,7 @@
   import Play from "../../../assets/Play.svg";
   import TreasureChest from "../../../assets/TreasureChest.svg";
   import girl from "../../../assets/girl.jpg";
+  import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
 </script>
 
 <div class="review-reaction">
@@ -12,6 +13,7 @@
       <div class="logo-img"></div>
     </div>
   </div>
+  <MobileBackBtn />
   <div class="frame-1410103818">
     <div class="heading">
       <div class="heading_01">
@@ -426,8 +428,8 @@
     height: 100%;
     padding-top: 24px;
     padding-bottom: 80px;
-    padding-left: 100px;
-    padding-right: 100px;
+    padding-left: 20px;
+    padding-right: 20px;
     background: white;
     overflow: hidden;
     flex-direction: column;
@@ -443,5 +445,59 @@
     background-position: center;
     width: 100%;
     height: 100%;
+  }
+  /* Title: single line, ellipsis if overflow */
+  .recording-reaction {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* Make main photo full width */
+  .frame-1410104055 {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  @media (max-width: 800px) {
+    /* Containers full width */
+    .frame-1410103818 {
+      width: 100%;
+    }
+    .frame-1410104083 {
+      width: 100%;
+    }
+    /* Title full width */
+    .recording-reaction {
+      width: 100%;
+    }
+    .heading_01 {
+      width: 100%;
+    }
+    /* Hide bottom Back button */
+    .frame-1410103870 .button {
+      display: none;
+    }
+    /* Bottom action primary full width */
+    .frame-1410103860 {
+      justify-content: center;
+    }
+    .button_01 {
+      width: 100%;
+    }
+    .recordingreaction_span {
+      font-size: 28px;
+    }
+    .frame-1410104194 {
+      height: 300px;
+      width: 200px;
+      /* bottom: 100px; */
+      top: auto;
+    }
+    .frame-1410104067 {
+      left: auto;
+      width : 300px;
+      top: 300px;
+    }
   }
 </style>

@@ -4,6 +4,7 @@
   import floppydiskback from "../../../assets/FloppyDiskBack.svg";
   import VideoConsentModal from "../../../components/VideoConsentModal.svelte";
   import ReactionReady from "../../../components/ReactionReady.svelte";
+  import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
 
   let showVideoConsentModal = false;
   let showReactionReadyModal = false;
@@ -32,6 +33,7 @@
       <div class="logo-img"></div>
     </div>
   </div>
+  <MobileBackBtn />
   <div class="frame-1410103818">
     <div class="heading">
       <div class="heading_01">
@@ -96,7 +98,13 @@
             <span class="retakereaction_span">Retake Reaction</span>
           </div>
         </div>
-        <div class="button_02" role="button" tabindex="0" on:click={openVideoConsentModal} on:keydown={(e) => e.key === 'Enter' && openVideoConsentModal()}>
+        <div
+          class="button_02"
+          role="button"
+          tabindex="0"
+          on:click={openVideoConsentModal}
+          on:keydown={(e) => e.key === "Enter" && openVideoConsentModal()}
+        >
           <img src={floppydiskback} alt="floppydiskback" />
           <div class="save-reaction">
             <span class="savereaction_span">Save Reaction</span>
@@ -123,15 +131,32 @@
   </div>
 </div>
 {#if showVideoConsentModal}
-  <div class="modal-overlay" role="dialog" aria-modal="true" tabindex="-1" on:click|self={closeVideoConsentModal} on:keydown={(e) => e.key === 'Escape' && closeVideoConsentModal()}>
+  <div
+    class="modal-overlay"
+    role="dialog"
+    aria-modal="true"
+    tabindex="-1"
+    on:click|self={closeVideoConsentModal}
+    on:keydown={(e) => e.key === "Escape" && closeVideoConsentModal()}
+  >
     <div class="modal-content">
-      <VideoConsentModal on:close={closeVideoConsentModal} on:submit={handleConsentSubmit} />
+      <VideoConsentModal
+        on:close={closeVideoConsentModal}
+        on:submit={handleConsentSubmit}
+      />
     </div>
   </div>
 {/if}
 
 {#if showReactionReadyModal}
-  <div class="modal-overlay" role="dialog" aria-modal="true" tabindex="-1" on:click|self={closeReactionReady} on:keydown={(e) => e.key === 'Escape' && closeReactionReady()}>
+  <div
+    class="modal-overlay"
+    role="dialog"
+    aria-modal="true"
+    tabindex="-1"
+    on:click|self={closeReactionReady}
+    on:keydown={(e) => e.key === "Escape" && closeReactionReady()}
+  >
     <div class="modal-content modal-content--small">
       <ReactionReady on:close={closeReactionReady} />
     </div>
@@ -436,6 +461,7 @@
     align-items: center;
     gap: 18px;
     display: flex;
+    justify-content: center;
   }
 
   .button {
@@ -563,8 +589,8 @@
     height: 100%;
     padding-top: 24px;
     padding-bottom: 80px;
-    padding-left: 100px;
-    padding-right: 100px;
+    padding-left: 20px;
+    padding-right: 20px;
     background: white;
     overflow: hidden;
     flex-direction: column;
@@ -602,5 +628,78 @@
     width: 530px;
     height: 265px;
   }
-  .button_02 { cursor: pointer; }
+  .button_02 {
+    cursor: pointer;
+  }
+  /* Title: single line, ellipsis if overflow */
+  .recording-reaction {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* Make main photo full width */
+  .frame-1410104055 {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  @media (max-width: 800px) {
+    /* Containers full width */
+    .frame-1410103818 {
+      width: 100%;
+    }
+    .frame-1410104083 {
+      width: 100%;
+    }
+    /* Title full width */
+    .recording-reaction {
+      width: 100%;
+    }
+    .heading_01 {
+      width: 100%;
+    }
+    /* Hide bottom Back button */
+    .frame-1410103870 .button {
+      display: none;
+    }
+    /* Bottom actions stack and fill */
+    .frame-1410103860 {
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+    }
+    .frame-1410104195 {
+      width: 100%;
+      flex-direction: column;
+    }
+    .button_01,
+    .button_02 {
+      width: 100%;
+    }
+    /* Modal as bottom sheet */
+    .modal-overlay {
+      align-items: flex-end;
+    }
+    .modal-content,
+    .modal-content--small {
+      width: 100%;
+      height: 72vh;
+      border-radius: 0;
+      box-sizing: border-box;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .notification {
+      width: 100%;
+    }
+    .recordingreaction_span {
+      font-size: 28px;
+    }
+    .frame-1410104194 {
+      height: 300px;
+      width: 200px;
+      bottom: 150px;
+      top: auto;
+    }
+  }
 </style>

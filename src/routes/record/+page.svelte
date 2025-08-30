@@ -4,6 +4,7 @@
   import DevicePermissionModal from "../../components/DevicePermissionModal.svelte";
 
   import { browser } from "$app/environment";
+  import MobileBackBtn from "../../components/MobileBackBtn.svelte";
 
   let isMobile = false;
   let showDevicePermissionModal = false;
@@ -27,6 +28,7 @@
       <div class="logo-img"></div>
     </div>
   </div>
+  <MobileBackBtn />
   <div class="frame-1410103818">
     <div class="heading">
       <div class="heading_01">
@@ -126,7 +128,7 @@
 {#if showDevicePermissionModal}
   <div class="modal-overlay" role="dialog" aria-modal="true" tabindex="-1" on:click|self={closeModal} on:keydown={(e) => e.key === 'Escape' && closeModal()}>
     <div class="modal-content">
-      <DevicePermissionModal />
+      <DevicePermissionModal on:close={closeModal} />
     </div>
   </div>
 {/if}
@@ -297,6 +299,7 @@
     align-items: center;
     gap: 16px;
     display: flex;
+    width: 100%;
   }
 
   .heading_02 {
@@ -351,6 +354,7 @@
   }
 
   .heading_01 {
+    width: 100%;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
@@ -516,8 +520,8 @@
     height: 100%;
     padding-top: 24px;
     padding-bottom: 80px;
-    padding-left: 100px;
-    padding-right: 100px;
+    padding-left: 20px;
+    padding-right: 20px;
     background: white;
     overflow: hidden;
     flex-direction: column;
@@ -559,4 +563,62 @@
   }
 
   .button_01 { cursor: pointer; }
+  @media (max-width: 800px) {
+    .modal-overlay {
+      align-items: flex-end;
+    }
+    .modal-content {
+      width: 100%;
+      height: 72vh;
+      /* max-height: 100dvh; */
+      border-radius: 0;
+      box-sizing: border-box;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .frame-1410103818 {
+      width: 100%;
+    }
+    .frame-1410104110 {
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .card,
+    .card_01 {
+      width: 100%;
+    }
+    .image,
+    .image_01 {
+      width: 100%;
+      height: auto;
+      min-height: 200px;
+    }
+    .howwouldyouliketoexperienceyourstory_span {
+      font-size: 28px;
+      line-height: 1.3;
+    }
+    .pickafunwaytoenjoyyouradventure_span {
+      font-size: 16px;
+    }
+    .frame-1410103860 {
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+    }
+    .frame-1410103870 {
+      width: 100%;
+      justify-content: center;
+    }
+    /* Hide bottom Back button on mobile */
+    .frame-1410103870 .button {
+      display: none;
+    }
+    .button_01 {
+      width: 100%;
+    }
+    /* Make title full-width on mobile */
+    .how-would-you-like-to-experience-your-story {
+      width: 100%;
+    }
+  }
 </style>

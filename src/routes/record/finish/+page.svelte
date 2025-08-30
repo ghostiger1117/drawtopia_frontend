@@ -5,6 +5,7 @@
   import playblack from "../../../assets/Play-black.svg";
   import VideoConsentModal from "../../../components/VideoConsentModal.svelte";
   import ReactionReady from "../../../components/ReactionReady.svelte";
+  import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
 
   let showVideoConsentModal = false;
   let showReactionReadyModal = false;
@@ -33,12 +34,13 @@
       <div class="logo-img"></div>
     </div>
   </div>
+  <MobileBackBtn />
   <div class="frame-1410103818">
     <div class="heading">
       <div class="heading_01">
         <div class="frame-1410103862">
           <div class="recording-reaction">
-            <span class="recordingreaction_span">Recording Reaction</span>
+            <span class="recordingreaction_span">How Would You Like to Experience Your Story?</span>
           </div>
           <div class="pick-a-fun-way-to-enjoy-your-adventure">
             <span class="pickafunwaytoenjoyyouradventure_span"
@@ -140,6 +142,10 @@
     width: 687px;
     text-align: center;
   }
+  /* Full width and single-line ellipsis like /record */
+  .recording-reaction {
+    width: 100%;
+  }
 
   .pickafunwaytoenjoyyouradventure_span {
     color: #666d80;
@@ -164,6 +170,12 @@
       rgba(0, 0, 0, 0.25) 100%
     );
     border-radius: 8px;
+  }
+  /* Ensure main image fills container width */
+  .frame-1410104055 {
+    width: 100%;
+    height: auto;
+    display: block;
   }
 
   .stopreaction_span {
@@ -276,6 +288,7 @@
     align-items: center;
     gap: 16px;
     display: flex;
+    width: 100%;
   }
 
   .frame-1410103820 {
@@ -296,7 +309,6 @@
     align-self: stretch;
     padding: 16px;
     background: white;
-    overflow: hidden;
     border-radius: 16px;
     justify-content: flex-start;
     align-items: flex-start;
@@ -310,6 +322,7 @@
     align-items: center;
     gap: 16px;
     display: flex;
+    width: 100%;
   }
 
   .frame-1410103821 {
@@ -357,6 +370,7 @@
     align-items: center;
     gap: 18px;
     display: flex;
+    justify-content: center;
   }
 
   .button {
@@ -484,8 +498,8 @@
     height: 100%;
     padding-top: 24px;
     padding-bottom: 80px;
-    padding-left: 100px;
-    padding-right: 100px;
+    padding-left: 20px;
+    padding-right: 20px;
     background: white;
     overflow: hidden;
     flex-direction: column;
@@ -524,4 +538,66 @@
     height: 300px;
   }
   .button_02 { cursor: pointer; }
+  @media (max-width: 800px) {
+    /* Containers full width */
+    .frame-1410103818 {
+      width: 100%;
+    }
+    .frame-1410104083 {
+      width: 100%;
+    }
+    /* Title full width */
+    .recording-reaction {
+      width: 100%;
+    }
+    .heading_01 {
+      width: 100%;
+    }
+    /* Hide bottom Back button */
+    .frame-1410103870 .button {
+      display: none;
+    }
+    /* Bottom actions stack and fill */
+    .frame-1410103860 {
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+    }
+    .frame-1410104195 {
+      width: 100%;
+      flex-direction: column;
+    }
+    .button_01,
+    .button_02 {
+      width: 100%;
+    }
+    /* Modal as bottom sheet */
+    .modal-overlay {
+      align-items: flex-end;
+    }
+    .modal-content {
+      width: 100%;
+      height: 72vh;
+      border-radius: 0;
+      box-sizing: border-box;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .modal-content--small {
+      width: 100%;
+      max-width: 100%;
+    }
+    .notification {
+      width: 100%;
+    }
+    .recordingreaction_span {
+      font-size: 28px;
+      line-height: 1.3;
+    }
+    .frame-1410104194 {
+      height: 300px;
+      width: 200px;
+      bottom: 100px;
+      top: auto;
+    }
+  }
 </style>
