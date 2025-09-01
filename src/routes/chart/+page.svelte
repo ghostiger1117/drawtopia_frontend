@@ -2070,11 +2070,6 @@
       line-height: 22.4px;
     }
 
-    span[class*="heading"] {
-      font-size: 20px;
-      line-height: 28px;
-    }
-
     span[class*="input"] {
       font-size: 14px;
       line-height: 19.6px;

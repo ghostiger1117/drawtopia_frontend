@@ -10,7 +10,7 @@
   import gift from "../../assets/Gift.svg";
   import list from "../../assets/List.svg";
   import x from "../../assets/X.svg";
-
+  import GiftTrackingComponent from "../../components/GiftTrackingComponent.svelte";
   let showMobileMenu = false;
 
   const toggleMobileMenu = () => {
@@ -329,6 +329,7 @@
               />
             {/each}
           </div>
+          <GiftTrackingComponent />
         </div>
       </div>
     </div>
@@ -1071,12 +1072,11 @@
 
     .frame-1410104150 {
       width: 100%;
-      padding: 16px;
     }
 
     .sidebar {
       width: 100%;
-      padding: 16px;
+      padding: 0px;
       gap: 16px;
     }
 
@@ -1180,6 +1180,7 @@
 
     .frame-1410104154_01 {
       gap: 16px;
+      width: 100%;
     }
 
     .frame-1410104155 {
