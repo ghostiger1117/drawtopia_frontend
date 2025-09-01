@@ -1,34 +1,32 @@
 <script>
-  import caretdown from "../../assets/CaretDown.svg";
+  import Navbar from "../../components/Navbar.svelte";
   import eye from "../../assets/Eye.svg";
   import arrowleft from "../../assets/ArrowLeft.svg";
   import purplecheck from "../../assets/purple-check.svg";
+  import MobileBackBtn from "../../components/MobileBackBtn.svelte";
+
+  const handleBack = () => {
+    // Navigate back in browser history
+    if (typeof window !== 'undefined') {
+      window.history.back();
+    }
+  };
 </script>
 
 <div class="purchase-option-screen-preview">
-  <div class="navbar">
-    <div class="logo-text-full">
-      <div class="logo-img"></div>
+  <Navbar />
+  
+  <!-- Mobile Back Button -->
+  <div class="mobile-back-button">
+    <div class="mobile-back-btn" role="button" tabindex="0" 
+         on:click={handleBack} 
+         on:keydown={(e) => e.key === 'Enter' && handleBack()}>
+      <img class="arrow-left-icon" src={arrowleft} alt="back" />
+      
     </div>
-    <div class="profile-close">
-      <div class="frame-1410103913">
-        <img
-          class="ellipse-7"
-          src="https://placehold.co/40x40"
-          alt="user avatar"
-        />
-        <div class="heading">
-          <div class="alex-smith">
-            <span class="alexsmith_span">Alex Smith</span>
-          </div>
-          <div class="premium-plan">
-            <span class="premiumplan_span">Premium Plan</span>
-          </div>
-        </div>
-      </div>
-      <img class="" src={caretdown} alt="vector" />
-    </div>
+    <span class="back-text">Back</span>
   </div>
+  
   <div class="frame-1410103976">
     <div class="frame-1410103904">
       <div class="heading_01">
@@ -208,47 +206,7 @@
 </div>
 
 <style>
-  .logo-img {
-    background-image: url("../../assets/logo.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    width: 100%;
-    height: 100%;
-  }
 
-  .ellipse-7 {
-    width: 40px;
-    height: 40px;
-    background: #d9d9d9;
-    border-radius: 9999px;
-  }
-
-  .alexsmith_span {
-    color: #121212;
-    font-size: 18px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 25.2px;
-    word-wrap: break-word;
-  }
-
-  .alex-smith {
-    align-self: stretch;
-  }
-
-  .premiumplan_span {
-    color: #727272;
-    font-size: 14px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 19.6px;
-    word-wrap: break-word;
-  }
-
-  .premium-plan {
-    align-self: stretch;
-  }
 
   .storypreview_span {
     color: black;
@@ -620,14 +578,7 @@
     text-align: center;
   }
 
-  .heading {
-    width: 119px;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 2px;
-    display: inline-flex;
-  }
+
 
   .heading_01 {
     align-self: stretch;
@@ -771,11 +722,7 @@
     display: inline-flex;
   }
 
-  .logo-text-full {
-    width: 203.32px;
-    height: 38px;
-    position: relative;
-  }
+
 
   .frame-1410103893 {
     justify-content: center;
@@ -840,12 +787,7 @@
     overflow: hidden;
   }
 
-  .frame-1410103913 {
-    justify-content: flex-start;
-    align-items: center;
-    gap: 12px;
-    display: flex;
-  }
+
 
   .frame-1410103960 {
     align-self: stretch;
@@ -938,20 +880,7 @@
     display: flex;
   }
 
-  .profile-close {
-    padding-left: 12px;
-    padding-right: 12px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    background: #fcfcfc;
-    border-radius: 20px;
-    outline: 1px #dcdcdc solid;
-    outline-offset: -1px;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 12px;
-    display: flex;
-  }
+
 
   .frame-1410103964 {
     align-self: stretch;
@@ -998,20 +927,7 @@
     display: inline-flex;
   }
 
-  .navbar {
-    width: 100%;
-    padding-top: 12px;
-    padding-bottom: 12px;
-    padding-left: 24px;
-    padding-right: 12px;
-    background: white;
-    border-radius: 20px;
-    outline: 1px #ededed solid;
-    outline-offset: -1px;
-    justify-content: space-between;
-    align-items: center;
-    display: inline-flex;
-  }
+
 
   .select {
     flex: 1 1 0;
@@ -1120,5 +1036,223 @@
     align-items: flex-start;
     gap: 53px;
     display: inline-flex;
+  }
+
+  /* Mobile Back Button Styles */
+  .mobile-back-button {
+    display: none;
+  }
+
+  .mobile-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 8px;
+    background: white;
+    border-radius: 8px;
+    outline: 1px #dcdcdc solid;
+    outline-offset: -1px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    width: fit-content;
+  }
+
+  .mobile-back-btn:hover {
+    background-color: #f8fafb;
+  }
+
+  .arrow-left-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .back-text {
+    color: #121212;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 22.4px;
+  }
+
+  /* Mobile responsive styles */
+  @media (max-width: 800px) {
+    .mobile-back-button {
+      display: flex;
+      width: 100%;
+      margin-bottom: 16px;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .purchase-option-screen-preview {
+      padding-left: 16px;
+      padding-right: 16px;
+      padding-top: 16px;
+      padding-bottom: 16px;
+      gap: 24px;
+    }
+
+    .frame-1410103976 {
+      gap: 16px;
+    }
+
+    .frame-1410103975 {
+      gap: 24px;
+    }
+
+    .frame-1410104091 {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .frame-1410104090 {
+      width: 100%;
+    }
+
+    .lunas-magic-adventure {
+      width: 100%;
+    }
+
+    .button {
+      width: 100%;
+      height: auto;
+      padding: 12px 16px;
+    }
+
+    .frame-1410103909 {
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .select,
+    .select_01,
+    .select_02 {
+      width: 100%;
+    }
+
+    .frame-1410103837,
+    .frame-1410103837_01,
+    .frame-1410103837_02 {
+      height: 200px;
+    }
+
+    .purchase-option {
+      width: 100%;
+    }
+
+    .frame-1410103958 {
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .button_04,
+    .button_05 {
+      width: 100%;
+    }
+
+    .storypreview_span {
+      font-size: 20px;
+      line-height: 28px;
+      text-align: center;
+    }
+
+    .purchaseoption_span {
+      font-size: 20px;
+      line-height: 28px;
+    }
+
+    .lunasmagicadventure_span {
+      font-size: 20px;
+      line-height: 28px;
+    }
+
+    .digitalbook_span,
+    .physicalbook_span,
+    .bundledeal_span {
+      font-size: 20px;
+      line-height: 28px;
+    }
+
+    .f00_span,
+    .f00_01_span,
+    .f00_02_span {
+      font-size: 20px;
+      line-height: 28px;
+    }
+
+    .instantaccessonanydevice_span,
+    .highqualityprintedhandover_span,
+    .getbothdigitalphysical_span {
+      font-size: 14px;
+      line-height: 19.6px;
+    }
+
+    .high-quality-printed-handover,
+    .get-both-digital-physical {
+      width: 100%;
+    }
+
+    .viewstory_span {
+      font-size: 16px;
+      line-height: 22.4px;
+    }
+
+    .buydigital_span,
+    .buyphysical_span,
+    .buybundle_span {
+      font-size: 16px;
+      line-height: 22.4px;
+    }
+
+    .back_span,
+    .continue_span {
+      font-size: 16px;
+      line-height: 22.4px;
+    }
+
+    .physicalbookstypicallyshipwithin3-5businessdays_span_01,
+    .physicalbookstypicallyshipwithin3-5businessdays_span_02,
+    .freeshippingonordersover35_span_01,
+    .freeshippingonordersover35_span_02 {
+      font-size: 16px;
+      line-height: 22.4px;
+    }
+
+    .contactushellodrawtopiacom_span,
+    .privacypolicy_span,
+    .termsofservice_span {
+      font-size: 16px;
+      line-height: 22.4px;
+    }
+
+    .frame-1410103820 {
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .frame-1410103898 {
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .adreasstory_span,
+    .f025-04-05_span {
+      font-size: 16px;
+      line-height: 22.4px;
+    }
+
+    .frame-1410104089 {
+      width: 80px;
+      height: 80px;
+    }
+
+    .frame-1410103893 {
+      flex-wrap: wrap;
+    }
+    .button_04 {
+      display: none;
+    }
   }
 </style>

@@ -2,6 +2,7 @@
   export let options: Array<{value: string, label: string}>;
   export let selectedOption: string;
   export let onChange: (event: Event) => void;
+  export let placeholder: string = "Select your account";
 </script>
 
 <select
@@ -15,7 +16,7 @@
   }}
   value={selectedOption}
 >
-  <option value="" disabled selected hidden>Select your account</option>
+  <option value="" disabled selected hidden>{placeholder}</option>
   {#each options as option}
     <option value={option.value}>{option.label}</option>
   {/each}

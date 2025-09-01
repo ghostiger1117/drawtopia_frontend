@@ -9,6 +9,13 @@
   import bookopen from "../../assets/BookOpen.svg";
   import gift from "../../assets/Gift.svg";
   import list from "../../assets/List.svg";
+  import x from "../../assets/X.svg";
+
+  let showMobileMenu = false;
+
+  const toggleMobileMenu = () => {
+    showMobileMenu = !showMobileMenu;
+  };
   const childProfiles = [
     {
       name: "Emma",
@@ -82,8 +89,8 @@
       <div class="logo-text-full">
         <div class="logo-img"></div>
       </div>
-      <div data-weight="Regular" class="icon-list">
-        <img src={list} alt="list" class="list" />
+      <div data-weight="Regular" class="icon-list" on:click={toggleMobileMenu} on:keydown={(e) => e.key === 'Enter' && toggleMobileMenu()} role="button" tabindex="0">
+        <img src={showMobileMenu ? x : list} alt={showMobileMenu ? "close" : "menu"} class="list" />
       </div>
     </div>
     <div class="content">
@@ -134,6 +141,72 @@
       </div>
     </div>
   </div>
+  
+  <!-- Mobile Menu Overlay -->
+  {#if showMobileMenu}
+    <div class="mobile-menu-overlay" on:click={toggleMobileMenu} on:keydown={(e) => e.key === 'Escape' && toggleMobileMenu()} role="dialog" tabindex="-1">
+      <div class="mobile-menu" on:click|stopPropagation on:keydown|stopPropagation role="dialog" tabindex="0">
+        <div class="mobile-menu-header">
+          <div class="logo-text-full">
+            <div class="logo-img"></div>
+          </div>
+          <div class="close-menu" on:click={toggleMobileMenu} on:keydown={(e) => e.key === 'Enter' && toggleMobileMenu()} role="button" tabindex="0">
+            <img src={x} alt="close" class="list" />
+          </div>
+        </div>
+        <div class="mobile-menu-content">
+          <div class="mobile-menu-label">
+            <span class="mainmenu_span">MENU</span>
+          </div>
+          <div class="mobile-menu-items">
+            <div class="mobile-menu-item active">
+              <div class="mobile-menu-icon">
+                <img src={house} alt="house" class="house" />
+              </div>
+              <span class="home_span">Home</span>
+            </div>
+            <div class="mobile-menu-item">
+              <div class="mobile-menu-icon">
+                <img src={baby} alt="baby" class="baby" />
+              </div>
+              <span class="childprofiles_span">Child Profiles</span>
+            </div>
+            <div class="mobile-menu-item">
+              <div class="mobile-menu-icon">
+                <img src={bookopen} alt="bookopen" class="bookopen" />
+              </div>
+              <span class="storylibrary_span">Story Library</span>
+            </div>
+            <div class="mobile-menu-item">
+              <div class="mobile-menu-icon">
+                <img src={gift} alt="gift" class="gift" />
+              </div>
+              <span class="gifttracking_span">Gift Tracking</span>
+            </div>
+          </div>
+        </div>
+        <div class="mobile-menu-footer">
+          <div class="mobile-profile-close">
+            <img
+              class="ellipse-7"
+              src="https://placehold.co/40x40"
+              alt="Alex Smith"
+            />
+            <div class="heading">
+              <div class="alex-smith">
+                <span class="alexsmith_span">Alex Smith</span>
+              </div>
+              <div class="premium-plan">
+                <span class="premiumplan_span">Premium Plan</span>
+              </div>
+            </div>
+            <img src={caretdown} alt="caretdown" class="caretdown" />
+          </div>
+        </div>
+      </div>
+    </div>
+  {/if}
+  
   <div class="frame-1410104150">
     <div class="sidebarpenaksir-kasir">
       <div class="sidebarheader_01">
@@ -402,7 +475,7 @@
 
   .manage-your-childrens-story-preferences-and-progress {
     align-self: stretch;
-    height: 26px;
+    height: 100%;
   }
 
 
@@ -967,4 +1040,308 @@
     align-items: flex-start;
     display: inline-flex;
   }
+
+  /* Mobile responsive styles */
+  @media (max-width: 800px) {
+    .parent-dashboard {
+      flex-direction: column;
+    }
+
+    .navigation {
+      display: block;
+      height: auto;
+      width: 100%;
+    }
+
+    .sidebarheader {
+      display: flex;
+      width: 100%;
+      height: auto;
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-top: 24px;
+      padding-bottom: 24px;
+      border-right: none;
+      border-bottom: 1px var(--Color-Border-Default, #e2e8f0) solid;
+    }
+
+    .content {
+      display: none;
+    }
+
+    .frame-1410104150 {
+      width: 100%;
+      padding: 16px;
+    }
+
+    .sidebar {
+      width: 100%;
+      padding: 16px;
+      gap: 16px;
+    }
+
+    .sidebarheader_01 {
+      padding-left: 16px;
+      padding-right: 16px;
+      padding-top: 12px;
+      padding-bottom: 12px;
+    }
+
+    .title {
+      width: 100%;
+    }
+
+    .welcomeback_span {
+      font-size: 24px;
+      line-height: 33.6px;
+      text-align: center;
+    }
+
+    .manageyourchildrensstoriesandgifts_span {
+      font-size: 16px;
+      line-height: 22.4px;
+      text-align: center;
+    }
+
+    .childprofiles_01_span {
+      font-size: 20px;
+      line-height: 28px;
+    }
+
+    .storylibrary_01_span {
+      font-size: 20px;
+      line-height: 28px;
+    }
+
+    .manageyourchildrensstorypreferencesandprogress_span {
+      font-size: 14px;
+      line-height: 19.6px;
+    }
+
+    .browseandmanageallcreatedstories_span {
+      font-size: 14px;
+      line-height: 19.6px;
+    }
+
+    .child-profiles-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .stories-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .frame-1410103868 {
+      width: 100%;
+      height: 49px;
+      padding-left: 16px;
+      padding-right: 16px;
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+
+    .frame-1410103899 {
+      width: 100%;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .frame-1410103898 {
+      width: 100%;
+    }
+
+    .dropdown {
+      width: 100%;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .dropdown_01,
+    .dropdown_02 {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .frame-1410104149 {
+      padding: 12px;
+    }
+
+    .frame-1410104150_01 {
+      padding: 12px;
+    }
+
+    .frame-1410104154 {
+      gap: 16px;
+    }
+
+    .frame-1410104154_01 {
+      gap: 16px;
+    }
+
+    .frame-1410104155 {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .frame-1410104155_01 {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .profile-close {
+      padding-left: 8px;
+      padding-right: 8px;
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+
+    .heading {
+      width: auto;
+    }
+
+    .alexsmith_span {
+      font-size: 16px;
+      line-height: 22.4px;
+    }
+
+    .premiumplan_span {
+      font-size: 12px;
+      line-height: 16.8px;
+    }
+
+    .ellipse-7 {
+      width: 32px;
+      height: 32px;
+    }
+    .profile-close {
+      display: none;
+    }
+
+    .icon-list {
+      cursor: pointer;
+    }
+  }
+
+  /* Mobile Menu Styles */
+  .mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    z-index: 1000;
+  }
+
+  .mobile-menu {
+    width: 100%;
+    height: 100%;
+    background: white;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobile-menu-header {
+    padding: 24px 20px;
+    border-bottom: 1px var(--Color-Border-Default, #e2e8f0) solid;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+  }
+
+  .close-menu {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-menu-content {
+    padding: 24px 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .mobile-menu-footer {
+    padding: 20px;
+    background: white;
+  }
+
+  .mobile-profile-close {
+    width: 100%;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    background: #fcfcfc;
+    border-radius: 12px;
+    outline: 1px #dcdcdc solid;
+    outline-offset: -1px;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    display: flex;
+  }
+
+  .mobile-menu-label {
+    padding-left: 4px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .mobile-menu-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mobile-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .mobile-menu-item:hover {
+    background-color: #f8fafb;
+  }
+
+  .mobile-menu-item.active {
+    background-color: #eef6ff;
+  }
+
+  .mobile-menu-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (min-width: 801px) {
+    .mobile-menu-overlay {
+      display: none;
+    }
+  }
+
+
 </style>
