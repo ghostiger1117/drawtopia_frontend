@@ -10,7 +10,7 @@
   import TextBtn from "../../components/TextBtn.svelte";
   import PrimaryBtn from "../../components/PrimaryBtn.svelte";
   import PrimaryInput from "../../components/PrimaryInput.svelte";
-  import { signUpWithEmail, signUpWithPhone } from "../../lib/auth";
+  import { signUpWithEmail, signUpWithPhone, signInWithGoogle } from "../../lib/auth";
   import { goto } from "$app/navigation";
   // Any Country Code Alpha-2 (ISO 3166)
   let selectedCountry: CountryCode | null = "HU";
@@ -99,6 +99,28 @@
     }
 
     return Object.keys(errors).length === 0;
+  };
+
+  const handleGoogleSignUp = async () => {
+    isLoading = true;
+    errors = {}; // Clear previous errors
+
+    try {
+      const result = await signInWithGoogle();
+      
+      if (result.success) {
+        console.log("Google signup successful:", result.user);
+        // The redirect will be handled by Supabase OAuth flow
+        // User will be redirected to /dashboard after successful authentication
+      } else {
+        errors.general = result.error || "Google signup failed. Please try again.";
+        isLoading = false;
+      }
+    } catch (error) {
+      console.error("Google signup error:", error);
+      errors.general = "An unexpected error occurred with Google signup. Please try again.";
+      isLoading = false;
+    }
   };
 
   const handleSubmit = async (event: Event) => {
@@ -294,13 +316,16 @@
           <button
             type="button"
             class="button-social"
-            on:click={() => alert("Google login coming soon!")}
+            on:click={handleGoogleSignUp}
+            disabled={isLoading}
           >
             <div class="icon-l">
               <div class="super-g-img"></div>
             </div>
             <div>
-              <span class="loginwithgoogle_span">Login with Google</span>
+              <span class="loginwithgoogle_span">
+                {isLoading ? 'Signing up...' : 'Sign up with Google'}
+              </span>
             </div>
           </button>
           <div class="frame-1410103989">
@@ -663,10 +688,16 @@
     transition: all 0.2s ease;
   }
 
-  .button-social:hover {
+  .button-social:hover:not(:disabled) {
     background: #f8fafc;
     transform: translateY(-1px);
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .button-social:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #f5f5f5;
   }
 
   .button {

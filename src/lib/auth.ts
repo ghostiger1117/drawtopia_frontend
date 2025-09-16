@@ -279,6 +279,40 @@ export async function resetPassword(email: string): Promise<{ success: boolean; 
 }
 
 /**
+ * Sign in with Google OAuth
+ */
+export async function signInWithGoogle(): Promise<AuthResponse> {
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`
+      }
+    });
+
+    if (error) {
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+
+    // For OAuth, the authentication happens via redirect
+    // The user and session will be available after redirect
+    return {
+      success: true,
+      user: undefined,
+      session: undefined
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'An unexpected error occurred'
+    };
+  }
+}
+
+/**
  * Listen to auth state changes
  */
 export function onAuthStateChange(callback: (event: string, session: Session | null) => void) {
