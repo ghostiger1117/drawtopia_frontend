@@ -5,6 +5,7 @@
 
 import { writable } from 'svelte/store';
 import { supabase } from '../supabase';
+import { registerGoogleOAuthUser } from '../auth';
 import type { User, Session } from '@supabase/supabase-js';
 
 // Auth state interface
@@ -27,7 +28,10 @@ export const auth = writable<AuthState>(initialState);
 // Initialize auth state and listen for changes
 export function initAuth() {
   // Get initial session
+  console.log("initAuth");
   supabase.auth.getSession().then(({ data: { session } }) => {
+    console.log("session", session);
+    console.log("user", session?.user);
     auth.update(state => ({
       ...state,
       session,
@@ -38,8 +42,30 @@ export function initAuth() {
 
   // Listen for auth state changes
   const { data: { subscription } } = supabase.auth.onAuthStateChange(
-    (event, session) => {
+    async (event, session) => {
       console.log('Auth state changed:', event, session);
+      
+      // Handle Google OAuth user registration
+      if (event === 'SIGNED_IN' && session?.user) {
+        const user = session.user;
+        
+        // Check if this is a Google OAuth sign-in
+        if (user.app_metadata?.provider === 'google') {
+          console.log('Google OAuth user detected, registering to database...');
+          
+          // try {
+          //   const result = await registerGoogleOAuthUser(user);
+          //   console.log(result);
+          //   if (result.success) {
+          //     console.log('Google OAuth user successfully registered to database');
+          //   } else {
+          //     console.error('Failed to register Google OAuth user:', result.error);
+          //   }
+          // } catch (error) {
+          //   console.error('Error during Google OAuth user registration:', error);
+          // }
+        }
+      }
       
       auth.update(state => ({
         ...state,
@@ -62,6 +88,7 @@ export const authLoading = writable<boolean>(true);
 
 // Subscribe to main auth store and update derived stores
 auth.subscribe(state => {
+  console.log("state", state);
   user.set(state.user);
   session.set(state.session);
   isAuthenticated.set(!!state.user);

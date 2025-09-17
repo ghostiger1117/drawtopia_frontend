@@ -1,15 +1,47 @@
 <script lang="ts">
 	import { env } from '$lib/env';
-	import { user, isAuthenticated } from '$lib/stores/auth';
-	import { signOut } from '$lib/auth';
+	import { user, isAuthenticated, initAuth } from '$lib/stores/auth';
+	import { signOut, getUserProfile } from '$lib/auth';
 	import { goto } from '$app/navigation';
 
+	let userProfile: any = null;
+	initAuth();
+	console.log("isAuthenticated", $isAuthenticated);
+	console.log("user", $user);
 	async function handleSignOut() {
-		const result = await signOut();
+		try {
+			// Clear local user profile data
+			userProfile = null;
+			
+			const result = await signOut();
+			if (result.success) {
+				console.log('User signed out successfully');
+				// Show success message and redirect to login
+				alert('Signed out successfully!');
+				goto('/login');
+			} else {
+				console.error('Sign out failed:', result.error);
+				alert('Error signing out: ' + result.error);
+			}
+		} catch (error) {
+			console.error('Sign out error:', error);
+			alert('An unexpected error occurred during sign out');
+		}
+	}
+
+	// Fetch user profile when user changes, clear when user signs out
+	$: if ($user) {
+		fetchUserProfile($user.id);
+	} else {
+		userProfile = null;
+	}
+
+	async function fetchUserProfile(userId: string) {
+		const result = await getUserProfile(userId);
 		if (result.success) {
-			alert('Signed out successfully!');
+			userProfile = result.profile;
 		} else {
-			alert('Error signing out: ' + result.error);
+			console.error('Failed to fetch user profile:', result.error);
 		}
 	}
 </script>
@@ -27,7 +59,14 @@
 
 		{#if $isAuthenticated}
 			<div class="user-info">
-				<p>Welcome back, {$user?.user_metadata?.full_name || $user?.email || 'User'}!</p>
+				{#if userProfile}
+					<p>Welcome back, {userProfile.first_name} {userProfile.last_name}!</p>
+					{#if userProfile.google_id}
+						<p><small>Signed in with Google</small></p>
+					{/if}
+				{:else}
+					<p>Welcome back, {$user?.user_metadata?.full_name || $user?.email || 'User'}!</p>
+				{/if}
 			</div>
 			<div class="auth-buttons">
 				<button on:click={handleSignOut} class="btn btn-primary">Sign Out</button>

@@ -156,7 +156,7 @@
         if (result.user && !result.session) {
           // Email verification required
           alert(
-            "Please check your email for a verification code before signing in."
+            "Please check your email for a verification code before logging in."
           );
         } else {
           // User is automatically signed in

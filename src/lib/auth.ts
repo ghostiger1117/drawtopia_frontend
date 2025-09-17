@@ -207,21 +207,37 @@ export async function signInWithPhone(phone: string, password: string): Promise<
 }
 
 /**
- * Sign out the current user
+ * Sign out the current user (works for all auth providers including Google OAuth)
  */
 export async function signOut(): Promise<{ success: boolean; error?: string }> {
   try {
+    console.log('Signing out user...');
+    
+    // Get current user info for logging
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      console.log('Signing out user:', {
+        id: user.id,
+        email: user.email,
+        provider: user.app_metadata?.provider
+      });
+    }
+
+    // Sign out from Supabase (handles all providers including Google OAuth)
     const { error } = await supabase.auth.signOut();
     
     if (error) {
+      console.error('Sign out error:', error);
       return {
         success: false,
         error: error.message
       };
     }
 
+    console.log('User signed out successfully');
     return { success: true };
   } catch (error) {
+    console.error('Sign out error:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'An unexpected error occurred'
@@ -286,10 +302,15 @@ export async function signInWithGoogle(): Promise<AuthResponse> {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/dashboard`
+        queryParams : {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+        redirectTo: `${window.location.origin}`,
+        // flow : 'popup'
       }
     });
-
+    console.log("signInWithGoogle",data);
     if (error) {
       return {
         success: false,
@@ -305,6 +326,117 @@ export async function signInWithGoogle(): Promise<AuthResponse> {
       session: undefined
     };
   } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'An unexpected error occurred'
+    };
+  }
+}
+
+/**
+ * Register Google OAuth user to database
+ */
+export async function registerGoogleOAuthUser(user: User): Promise<{ success: boolean; error?: string }> {
+  try {
+    // Check if user already exists in our database
+    console.log("=============================", user.id);
+
+    const { data: existingUser, error: checkError } = await supabaseAdmin.from('users')
+    .select('*')
+    .eq('id', user.id)
+    .single();
+    console.log("=============================", existingUser);
+    
+    if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is "not found" error
+      console.error('Error checking existing user:', checkError);
+      return {
+        success: false,
+        error: 'Failed to check existing user'
+      };
+    }
+
+    // If user already exists, no need to register again
+    if (existingUser) {
+      return { success: true };
+    }
+    console.log(user);
+    // Extract user data from Google OAuth response
+    const googleId = user.user_metadata?.provider_id || user.id;
+    const firstName = user.user_metadata?.given_name || user.user_metadata?.full_name.split(' ')[0] || '';
+    const lastName = user.user_metadata?.family_name || user.user_metadata?.full_name.split(' ')[1] || '';
+    const email = user.email || '';
+
+    console.log('Google OAuth user data:', {
+      id: user.id,
+      googleId,
+      firstName,
+      lastName,
+      email,
+      user_metadata: user.user_metadata
+    });
+
+    // Create user data object
+    const userData = {
+      id: user.id,
+      google_id: googleId,
+      email: email.toLowerCase().trim(),
+      first_name: firstName.trim(),
+      last_name: lastName.trim(),
+      role: 'adult',
+      created_at: new Date(),
+      updated_at: new Date()
+    };
+
+    // Insert user data into database
+    const { data: userProfile, error: profileError } = await supabaseAdmin
+      .from('users')
+      .insert([userData])
+      .select('*')
+      .single();
+
+    if (profileError) {
+      console.error('Error creating user profile:', profileError);
+      return {
+        success: false,
+        error: profileError.message
+      };
+    }
+
+    console.log('Google OAuth user registered successfully:', userProfile);
+    return { success: true };
+  } catch (error) {
+    console.error('Error registering Google OAuth user:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'An unexpected error occurred'
+    };
+  }
+}
+
+/**
+ * Get user profile from database
+ */
+export async function getUserProfile(userId: string): Promise<{ success: boolean; profile?: any; error?: string }> {
+  try {
+    const { data: profile, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', userId);
+    console.log("profile, error",profile, error);
+    if (error) {
+      console.error('Error fetching user profile:', error);
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+
+    return {
+      success: true,
+      profile
+    };
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'An unexpected error occurred'

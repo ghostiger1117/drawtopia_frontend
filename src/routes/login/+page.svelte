@@ -193,7 +193,7 @@
             </div>
             <div>
               <span class="loginwithgoogle_span">
-                {isLoading ? 'Signing in...' : 'Login with Google'}
+                {isLoading ? 'Logging in...' : 'Login with Google'}
               </span>
             </div>
           </button>
