@@ -70,7 +70,7 @@ export async function signUpWithEmail(email: string, password: string, firstName
     const { data: otpData, error: otpError } = await supabase.auth.signInWithOtp({
       email: email.toLowerCase().trim(),
       options: {
-        emailRedirectTo: 'http://localhost:5173',
+        emailRedirectTo: `${window.location.origin}`,
       }
     });
     // console.log('OTP data:', otpData);
@@ -484,7 +484,7 @@ export async function resendEmailOTP(email: string): Promise<{ success: boolean;
     const { data, error } = await supabase.auth.signInWithOtp({
       email: email.toLowerCase().trim(),
       options: {
-        emailRedirectTo: 'http://localhost:3000',
+        emailRedirectTo: `${window.location.origin}`,
       }
     });
 
