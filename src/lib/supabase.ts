@@ -8,9 +8,6 @@ import { createClient } from '@supabase/supabase-js';
 
 // Create Supabase client
 export const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
-console.log(import.meta.env.VITE_SUPABASE_URL);
-console.log(import.meta.env.VITE_SUPABASE_ANON_KEY);
-console.log(import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY);
 export const supabaseAdmin = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY);
 // Database types (you can expand these based on your schema)
 export interface UserProfile {

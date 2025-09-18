@@ -3,18 +3,36 @@
   import PrimaryBtn from "./PrimaryBtn.svelte";
   import PrimarySelect from "./PrimarySelect.svelte";
   import PrimaryInput from "./PrimaryInput.svelte";
+  import { uploadAvatar } from '../lib/storage';
+  import { insertChildProfiles } from '../lib/database/childProfiles';
+  import type { ChildProfile } from '../lib/database/childProfiles';
+  
   export let showPhotoGuideModal = false;
   export let selectedAgeGroup = "";
   export let selectedRelationship = "parent";
+  export let onAvatarUploaded: ((url: string) => void) | undefined = undefined;
+  export let userId: string | undefined = undefined;
+  export let onAddChild: ((childData: any) => void) | undefined = undefined;
+  export let children: Array<any> = [];
+  export let onContinueToStoryCreation: (() => void) | undefined = undefined;
+  
   let errors = {
     firstName: "",
     ageGroup: "",
     relationship: "",
   };
 
+  // Form data
+  let firstName = "";
   let selectedImage: File | null = null;
   let imagePreviewUrl: string | null = null;
+  let uploadedAvatarUrl: string | null = null;
   let fileInput: HTMLInputElement;
+  let uploading = false;
+  let uploadError = "";
+  let showSuccessMessage = false;
+  let savingProfiles = false;
+  let saveError = "";
 
   const openPhotoGuideModal = () => {
     showPhotoGuideModal = true;
@@ -24,26 +42,180 @@
     fileInput.click();
   };
 
-  const handleFileSelect = (event: Event) => {
+  const handleFileSelect = async (event: Event) => {
     const target = event.target as HTMLInputElement;
     const file = target.files?.[0];
-    if (file && file.type.startsWith("image/")) {
-      selectedImage = file;
+    
+    if (!file || !file.type.startsWith("image/")) {
+      return;
+    }
 
-      // Create preview URL
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        imagePreviewUrl = e.target?.result as string;
-      };
-      reader.readAsDataURL(file);
+    selectedImage = file;
+    uploadError = "";
+
+    // Create preview URL
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      imagePreviewUrl = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+
+    // Upload to Supabase
+    if (!userId) {
+      uploadError = "User not authenticated. Please log in to upload images.";
+      return;
+    }
+
+    uploading = true;
+    try {
+      const result = await uploadAvatar(file, userId);
+      
+      if (result.success && result.url) {
+        uploadedAvatarUrl = result.url;
+        if (onAvatarUploaded) {
+          onAvatarUploaded(result.url);
+        }
+        console.log("Avatar uploaded successfully:", result.url);
+      } else {
+        uploadError = result.error || "Failed to upload avatar";
+        console.error("Upload failed:", result.error);
+      }
+    } catch (error) {
+      uploadError = "An error occurred while uploading";
+      console.error("Upload error:", error);
+    } finally {
+      uploading = false;
     }
   };
 
   const removeImage = () => {
     selectedImage = null;
     imagePreviewUrl = null;
+    uploadedAvatarUrl = null;
+    uploadError = "";
     if (fileInput) {
       fileInput.value = "";
+    }
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    errors = {
+      firstName: "",
+      ageGroup: "",
+      relationship: "",
+    };
+
+    if (!firstName.trim()) {
+      errors.firstName = "First name is required";
+      isValid = false;
+    }
+
+    if (!selectedAgeGroup) {
+      errors.ageGroup = "Age group is required";
+      isValid = false;
+    }
+
+    if (!selectedRelationship) {
+      errors.relationship = "Relationship is required";
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
+  const collectChildData = () => {
+    return {
+      id: Date.now(), // Simple ID generation, you might want to use UUID
+      name: firstName.trim(),
+      ageGroup: selectedAgeGroup,
+      relationship: selectedRelationship,
+      avatarUrl: uploadedAvatarUrl || "https://placehold.co/40x40",
+      createdAt: new Date().toISOString()
+    };
+  };
+
+  const resetForm = () => {
+    firstName = "";
+    selectedAgeGroup = "";
+    selectedRelationship = "parent";
+    removeImage();
+    errors = {
+      firstName: "",
+      ageGroup: "",
+      relationship: "",
+    };
+    showSuccessMessage = false;
+  };
+
+  const handleAddChild = () => {
+    if (!validateForm()) {
+      console.log("Form validation failed:", errors);
+      return;
+    }
+
+    const childData = collectChildData();
+    
+    if (onAddChild) {
+      onAddChild(childData);
+      
+      // Show success message temporarily
+      showSuccessMessage = true;
+      setTimeout(() => {
+        showSuccessMessage = false;
+      }, 3000);
+      
+      resetForm();
+      console.log("Child added successfully:", childData);
+    }
+  };
+
+  const handleContinueToStoryCreation = async () => {
+    if (!userId) {
+      saveError = "User not authenticated. Please log in to continue.";
+      return;
+    }
+
+    if (children.length === 0) {
+      saveError = "Please add at least one child profile before continuing.";
+      return;
+    }
+
+    savingProfiles = true;
+    saveError = "";
+
+    try {
+      // Convert children data to database format
+      const childProfiles: ChildProfile[] = children.map(child => ({
+        first_name: child.name,
+        age_group: child.ageGroup,
+        relationship: child.relationship,
+        parent_id: userId,
+        avatar_url: child.avatarUrl
+      }));
+
+      console.log("Saving child profiles:", childProfiles);
+
+      // Save to database
+      const result = await insertChildProfiles(childProfiles);
+
+      if (result.success) {
+        console.log("Child profiles saved successfully:", result.data);
+        
+        // Call the parent callback to proceed to story creation
+        if (onContinueToStoryCreation) {
+          onContinueToStoryCreation();
+        }
+      } else {
+        saveError = result.error || "Failed to save child profiles";
+        console.error("Failed to save child profiles:", result.error);
+      }
+
+    } catch (error) {
+      saveError = "An unexpected error occurred while saving profiles";
+      console.error("Error saving child profiles:", error);
+    } finally {
+      savingProfiles = false;
     }
   };
 </script>
@@ -52,6 +224,12 @@
   <div class="personal-information">
     <span class="personalinformation_span">Personal Information</span>
   </div>
+  
+  {#if showSuccessMessage}
+    <div class="success-message">
+      ✅ Child added successfully! The form has been reset for the next child.
+    </div>
+  {/if}
   <div class="frame-1410103935">
     <div class="frame-1410103851">
       <div class="form">
@@ -64,11 +242,22 @@
           {#if imagePreviewUrl}
             <div class="image-preview">
               <img src={imagePreviewUrl} alt="Selected" class="preview-image" />
+              {#if uploading}
+                <div class="upload-status">
+                  <div class="spinner"></div>
+                  <span>Uploading...</span>
+                </div>
+              {:else if uploadedAvatarUrl}
+                <div class="upload-success">
+                  <span>✓ Uploaded successfully!</span>
+                </div>
+              {/if}
               <div class="image-overlay">
                 <button
                   class="remove-image-btn"
                   on:click={removeImage}
                   type="button"
+                  disabled={uploading}
                 >
                   <span>✕</span>
                 </button>
@@ -76,6 +265,7 @@
                   class="change-image-btn"
                   on:click={handleImageUpload}
                   type="button"
+                  disabled={uploading}
                 >
                   Change Image
                 </button>
@@ -98,9 +288,9 @@
                     >Click to upload or drag and drop
                   </span>
                 </div>
-                <div class="png-jpg-gif-up-to-10mb">
-                  <span class="pngjpggifupto10mb_span"
-                    >PNG, JPG, GIF Up to 10MB</span
+                <div class="png-jpg-gif-up-to-5mb">
+                  <span class="pngjpggifupto5mb_span"
+                    >PNG, JPG, WebP Up to 5MB</span
                   >
                 </div>
               </div>
@@ -109,12 +299,17 @@
           <!-- Hidden file input -->
           <input
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/jpg,image/png,image/webp"
             bind:this={fileInput}
             on:change={handleFileSelect}
             style="display: none;"
           />
         </div>
+        {#if uploadError}
+          <div class="error-message">
+            {uploadError}
+          </div>
+        {/if}
       </div>
       <div class="frame-1410104082">
         <div class="make-sure-only-one-person-in-clearly-visible-see-details">
@@ -137,11 +332,15 @@
           <span class="childsfirstname_span">Child’s first name*</span>
         </div>
         <PrimaryInput
-          type="text"
-          placeholder="Enter your child’s first name (e.g., Léa)"
+          type="firstName"
+          placeholder="Enter your child's first name (e.g., Léa)"
           disabled={false}
+          bind:value={firstName}
           {errors}
         />
+        {#if errors.firstName}
+          <div class="error-message">{errors.firstName}</div>
+        {/if}
       </div>
     </div>
     <div class="form_02">
@@ -159,6 +358,9 @@
         bind:selectedOption={selectedAgeGroup}
         onChange={() => {}}
       />
+      {#if errors.ageGroup}
+        <div class="error-message">{errors.ageGroup}</div>
+      {/if}
     </div>
     <div class="title">
       <div class="frame-1410104017">
@@ -194,23 +396,35 @@
         bind:selectedOption={selectedRelationship}
         onChange={() => {}}
       />
+      {#if errors.relationship}
+        <div class="error-message">{errors.relationship}</div>
+      {/if}
       <!-- </div> -->
     </div>
   </div>
+  
+  {#if saveError}
+    <div class="save-error-message">
+      ❌ {saveError}
+    </div>
+  {/if}
+  
   <div class="frame-1410103991">
     <OutlineBtn
       text="Add Another Child"
       isLoading={false}
       spinner_name="add-another-child"
-      onClick={() => {}}
+      onClick={handleAddChild}
       outlineType="dot-outline"
     />
-    <PrimaryBtn
-      text="Continue to Story Creation"
-      isLoading={false}
-      spinner_name="continue-to-story-creation"
-      onClick={() => {}}
-    />
+    <div class="continue-btn-wrapper" class:disabled={children.length === 0}>
+      <PrimaryBtn
+        text={children.length === 0 ? "Add a child first" : "Continue to Story Creation"}
+        isLoading={savingProfiles}
+        spinner_name="Saving profiles..."
+        onClick={children.length === 0 ? () => {} : handleContinueToStoryCreation}
+      />
+    </div>
   </div>
 </div>
 
@@ -247,8 +461,7 @@
     left: 4px;
     top: 3px;
     position: absolute;
-    /* background: #141414; */
-    background-image: url("../../assets/upload-icon.svg");
+    background-image: url("../assets/upload-icon.svg");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -268,19 +481,6 @@
     text-align: center;
   }
 
-  .pngjpggifupto10mb_span {
-    color: #666d80;
-    font-size: 14px;
-    font-family: Nunito;
-    font-weight: 400;
-    line-height: 19.6px;
-    word-wrap: break-word;
-  }
-
-  .png-jpg-gif-up-to-10mb {
-    align-self: stretch;
-    text-align: center;
-  }
 
   .makesureonlyonepersoninclearlyvisibleseedetails_span_01 {
     color: black;
@@ -425,14 +625,14 @@
     align-items: flex-start;
     gap: 24px;
     display: flex;
-    width: 50%;
+    width: 100%;
   }
   .frame-1410103822 {
     width: 100%;
+    height: 100%;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
-    gap: 16px;
     display: inline-flex;
   }
   .frame-1410103850 {
@@ -552,6 +752,135 @@
 
   .change-image-btn:hover {
     background: #357ae8;
+  }
+
+  .change-image-btn:disabled,
+  .remove-image-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .upload-status {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .upload-success {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(34, 197, 94, 0.9);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    animation: fadeInOut 3s ease-in-out;
+  }
+
+  .spinner {
+    width: 12px;
+    height: 12px;
+    border: 2px solid #ffffff;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    10%, 90% { opacity: 1; }
+  }
+
+  .error-message {
+    color: #ef4444;
+    font-size: 14px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 1.4;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    word-wrap: break-word;
+  }
+
+  .png-jpg-gif-up-to-5mb {
+    align-self: stretch;
+    text-align: center;
+  }
+
+  .pngjpggifupto5mb_span {
+    color: #666d80;
+    font-size: 14px;
+    font-family: Nunito;
+    font-weight: 400;
+    line-height: 19.6px;
+    word-wrap: break-word;
+  }
+
+  .success-message {
+    background: #d1fae5;
+    border: 1px solid #10b981;
+    color: #065f46;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-family: Nunito;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .save-error-message {
+    background: #fef2f2;
+    border: 1px solid #ef4444;
+    color: #dc2626;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-family: Nunito;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .continue-btn-wrapper {
+    width: 100%;
+  }
+
+  .continue-btn-wrapper.disabled {
+    opacity: 0.6;
+    pointer-events: none;
   }
   .thisstoryisforyourlittlestdreamer_span {
     color: #871fff;

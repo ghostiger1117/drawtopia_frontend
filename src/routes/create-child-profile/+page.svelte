@@ -1,83 +1,213 @@
 <script lang="ts">
   import BackBtn from "../../components/BackBtn.svelte";
-
+  import ChildProfile from "../../components/ChildProfile.svelte";
   import PhotoGuideModal from "../../components/PhotoGuideModal.svelte";
   import PersonInfo from "../../components/PersonInfo.svelte";
-  import StoryPreview from "../../components/StoryPreview.svelte";
-  
+  // import StoryPreview from "../../components/StoryPreview.svelte";
+  import { user, authLoading, isAuthenticated } from "../../lib/stores/auth";
+  import { goto } from "$app/navigation";
+  import { browser } from "$app/environment";
+  import { onMount } from "svelte";
+
   let showPhotoGuideModal = false;
   let selectedAgeGroup = "";
   
+  // Reactive statements for auth state
+  $: currentUser = $user;
+  $: loading = $authLoading;
+  $: authenticated = $isAuthenticated;
+  $: userId = currentUser?.id;
+  
+  // Additional safety check for SSR
+  $: safeToRedirect = browser && !loading && currentUser !== undefined;
+
+  // Children data - starts empty, populated when user adds children
+  let children: Array<{
+    id: number;
+    name: string;
+    avatarUrl: string;
+    ageGroup?: string;
+    relationship?: string;
+    createdAt?: string;
+  }> = [];
+
+  // Check authentication on mount (client-side only)
+  onMount(() => {
+    // Only run on client side
+    if (browser) {
+      // Add a small delay to ensure auth state is fully loaded
+      setTimeout(() => {
+        if (safeToRedirect && !authenticated) {
+          goto('/login');
+        }
+      }, 100);
+    }
+  });
+
+  // Reactive redirect when auth state changes (client-side only)
+  $: if (safeToRedirect && !authenticated) {
+    // Only redirect if we're sure about the auth state
+    goto('/login');
+  }
+
   const closePhotoGuideModal = () => {
     showPhotoGuideModal = false;
   };
+
+  const handleEditChild = (childId: number) => {
+    console.log("Edit child:", childId);
+    // Add edit logic here
+  };
+
+  const handleDeleteChild = (childId: number) => {
+    console.log("Delete child:", childId);
+    children = children.filter(child => child.id !== childId);
+  };
+
+  const handleAvatarUploaded = (avatarUrl: string) => {
+    console.log("Avatar uploaded successfully:", avatarUrl);
+    // Here you can save the avatar URL to your form state or database
+    // For example, you might want to associate it with the current child profile being created
+  };
+
+  const handleAddChild = (childData: any) => {
+    console.log("Adding new child:", childData);
+    
+    // Add the new child to the children array
+    children = [...children, {
+      id: childData.id,
+      name: childData.name,
+      avatarUrl: childData.avatarUrl,
+      ageGroup: childData.ageGroup,
+      relationship: childData.relationship,
+      createdAt: childData.createdAt
+    }];
+    
+    console.log("Updated children list:", children);
+  };
+
+  const handleContinueToStoryCreation = () => {
+    console.log("Continuing to story creation with saved profiles");
+    // Here you can navigate to the story creation page
+    // goto('/story-creation') or similar
+    alert("Child profiles saved successfully! Redirecting to story creation...");
+    goto('/create-character/1');
+  };
+
 </script>
 
-<div class="profile-creation-default">
-  <div class="navbar" style="justify-content: center;">
-    <div class="logo-text-full">
-      <div class="logo-img"></div>
-    </div>
+{#if loading || !browser}
+  <div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Loading...</p>
   </div>
-  <div class="back-btn-container">
-    <BackBtn />
+{:else if !authenticated || !userId}
+  <div class="auth-error-container">
+    <p>Please log in to access this page.</p>
   </div>
-  <div class="frame-5">
-    <div class="frame-1">
-      <div class="heading">
-        <div class="create-child-profile">
-          <span class="createchildprofile_span">Create Child Profile</span>
+{:else}
+  <div class="profile-creation-default">
+    <div class="main-pane">
+      <div class="navbar" style="justify-content: center;">
+        <div class="logo-text-full">
+          <div class="logo-img"></div>
         </div>
-        <div
-          class="tell-us-about-your-child-so-we-can-personalize-their-drawtopia-experience"
-        >
-          <span
-            class="tellusaboutyourchildsowecanpersonalizetheirdrawtopiaexperience_span"
-            >Tell us about your child so we can personalize their Drawtopia
-            experience</span
+      </div>
+      <div class="back-btn-container">
+        <BackBtn />
+      </div>
+    <div class="frame-5">
+      <div class="frame-1">
+        <div class="heading">
+          <div class="create-child-profile">
+            <span class="createchildprofile_span">Create Child Profile</span>
+          </div>
+          <div
+            class="tell-us-about-your-child-so-we-can-personalize-their-drawtopia-experience"
           >
+            <span
+              class="tellusaboutyourchildsowecanpersonalizetheirdrawtopiaexperience_span"
+              >Tell us about your child so we can personalize their Drawtopia
+              experience</span
+            >
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="progress-bar">
-    <div class="frame-1410103829">
-      <div class="frame-1410103997">
-        <div class="step-1"><span class="step1_span">Step 1</span></div>
-        <div><span class="f2_span">1/2</span></div>
-      </div>
-      <div class="bar">
-        <div class="bar_01"></div>
-      </div>
-      <div class="setting-up-profile">
-        <span class="settingupprofile_span">Setting Up Profile</span>
+    <div class="progress-bar">
+      <div class="frame-1410103829">
+        <div class="frame-1410103997">
+          <div class="step-1"><span class="step1_span">Step 1</span></div>
+          <div><span class="f2_span">1/2</span></div>
+        </div>
+        <div class="bar">
+          <div class="bar_01"></div>
+        </div>
+        <div class="setting-up-profile">
+          <span class="settingupprofile_span">Setting Up Profile</span>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="frame-1410103818">
-    <PersonInfo bind:showPhotoGuideModal bind:selectedAgeGroup />
-    <StoryPreview {selectedAgeGroup} />
-  </div>
-  <div class="frame-1410103821">
-    <div class="contact-us-hellodrawtopiacom">
-      <span class="contactushellodrawtopiacom_span"
-        >Contact us: hello@drawtopia.com</span
-      >
-    </div>
-    <div class="rectangle-34"></div>
-    <div class="frame-1410103820">
-      <div class="privacy-policy">
-        <span class="privacypolicy_span">Privacy Policy</span>
+    <div class="frame-1410104010">
+      <div class="list-of-children">
+        <span class="listofchildren_span">List of Children</span>
       </div>
-      <div class="terms-of-service">
-        <span class="termsofservice_span">Terms of Service</span>
+      <div class="frame-1410104011">
+        {#if children.length === 0}
+          <div class="no-children-message">
+            <p>No children added yet. Fill out the form below and click "Add Another Child" to add them to the list.</p>
+          </div>
+        {:else}
+          {#each children as child (child.id)}
+            <ChildProfile
+              name={child.name}
+              avatarUrl={child.avatarUrl}
+              onEdit={() => handleEditChild(child.id)}
+              onDelete={() => handleDeleteChild(child.id)}
+            />
+          {/each}
+        {/if}
+      </div>
+    </div>
+    <div class="frame-1410103818">
+      <PersonInfo 
+        bind:showPhotoGuideModal 
+        bind:selectedAgeGroup 
+        onAvatarUploaded={handleAvatarUploaded}
+        onAddChild={handleAddChild}
+        onContinueToStoryCreation={handleContinueToStoryCreation}
+        children={children}
+        userId={userId}
+      />
+      <!-- <StoryPreview {selectedAgeGroup} /> -->
+    </div>
+    <div class="frame-1410103821">
+      <div class="contact-us-hellodrawtopiacom">
+        <span class="contactushellodrawtopiacom_span"
+          >Contact us: hello@drawtopia.com</span
+        >
+      </div>
+      <div class="rectangle-34"></div>
+      <div class="frame-1410103820">
+        <div class="privacy-policy">
+          <span class="privacypolicy_span">Privacy Policy</span>
+        </div>
+        <div class="terms-of-service">
+          <span class="termsofservice_span">Terms of Service</span>
+        </div>
       </div>
     </div>
   </div>
 </div>
+{/if}
 
 {#if showPhotoGuideModal}
-  <div class="modal-overlay" on:keydown={(e) => e.key === 'Escape' && closePhotoGuideModal()} role="dialog" tabindex="-1">
+  <div
+    class="modal-overlay"
+    on:keydown={(e) => e.key === "Escape" && closePhotoGuideModal()}
+    role="dialog"
+    tabindex="-1"
+  >
     <div class="modal-container">
       <PhotoGuideModal onClose={closePhotoGuideModal} />
     </div>
@@ -85,8 +215,45 @@
 {/if}
 
 <style>
+  .main-pane {
+    width: 700px;
+    gap: 24px;
+    display: inline-flex;
+    flex-direction: column;
+  }
+  .listofchildren_span {
+  color: black;
+  font-size: 24px;
+  font-family: Quicksand;
+  font-weight: 600;
+  line-height: 33.60px;
+  word-wrap: break-word;
+}
 
+.list-of-children {
+  align-self: stretch;
+}
 
+.frame-1410104011 {
+  justify-content: flex-start;
+  align-items: center;
+  gap: 4px;
+  display: inline-flex;
+}
+
+.frame-1410104010 {
+  align-self: stretch;
+  padding: 8px;
+  background: white;
+  border-radius: 12px;
+  outline: 1px #EDEDED solid;
+  outline-offset: -1px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 24px;
+  display: flex;
+}
   .createchildprofile_span {
     color: #121212;
     font-size: 48px;
@@ -158,8 +325,6 @@
     align-self: stretch;
   }
 
-
-
   .contactushellodrawtopiacom_span {
     color: #141414;
     font-size: 18px;
@@ -221,8 +386,6 @@
     display: inline-flex;
   }
 
-
-
   .frame-1410103820 {
     justify-content: flex-start;
     align-items: flex-start;
@@ -256,8 +419,6 @@
     border-radius: 12px;
   }
 
-
-
   .frame-1 {
     align-self: stretch;
     flex-direction: column;
@@ -266,8 +427,6 @@
     gap: 32px;
     display: flex;
   }
-
-
 
   .frame-1410103821 {
     align-self: stretch;
@@ -300,8 +459,6 @@
     display: flex;
   }
 
-
-
   .frame-5 {
     align-self: stretch;
     flex-direction: column;
@@ -310,8 +467,6 @@
     gap: 48px;
     display: flex;
   }
-
-
 
   .progress-bar {
     align-self: stretch;
@@ -476,7 +631,7 @@
   }
 
   .modal-container {
-    position: absolute  ;
+    position: absolute;
     min-width: 600px;
     min-height: 440px;
     overflow-y: auto;
@@ -490,4 +645,50 @@
     justify-content: flex-start;
   }
 
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    gap: 16px;
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #438bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  .auth-error-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    flex-direction: column;
+    gap: 16px;
+    color: #ef4444;
+    font-family: Nunito;
+    font-size: 18px;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .no-children-message {
+    text-align: center;
+    padding: 24px;
+    color: #666d80;
+    font-family: Nunito;
+    font-size: 16px;
+    line-height: 1.5;
+    background: #f8fafb;
+    border-radius: 8px;
+    border: 1px dashed #dcdcdc;
+  }
 </style>

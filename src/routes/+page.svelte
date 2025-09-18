@@ -3,6 +3,7 @@
 	import { user, isAuthenticated, initAuth } from '$lib/stores/auth';
 	import { signOut, getUserProfile } from '$lib/auth';
 	import { goto } from '$app/navigation';
+  import { supabase } from '$lib/supabase';
 
 	let userProfile: any = null;
 	initAuth();
@@ -12,7 +13,7 @@
 		try {
 			// Clear local user profile data
 			userProfile = null;
-			
+
 			const result = await signOut();
 			if (result.success) {
 				console.log('User signed out successfully');

@@ -149,16 +149,24 @@
         </div>
       </div>
     </div>
-    {#if !isMobile}
-      <button class="button_01" on:click={() => goto("/")}>
-        <div class="arrowleft">
-          <img src={arrowLeft} alt="arrowLeft" />
-        </div>
-        <div class="back-to-step">
-          <span class="backtostep_span">Back To Step</span>
+    <div style="display: flex; justify-content: space-between; width: 100%;">
+      {#if !isMobile}
+        <button class="button_01" on:click={() => goto("/")}>
+          <div class="arrowleft">
+            <img src={arrowLeft} alt="arrowLeft" />
+          </div>
+          <div class="back-to-step">
+            <span class="backtostep_span">Back To Step</span>
+          </div>
+        </button>
+      {/if}
+
+      <button class="button-fill" on:click={() => goto("/create-character/2")}>
+        <div class="continue-to-next-step">
+          <span class="continuetostyleselection_span">Continue</span>
         </div>
       </button>
-    {/if}
+    </div>
   </div>
   <div class="frame-1410103821">
     <div class="contact-us-hellodrawtopiacom">
@@ -815,5 +823,44 @@
     .message-content {
       width: 90%;
     }
+    .button-fill {
+      width: 100%;
+    }
+  }
+
+  .continuetostyleselection_span {
+    color: white;
+    font-size: 18px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 25.2px;
+    word-wrap: break-word;
+  }
+
+  .continue-to-next-step {
+    text-align: center;
+  }
+
+  .button-fill {
+    width: 300px;
+    height: 100%;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    background: #438bff;
+    border-radius: 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    display: inline-flex;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .button-fill:hover {
+    background: #3a7ae4;
+    transform: translateY(-1px);
   }
 </style>

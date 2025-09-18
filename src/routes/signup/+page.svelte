@@ -10,8 +10,33 @@
   import TextBtn from "../../components/TextBtn.svelte";
   import PrimaryBtn from "../../components/PrimaryBtn.svelte";
   import PrimaryInput from "../../components/PrimaryInput.svelte";
-  import { signUpWithEmail, signUpWithPhone, signInWithGoogle } from "../../lib/auth";
+  import {
+    signUpWithEmail,
+    signUpWithPhone,
+    signInWithGoogle,
+    registerUser,
+    formatGoogleUserData,
+  } from "../../lib/auth";
   import { goto } from "$app/navigation";
+  import { user, isAuthenticated } from "$lib/stores/auth";
+  import { supabase } from "$lib/supabase";
+  import { addNotification } from "$lib/stores/notification";
+  import { onMount } from "svelte";
+
+  // Check if user is already authenticated
+  onMount(() => {
+    const unsubscribe = isAuthenticated.subscribe(authenticated => {
+      if (authenticated) {
+        addNotification({
+          type: 'info',
+          message: 'You are already signed in!'
+        });
+        goto("/");
+      }
+    });
+    
+    return unsubscribe;
+  });
   // Any Country Code Alpha-2 (ISO 3166)
   let selectedCountry: CountryCode | null = "HU";
 
@@ -30,7 +55,8 @@
   let lastName = "";
   let isLoading = false;
   let errors: { [key: string]: string } = {};
-  let loginMethod: "phone" | "email" = "phone";
+  let signupMethod: "phone" | "email" = "phone";
+  let accountType: "adult" | "child";
   let acceptedTerms = false;
   // let selectedCountry = { name: 'United States', code: '+1', flag: '🇺🇸' };
   let showCountryDropdown = false;
@@ -54,7 +80,12 @@
   ];
 
   const switchLoginMethod = (method: "phone" | "email") => {
-    loginMethod = method;
+    signupMethod = method;
+    errors = {}; // Clear errors when switching
+  };
+
+  const selectAccountType = (method: string) => {
+    accountType = method as "adult" | "child";
     errors = {}; // Clear errors when switching
   };
 
@@ -63,9 +94,8 @@
     // showCountryDropdown = false;
   };
 
-  const validateForm = () => {
+  const validateForm = (isGoogle: boolean) => {
     errors = {};
-
     if (!firstName.trim()) {
       errors.firstName = "First name is required";
     }
@@ -73,8 +103,10 @@
     if (!lastName.trim()) {
       errors.lastName = "Last name is required";
     }
-
-    if (loginMethod === "email") {
+    if (!accountType) {
+      errors.accountType = "You must select account type";
+    }
+    if (signupMethod === "email" && !isGoogle) {
       if (!email) {
         errors.email = "Email is required";
       } else if (!/\S+@\S+\.\S+/.test(email)) {
@@ -101,17 +133,35 @@
     return Object.keys(errors).length === 0;
   };
 
-  const handleGoogleSignUp = async () => {
+  const handleGoogleSignUp = async (event: Event) => {
+    event.preventDefault();
+    if (!validateForm(true)) return;
     isLoading = true;
     errors = {}; // Clear previous errors
 
     try {
+      // Ensure we have all required data before proceeding
+      if (!firstName.trim() || !lastName.trim() || !accountType) {
+        errors.general = "Please fill in all required fields before signing up with Google.";
+        isLoading = false;
+        return;
+      }
+
+      // Store form data temporarily for after OAuth redirect
+      sessionStorage.setItem('pendingGoogleSignup', JSON.stringify({
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        accountType
+      }));
+
+      console.log('Storing signup data:', { firstName: firstName.trim(), lastName: lastName.trim(), accountType });
       const result = await signInWithGoogle();
+      console.log("Google signup initiated:", result);
       
       if (result.success) {
-        console.log("Google signup successful:", result.user);
-        // The redirect will be handled by Supabase OAuth flow
-        // User will be redirected to /dashboard after successful authentication
+        // OAuth redirect will happen automatically
+        // User registration will be handled by auth state change listener
+        console.log("Google OAuth redirect initiated");
       } else {
         errors.general = result.error || "Google signup failed. Please try again.";
         isLoading = false;
@@ -125,8 +175,7 @@
 
   const handleSubmit = async (event: Event) => {
     event.preventDefault();
-    console.log("value", value);
-    if (!validateForm()) return;
+    if (!validateForm(false)) return;
 
     isLoading = true;
     errors = {}; // Clear previous errors
@@ -134,7 +183,7 @@
     try {
       let result;
 
-      if (loginMethod === "email") {
+      if (signupMethod === "email") {
         result = await signUpWithEmail(email, password, firstName, lastName);
         console.log("Signup result:", result);
       } else {
@@ -166,8 +215,8 @@
         }
 
         // Store email for verification if using email method
-        if (loginMethod === "email") {
-          localStorage.setItem('pendingEmailVerification', email);
+        if (signupMethod === "email") {
+          localStorage.setItem("pendingEmailVerification", email);
           goto(`/otp-email?email=${encodeURIComponent(email)}`);
         } else {
           goto("/otp-phone");
@@ -324,7 +373,7 @@
             </div>
             <div>
               <span class="loginwithgoogle_span">
-                {isLoading ? 'Signing up...' : 'Sign up with Google'}
+                {isLoading ? "Signing up..." : "Sign up with Google"}
               </span>
             </div>
           </button>
@@ -338,7 +387,7 @@
               <button
                 type="button"
                 class="button"
-                class:active={loginMethod === "phone"}
+                class:active={signupMethod === "phone"}
                 on:click={() => switchLoginMethod("phone")}
               >
                 <div class="phone">
@@ -360,7 +409,7 @@
               <button
                 type="button"
                 class="button"
-                class:active={loginMethod === "email"}
+                class:active={signupMethod === "email"}
                 on:click={() => switchLoginMethod("email")}
               >
                 <div class="envelope">
@@ -412,9 +461,19 @@
 
             <div class="select-wrapper">
               <label for="accountType">Account Type</label>
-              <PrimarySelect {options} {selectedOption} onChange={() => {}} />
+              <PrimarySelect
+                {options}
+                {selectedOption}
+                onChange={(event) => {
+                  const target = event.target as HTMLSelectElement;
+                  selectAccountType(target.value);
+                }}
+              />
+              {#if errors.accountType}
+                <span class="error-text">{errors.accountType}</span>
+              {/if}
             </div>
-            {#if loginMethod === "phone"}
+            {#if signupMethod === "phone"}
               <div class="text-field">
                 <div><span class="phonenumber_01_span">Phone Number</span></div>
                 <PhoneNumber

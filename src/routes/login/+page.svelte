@@ -11,6 +11,24 @@
   import PrimaryInput from "../../components/PrimaryInput.svelte";
   import { signInWithEmail, signInWithPhone, signInWithGoogle } from "../../lib/auth";
   import { goto } from "$app/navigation";
+  import { isAuthenticated } from "$lib/stores/auth";
+  import { addNotification } from "$lib/stores/notification";
+  import { onMount } from "svelte";
+
+  // Check if user is already authenticated
+  onMount(() => {
+    const unsubscribe = isAuthenticated.subscribe(authenticated => {
+      if (authenticated) {
+        addNotification({
+          type: 'info',
+          message: 'You are already signed in!'
+        });
+        goto("/");
+      }
+    });
+    
+    return unsubscribe;
+  });
   
   // Any Country Code Alpha-2 (ISO 3166)
   let selectedCountry: CountryCode | null = "HU";

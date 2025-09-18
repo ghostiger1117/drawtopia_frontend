@@ -2,6 +2,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { initAuth } from '$lib/stores/auth';
+  import NotificationContainer from '../components/NotificationContainer.svelte';
   import '../app.css';
 
   // Initialize authentication on app startup
@@ -16,6 +17,9 @@
 <main>
   <slot />
 </main>
+
+<!-- Global notification container -->
+<NotificationContainer />
 
 <style>
   :global(body) {

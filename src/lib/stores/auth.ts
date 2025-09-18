@@ -5,7 +5,7 @@
 
 import { writable } from 'svelte/store';
 import { supabase } from '../supabase';
-import { registerGoogleOAuthUser } from '../auth';
+import { registerUser } from '../auth';
 import type { User, Session } from '@supabase/supabase-js';
 
 // Auth state interface
@@ -53,17 +53,48 @@ export function initAuth() {
         if (user.app_metadata?.provider === 'google') {
           console.log('Google OAuth user detected, registering to database...');
           
-          // try {
-          //   const result = await registerGoogleOAuthUser(user);
-          //   console.log(result);
-          //   if (result.success) {
-          //     console.log('Google OAuth user successfully registered to database');
-          //   } else {
-          //     console.error('Failed to register Google OAuth user:', result.error);
-          //   }
-          // } catch (error) {
-          //   console.error('Error during Google OAuth user registration:', error);
-          // }
+          try {
+            // Check for pending signup data from sessionStorage
+            const pendingSignupData = sessionStorage.getItem('pendingGoogleSignup');
+            let userData;
+
+            if (pendingSignupData) {
+              // User came from signup page with form data
+              const formData = JSON.parse(pendingSignupData);
+              userData = {
+                id: user.id,
+                email: user.email?.toLowerCase().trim(),
+                first_name: formData.firstName?.trim(),
+                last_name: formData.lastName?.trim(),
+                role: formData.accountType,
+                google_id: user.user_metadata?.provider_id || user.id,
+                created_at: new Date(),
+                updated_at: new Date()
+              };
+              
+              // Clear the pending data
+              sessionStorage.removeItem('pendingGoogleSignup');
+            } else {
+              // No pending signup data - user didn't come from signup page
+              // Don't register them yet, they need to complete signup form first
+              console.warn('No pending signup data found - user must complete signup form with first name, last name, and account type');
+              
+              // Skip registration and let them complete the signup process
+              return;
+            }
+
+            console.log('Registering user with data:', userData);
+            const result = await registerUser(userData);
+            console.log('User registration result:', result);
+            
+            if (result.success) {
+              console.log('Google OAuth user successfully registered to database');
+            } else {
+              console.error('Failed to register Google OAuth user:', result.error);
+            }
+          } catch (error) {
+            console.error('Error during Google OAuth user registration:', error);
+          }
         }
       }
       

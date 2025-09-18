@@ -59,7 +59,7 @@ export async function signUpWithEmail(email: string, password: string, firstName
       created_at: new Date(),
       updated_at: new Date()
     };
-    
+
     const { data: userProfile, error: profileError } = await supabaseAdmin
       .from('users')
       .insert([userData])
@@ -70,7 +70,7 @@ export async function signUpWithEmail(email: string, password: string, firstName
     const { data: otpData, error: otpError } = await supabase.auth.signInWithOtp({
       email: email.toLowerCase().trim(),
       options: {
-        emailRedirectTo : 'http://localhost:3000',
+        emailRedirectTo: 'http://localhost:5173',
       }
     });
     // console.log('OTP data:', otpData);
@@ -212,7 +212,7 @@ export async function signInWithPhone(phone: string, password: string): Promise<
 export async function signOut(): Promise<{ success: boolean; error?: string }> {
   try {
     console.log('Signing out user...');
-    
+
     // Get current user info for logging
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
@@ -225,7 +225,7 @@ export async function signOut(): Promise<{ success: boolean; error?: string }> {
 
     // Sign out from Supabase (handles all providers including Google OAuth)
     const { error } = await supabase.auth.signOut();
-    
+
     if (error) {
       console.error('Sign out error:', error);
       return {
@@ -277,7 +277,7 @@ export async function getCurrentSession(): Promise<Session | null> {
 export async function resetPassword(email: string): Promise<{ success: boolean; error?: string }> {
   try {
     const { error } = await supabase.auth.resetPasswordForEmail(email);
-    
+
     if (error) {
       return {
         success: false,
@@ -302,7 +302,7 @@ export async function signInWithGoogle(): Promise<AuthResponse> {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        queryParams : {
+        queryParams: {
           access_type: 'offline',
           prompt: 'consent',
         },
@@ -310,7 +310,9 @@ export async function signInWithGoogle(): Promise<AuthResponse> {
         // flow : 'popup'
       }
     });
-    console.log("signInWithGoogle",data);
+
+    alert("signInWithGoogle" + JSON.stringify(data));
+    console.log("signInWithGoogle", data);
     if (error) {
       return {
         success: false,
@@ -342,11 +344,11 @@ export async function registerGoogleOAuthUser(user: User): Promise<{ success: bo
     console.log("=============================", user.id);
 
     const { data: existingUser, error: checkError } = await supabaseAdmin.from('users')
-    .select('*')
-    .eq('id', user.id)
-    .single();
+      .select('*')
+      .eq('id', user.id)
+      .single();
     console.log("=============================", existingUser);
-    
+
     if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is "not found" error
       console.error('Error checking existing user:', checkError);
       return {
@@ -422,7 +424,7 @@ export async function getUserProfile(userId: string): Promise<{ success: boolean
       .from('users')
       .select('*')
       .eq('id', userId);
-    console.log("profile, error",profile, error);
+    console.log("profile, error", profile, error);
     if (error) {
       console.error('Error fetching user profile:', error);
       return {
@@ -465,7 +467,7 @@ export async function verifyEmail(email: string, token: string): Promise<{ succe
     }
     // console.log('Verify email data:', data);
     // console.log('Verify email error:', error);
-    return { success: true};
+    return { success: true };
   } catch (error) {
     return {
       success: false,
@@ -485,17 +487,98 @@ export async function resendEmailOTP(email: string): Promise<{ success: boolean;
         emailRedirectTo: 'http://localhost:3000',
       }
     });
-    
+
     if (error) {
       return {
         success: false,
         error: error.message
       };
     }
-    
+
     // console.log('Resend OTP data:', data);
     return { success: true };
   } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'An unexpected error occurred'
+    };
+  }
+}
+
+/**
+ * Format Google OAuth user data for database insertion
+ */
+export function formatGoogleUserData(user: any): any {
+  const googleId = user.user_metadata?.provider_id || user.id;
+  const firstName = user.user_metadata?.given_name || user.user_metadata?.full_name?.split(' ')[0] || '';
+  const lastName = user.user_metadata?.family_name || user.user_metadata?.full_name?.split(' ')[1] || '';
+  const email = user.email || '';
+
+  return {
+    id: user.id,
+    google_id: googleId,
+    email: email.toLowerCase().trim(),
+    first_name: firstName.trim(),
+    last_name: lastName.trim(),
+    role: 'adult',
+    created_at: new Date(),
+    updated_at: new Date()
+  };
+}
+
+/**
+ * Register user to database
+ */
+export async function registerUser(userData: any): Promise<{ success: boolean; profile?: any; error?: string }> {
+  try {
+    console.log('Attempting to register user:', userData);
+    
+    // Check if user already exists in our database
+    const { data: existingUser, error: checkError } = await supabaseAdmin
+      .from('users')
+      .select('*')
+      .eq('id', userData.id)
+      .single();
+
+    if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is "not found" error
+      console.error('Error checking existing user:', checkError);
+      return {
+        success: false,
+        error: 'Failed to check existing user'
+      };
+    }
+
+    // If user already exists, return success with existing profile
+    if (existingUser) {
+      console.log('User already exists in database');
+      return { 
+        success: true, 
+        profile: existingUser 
+      };
+    }
+
+    // Insert new user data into database
+    const { data: userProfile, error: profileError } = await supabaseAdmin
+      .from('users')
+      .insert([userData])
+      .select('*')
+      .single();
+
+    if (profileError) {
+      console.error('Error creating user profile:', profileError);
+      return {
+        success: false,
+        error: profileError.message
+      };
+    }
+
+    console.log('User registered successfully:', userProfile);
+    return {
+      success: true,
+      profile: userProfile
+    };
+  } catch (error) {
+    console.error('Error registering user:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'An unexpected error occurred'
