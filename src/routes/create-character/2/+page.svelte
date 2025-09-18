@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import StarEmoticon from "../../../components/StarEmoticon.svelte";
   import ProgressBar from "../../../components/ProgressBar.svelte";
   import uploadSimple from "../../../assets/upload-icon.svg";
@@ -17,11 +17,43 @@
   import { browser } from "$app/environment";
   import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";
   import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
+  import { onMount } from "svelte";
+  import PrimaryInput from "../../../components/PrimaryInput.svelte";
+  
   let isMobile = false;
-
+  let uploadedImageUrl = "";
+  let characterName = "";
+  let selectedCharacterType = "person"; // Default selection
+  let specialAbility = "";
   $: if (browser) {
     isMobile = window.innerWidth < 800;
   }
+
+  // Retrieve the uploaded image URL from sessionStorage on component mount
+  onMount(() => {
+    if (browser) {
+      const storedImageUrl = sessionStorage.getItem('characterImageUrl');
+      if (storedImageUrl) {
+        uploadedImageUrl = storedImageUrl;
+      } else {
+        // If no image URL is found, redirect back to step 1
+        goto('/create-character/1');
+      }
+    }
+  });
+
+  // Handle retake photo button
+  const handleRetakePhoto = () => {
+    if (browser) {
+      sessionStorage.removeItem('characterImageUrl');
+    }
+    goto('/create-character/1');
+  };
+
+  // Handle character type selection
+  const selectCharacterType = (type: string) => {
+    selectedCharacterType = type;
+  };
 </script>
 
 <div class="character-creation-default">
@@ -84,6 +116,14 @@
           </div>
         </div>
         <div class="image">
+          {#if uploadedImageUrl}
+            <img src={uploadedImageUrl} alt="character" style="width: 100%; height: 100%; object-fit: contain;" />
+          {:else}
+            <div class="image-placeholder">
+              <div class="loading-spinner"></div>
+              <span>Loading your character...</span>
+            </div>
+          {/if}
           <div class="frame-1410104035_01">
             <div class="youre-creating-a-free-2-page-preview">
               <span class="yourecreatingafree2-pagepreview_span"
@@ -92,7 +132,7 @@
             </div>
           </div>
         </div>
-        <button class="frame-1410103991">
+        <button class="frame-1410103991" on:click={handleRetakePhoto}>
           <div class="button">
             <img src={cameraBlue} alt="camera-blue" />
             <div class="retake-photo">
@@ -120,15 +160,15 @@
               >
             </div>
             <div class="frame-1410104040">
-              <div class="input-placeholder">
-                <div>
-                  <span class="enteryourcharactername_span"
-                    >Enter your Character Name</span
-                  >
-                </div>
-              </div>
+              <PrimaryInput
+                type="text"
+                bind:value={characterName}
+                placeholder="Enter your character name"
+                errors={{}}
+                disabled={false}
+              />
               <div class="text-0200-characters">
-                <span class="f200characters_span">0/200 Characters</span>
+                <span class="f200characters_span">{characterName.length}/200 Characters</span>
               </div>
             </div>
           </div>
@@ -139,49 +179,70 @@
               >
             </div>
             <div class="frame-1410103942">
-              <div class="selected">
+              <!-- Person Character Type -->
+              <button 
+                class="character-option {selectedCharacterType === 'person' ? 'selected' : 'unselected'}"
+                on:click={() => selectCharacterType('person')}
+              >
                 <div class="frame-1410103940">
-                  <img src={person} alt="person" />
+                  <div class="frame">
+                    <div class="vector"></div>
+                    <div class="vector_01"></div>
+                    <div class="vector_02"></div>
+                    <div class="vector_03"></div>
+                  </div>
                   <div class="frame-1410103939">
                     <div><span class="person_span">Person</span></div>
-                    <div>
-                      <span class="ahumancharacter_span">A human character</span
-                      >
-                    </div>
+                    <div><span class="ahumancharacter_span">A human character</span></div>
                   </div>
                 </div>
-                <div class="ellipse-13"></div>
-              </div>
-              <div class="selected_01">
-                <div class="frame-1410103940_01">
+                <div class="frame-1410104043">
+                  <div class="ellipse-14"></div>
+                  {#if selectedCharacterType === 'person'}
+                    <div class="ellipse-13"></div>
+                  {/if}
+                </div>
+              </button>
+
+              <!-- Animal Character Type -->
+              <button 
+                class="character-option {selectedCharacterType === 'animal' ? 'selected' : 'unselected'}"
+                on:click={() => selectCharacterType('animal')}
+              >
+                <div class="frame-1410103940">
                   <img src={animal} alt="animal" />
-                  <div class="frame-1410103939_01">
-                    <div><span class="animal_span">Animal</span></div>
-                    <div>
-                      <span class="petorwildanimal_span"
-                        >Pet or wild animal</span
-                      >
-                    </div>
+                  <div class="frame-1410103939">
+                    <div><span class="person_span">Animal</span></div>
+                    <div><span class="ahumancharacter_span">Pet or wild animal</span></div>
                   </div>
                 </div>
-                <div class="ellipse-13_01"></div>
-              </div>
-              <div class="selected_02">
-                <div class="frame-1410103940_02">
+                <div class="frame-1410104043">
+                  <div class="ellipse-14"></div>
+                  {#if selectedCharacterType === 'animal'}
+                    <div class="ellipse-13"></div>
+                  {/if}
+                </div>
+              </button>
+
+              <!-- Magical Character Type -->
+              <button 
+                class="character-option {selectedCharacterType === 'magical' ? 'selected' : 'unselected'}"
+                on:click={() => selectCharacterType('magical')}
+              >
+                <div class="frame-1410103940">
                   <img src={magical} alt="magical" />
-                  <div class="frame-1410103939_02">
-                    <div>
-                      <span class="magicalfeatures_span">Magical Features</span>
-                    </div>
-                    <div>
-                      <span class="fairydragonetc_span"
-                        >Fairy, dragon, etc.</span
-                      >
-                    </div>
+                  <div class="frame-1410103939">
+                    <div><span class="person_span">Magical Features</span></div>
+                    <div><span class="ahumancharacter_span">Fairy, dragon, etc.</span></div>
                   </div>
                 </div>
-                <div class="ellipse-13_02"></div>
-              </div>
+                <div class="frame-1410104043">
+                  <div class="ellipse-14"></div>
+                  {#if selectedCharacterType === 'magical'}
+                    <div class="ellipse-13"></div>
+                  {/if}
+                </div>
+              </button>
             </div>
           </div>
           <div class="form_02">
@@ -195,6 +256,7 @@
                 options={[]}
                 selectedOption={""}
                 onChange={() => {}}
+                placeholder="Select your special ability"
               />
             </div>
             <div class="form_03">
@@ -204,7 +266,7 @@
                 >
               </div>
               <div class="frame-1410104041">
-                <div class="input-placeholder_02">
+                <!-- <div class="input-placeholder_02">
                   <div>
                     <span
                       class="exampleafriendlyspacealienwithsixarmsandbigeyes_span"
@@ -212,9 +274,15 @@
                       eyes</span
                     >
                   </div>
-                </div>
+                </div> -->
+                <textarea 
+                  bind:value={specialAbility}
+                  placeholder="Enter your special ability" 
+                  class="input-placeholder_02 exampleafriendlyspacealienwithsixarmsandbigeyes_span"
+                  maxlength="200"
+                ></textarea>
                 <div class="text-0200-characters_01">
-                  <span class="f200characters_01_span">0/200 Characters</span>
+                  <span class="f200characters_01_span">{specialAbility.length}/200 Characters</span>
                 </div>
               </div>
             </div>
@@ -887,7 +955,6 @@
     background: white;
     overflow: hidden;
     border-radius: 12px;
-    outline: 1px #ededed solid;
     outline-offset: -1px;
     justify-content: flex-start;
     align-items: flex-start;
@@ -1226,5 +1293,155 @@
     .message-content {
       width: 90%;
     }
+  }
+
+  /* Image loading placeholder styles */
+  .image-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 40px;
+    color: #666d80;
+    font-family: Nunito;
+    font-size: 14px;
+  }
+
+  .loading-spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #438bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Character selection styles */
+  .character-option {
+    width: 100%;
+    padding: 8px 12px 8px 8px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+  }
+
+  .character-option:hover {
+    outline-color: #438bff;
+    background: #f8fafb;
+  }
+
+  .character-option.selected {
+    background: #eef6ff;
+    outline: 1px #438bff solid;
+    outline-offset: -1px;
+  }
+
+  .character-option.unselected {
+    background: white;
+    outline: 1px #ededed solid;
+    outline-offset: -1px;
+  }
+
+  .vector {
+    width: 19.27px;
+    height: 19.27px;
+    left: 10.08px;
+    top: 0px;
+    position: absolute;
+    background: #ffbb85;
+  }
+
+  .vector_01 {
+    width: 33.37px;
+    height: 20.68px;
+    left: 3.28px;
+    top: 19.32px;
+    position: absolute;
+    background: #438bff;
+  }
+
+  .vector_02 {
+    width: 9.64px;
+    height: 19.27px;
+    left: 19.71px;
+    top: 0px;
+    position: absolute;
+    background: #f5a86c;
+  }
+
+  .vector_03 {
+    width: 16.94px;
+    height: 20.68px;
+    left: 19.71px;
+    top: 19.32px;
+    position: absolute;
+    background: #1b60f5;
+  }
+
+  .ellipse-14 {
+    width: 24px;
+    height: 24px;
+    left: 0px;
+    top: 0px;
+    position: absolute;
+    border-radius: 9999px;
+    border: 1px #438bff solid;
+  }
+
+  .ellipse-13 {
+    width: 12px;
+    height: 12px;
+    left: 6px;
+    top: 6px;
+    position: absolute;
+    background: #438bff;
+    border-radius: 9999px;
+    border: 1px #438bff solid;
+  }
+
+  .frame-1410103939 {
+    flex: 1 1 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2px;
+    display: inline-flex;
+  }
+
+  .frame {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .frame-1410104043 {
+    width: 24px;
+    height: 24px;
+    position: relative;
+    background: white;
+    border-radius: 999px;
+  }
+
+  .frame-1410103940 {
+    flex: 1 1 0;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    display: flex;
   }
 </style>

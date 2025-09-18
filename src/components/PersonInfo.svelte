@@ -6,6 +6,7 @@
   import { uploadAvatar } from '../lib/storage';
   import { insertChildProfiles } from '../lib/database/childProfiles';
   import type { ChildProfile } from '../lib/database/childProfiles';
+  import { onMount, onDestroy } from 'svelte';
   
   export let showPhotoGuideModal = false;
   export let selectedAgeGroup = "";
@@ -33,6 +34,7 @@
   let showSuccessMessage = false;
   let savingProfiles = false;
   let saveError = "";
+  let isDragOver = false;
 
   const openPhotoGuideModal = () => {
     showPhotoGuideModal = true;
@@ -42,11 +44,49 @@
     fileInput.click();
   };
 
-  const handleFileSelect = async (event: Event) => {
-    const target = event.target as HTMLInputElement;
-    const file = target.files?.[0];
+  const handleDragOver = (event: DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    isDragOver = true;
+  };
+
+  const handleDragLeave = (event: DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
     
+    // Only set isDragOver to false if we're leaving the drop zone itself
+    // Check if the related target is outside the drop zone
+    const dropZone = event.currentTarget as HTMLElement;
+    const relatedTarget = event.relatedTarget as Node;
+    
+    if (!dropZone.contains(relatedTarget)) {
+      isDragOver = false;
+    }
+  };
+
+  const handleDrop = async (event: DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    isDragOver = false;
+
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      const file = files[0]; // Take only the first file if multiple are dropped
+      
+      // Check if it's an image file
+      if (file.type.startsWith("image/")) {
+        await processImageFile(file);
+      } else {
+        uploadError = "Please drop an image file (JPEG, PNG, WebP)";
+      }
+    } else {
+      uploadError = "No files were dropped. Please try again.";
+    }
+  };
+
+  const processImageFile = async (file: File) => {
     if (!file || !file.type.startsWith("image/")) {
+      uploadError = "Please select a valid image file";
       return;
     }
 
@@ -85,6 +125,15 @@
       console.error("Upload error:", error);
     } finally {
       uploading = false;
+    }
+  };
+
+  const handleFileSelect = async (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
+    
+    if (file) {
+      await processImageFile(file);
     }
   };
 
@@ -218,6 +267,24 @@
       savingProfiles = false;
     }
   };
+
+  // Prevent default drag behavior on the entire window
+  const preventDefaultDrag = (e: DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  onMount(() => {
+    // Prevent default drag and drop behavior on the entire window
+    window.addEventListener('dragover', preventDefaultDrag);
+    window.addEventListener('drop', preventDefaultDrag);
+  });
+
+  onDestroy(() => {
+    // Clean up event listeners
+    window.removeEventListener('dragover', preventDefaultDrag);
+    window.removeEventListener('drop', preventDefaultDrag);
+  });
 </script>
 
 <div class="frame-10">
@@ -274,8 +341,12 @@
           {:else}
             <div
               class="frame-1410103822"
+              class:drag-over={isDragOver}
               on:click={handleImageUpload}
               on:keydown={(e) => e.key === "Enter" && handleImageUpload()}
+              on:dragover={handleDragOver}
+              on:dragleave={handleDragLeave}
+              on:drop={handleDrop}
               role="button"
               tabindex="0"
             >
@@ -284,8 +355,12 @@
               </div>
               <div class="frame-1410103823">
                 <div class="click-to-upload-or-drag-and-drop">
-                  <span class="clicktouploadordraganddrop_span"
-                    >Click to upload or drag and drop
+                  <span class="clicktouploadordraganddrop_span">
+                    {#if isDragOver}
+                      Drop your image here
+                    {:else}
+                      Click to upload or drag and drop
+                    {/if}
                   </span>
                 </div>
                 <div class="png-jpg-gif-up-to-5mb">
@@ -634,6 +709,31 @@
     justify-content: center;
     align-items: center;
     display: inline-flex;
+    transition: all 0.2s ease;
+    border: 2px dashed transparent;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .frame-1410103822:hover {
+    background: #f0f8ff;
+    border-color: #438bff;
+  }
+
+  .frame-1410103822.drag-over {
+    background: #e6f3ff;
+    border-color: #438bff;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(67, 139, 255, 0.2);
+  }
+
+  .frame-1410103822.drag-over .uploadsimple {
+    transform: scale(1.1);
+  }
+
+  .frame-1410103822.drag-over .clicktouploadordraganddrop_span {
+    color: #438bff;
+    font-weight: 600;
   }
   .frame-1410103850 {
     align-self: stretch;
@@ -656,6 +756,7 @@
     height: 32px;
     position: relative;
     overflow: hidden;
+    transition: transform 0.2s ease;
   }
   .frame-1410103823 {
     align-self: stretch;

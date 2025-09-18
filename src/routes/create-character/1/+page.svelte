@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import StarEmoticon from "../../../components/StarEmoticon.svelte";
   import ProgressBar from "../../../components/ProgressBar.svelte";
   import uploadSimple from "../../../assets/upload-icon.svg";
@@ -12,11 +12,120 @@
   import { browser } from "$app/environment";
   import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";
   import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
+  import { uploadCharacterImage } from "../../../lib/storage";
+  import { user } from "../../../lib/stores/auth";
+  
   let isMobile = false;
+  let fileInput: HTMLInputElement;
+  let isDragOver = false;
+  let uploading = false;
+  let uploadProgress = 0;
+  let uploadError = "";
+  let uploadedImageUrl = "";
+  let selectedFile: File | null = null;
 
   $: if (browser) {
     isMobile = window.innerWidth < 800;
   }
+
+  // Handle file selection from input
+  const handleFileSelect = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    const files = target.files;
+    if (files && files.length > 0) {
+      processImageFile(files[0]);
+    }
+  };
+
+  // Handle drag events
+  const handleDragOver = (event: DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    isDragOver = true;
+  };
+
+  const handleDragLeave = (event: DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Only set isDragOver to false if we're leaving the drop zone itself
+    const dropZone = event.currentTarget as HTMLElement;
+    const relatedTarget = event.relatedTarget as Node;
+    
+    if (!dropZone.contains(relatedTarget)) {
+      isDragOver = false;
+    }
+  };
+
+  const handleDrop = async (event: DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    isDragOver = false;
+
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      
+      if (file.type.startsWith("image/")) {
+        await processImageFile(file);
+      } else {
+        uploadError = "Please drop an image file (JPEG, PNG, WebP, GIF)";
+      }
+    } else {
+      uploadError = "No files were dropped. Please try again.";
+    }
+  };
+
+  // Process and upload image file
+  const processImageFile = async (file: File) => {
+    if (!file || !file.type.startsWith("image/")) {
+      uploadError = "Please select a valid image file";
+      return;
+    }
+
+    selectedFile = file;
+    uploadError = "";
+    uploading = true;
+    uploadProgress = 0;
+
+    try {
+      const result = await uploadCharacterImage(
+        file,
+        $user?.id,
+        (progress) => {
+          uploadProgress = progress;
+        }
+      );
+
+      if (result.success && result.url) {
+        uploadedImageUrl = result.url;
+        
+        // Store the uploaded image URL in sessionStorage for step 2
+        if (browser) {
+          sessionStorage.setItem('characterImageUrl', result.url);
+        }
+        
+        // Auto-navigate to step 2 after a brief delay
+        setTimeout(() => {
+          goto("/create-character/2");
+        }, 1000);
+      } else {
+        uploadError = result.error || "Failed to upload image";
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      uploadError = "An unexpected error occurred while uploading the image";
+    } finally {
+      uploading = false;
+    }
+  };
+
+  // Click handler for upload area
+  const handleUploadClick = () => {
+    if (!uploading) {
+      fileInput?.click();
+    }
+  };
 </script>
 
 <div class="character-creation-default">
@@ -73,27 +182,71 @@
               <div class="upload-character">
                 <span class="uploadcharacter_span">Upload Character</span>
               </div>
-              <div class="image">
-                <div class="frame-1410103822">
-                  <div class="uploadsimple">
-                    <img src={uploadSimple} alt="uploadSimple" />
-                  </div>
-                  <div class="frame-1410103823">
-                    <div class="click-to-choose-file-or-drag-and-drop">
-                      <span class="clicktochoosefileordraganddrop_span_01"
-                        >Click to Choose File
-                      </span>
-                      <span class="clicktochoosefileordraganddrop_span_02"
-                        >or drag and drop
-                      </span>
+              <div 
+                class="image {isDragOver ? 'drag-over' : ''} {uploading ? 'uploading' : ''}"
+                on:click={handleUploadClick}
+                on:dragover={handleDragOver}
+                on:dragleave={handleDragLeave}
+                on:drop={handleDrop}
+                role="button"
+                tabindex="0"
+                on:keydown={(e) => e.key === 'Enter' && handleUploadClick()}
+              >
+                <input 
+                  bind:this={fileInput}
+                  type="file" 
+                  accept="image/*" 
+                  style="display: none;"
+                  on:change={handleFileSelect}
+                />
+                
+                {#if uploading}
+                  <div class="upload-progress">
+                    <div class="spinner"></div>
+                    <div class="progress-text">
+                      <span class="uploading-text">Uploading...</span>
+                      <span class="progress-percentage">{uploadProgress}%</span>
                     </div>
-                    <div class="png-jpg-gifwebp-up-to-10mb">
-                      <span class="pngjpggifwebpupto10mb_span"
-                        >PNG, JPG, GIF,Webp Up to 10MB</span
-                      >
+                    <div class="progress-bar">
+                      <div class="progress-fill" style="width: {uploadProgress}%"></div>
                     </div>
                   </div>
-                </div>
+                {:else if uploadedImageUrl}
+                  <div class="upload-success">
+                    <img src={uploadedImageUrl} alt="Uploaded character" class="uploaded-image" />
+                    <div class="success-text">
+                      <span class="success-message">✓ Upload successful!</span>
+                      <span class="redirect-message">Redirecting to next step...</span>
+                    </div>
+                  </div>
+                {:else}
+                  <div class="frame-1410103822">
+                    <div class="uploadsimple">
+                      <img src={uploadSimple} alt="uploadSimple" />
+                    </div>
+                    <div class="frame-1410103823">
+                      <div class="click-to-choose-file-or-drag-and-drop">
+                        <span class="clicktochoosefileordraganddrop_span_01"
+                          >Click to Choose File
+                        </span>
+                        <span class="clicktochoosefileordraganddrop_span_02"
+                          >or drag and drop
+                        </span>
+                      </div>
+                      <div class="png-jpg-gifwebp-up-to-10mb">
+                        <span class="pngjpggifwebpupto10mb_span"
+                          >PNG, JPG, GIF,Webp Up to 10MB</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                {/if}
+                
+                {#if uploadError}
+                  <div class="upload-error">
+                    <span class="error-message">{uploadError}</span>
+                  </div>
+                {/if}
               </div>
             </div>
           </div>
@@ -161,9 +314,15 @@
         </button>
       {/if}
 
-      <button class="button-fill" on:click={() => goto("/create-character/2")}>
+      <button 
+        class="button-fill" 
+        on:click={() => goto("/create-character/2")}
+        disabled={uploading}
+      >
         <div class="continue-to-next-step">
-          <span class="continuetostyleselection_span">Continue</span>
+          <span class="continuetostyleselection_span">
+            {uploading ? 'Uploading...' : 'Continue'}
+          </span>
         </div>
       </button>
     </div>
@@ -862,5 +1021,156 @@
   .button-fill:hover {
     background: #3a7ae4;
     transform: translateY(-1px);
+  }
+
+  .button-fill:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .button-fill:disabled:hover {
+    background: #cccccc;
+    transform: none;
+  }
+
+  /* Upload area styles */
+  .image {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .image:hover {
+    background: #f0f4f8;
+    outline-color: #438bff;
+  }
+
+  .image.drag-over {
+    background: #e8f4ff;
+    outline: 2px solid #438bff;
+    outline-offset: -2px;
+  }
+
+  .image.uploading {
+    cursor: not-allowed;
+  }
+
+  /* Upload progress styles */
+  .upload-progress {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #438bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .progress-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .uploading-text {
+    color: #438bff;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+  }
+
+  .progress-percentage {
+    color: #666d80;
+    font-size: 14px;
+    font-family: Nunito;
+    font-weight: 500;
+  }
+
+  .progress-bar {
+    width: 200px;
+    height: 8px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #438bff 0%, #5ba0ff 100%);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+
+  /* Upload success styles */
+  .upload-success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .uploaded-image {
+    max-width: 200px;
+    max-height: 150px;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .success-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .success-message {
+    color: #22c55e;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+  }
+
+  .redirect-message {
+    color: #666d80;
+    font-size: 14px;
+    font-family: Nunito;
+    font-weight: 400;
+  }
+
+  /* Upload error styles */
+  .upload-error {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    border-radius: 6px;
+    padding: 8px 12px;
+    max-width: 90%;
+  }
+
+  .error-message {
+    color: #dc2626;
+    font-size: 12px;
+    font-family: Nunito;
+    font-weight: 500;
+    text-align: center;
   }
 </style>
