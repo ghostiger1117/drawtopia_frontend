@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import StarEmoticon from "../../../components/StarEmoticon.svelte";
   import ProgressBar from "../../../components/ProgressBar.svelte";
   import uploadSimple from "../../../assets/upload-icon.svg";
@@ -23,9 +23,14 @@
   import { browser } from "$app/environment";
 
   let isMobile = false;
+  let selectedEnhancement = "normal"; // Default selection: "minimal", "normal", or "high"
 
   $: if (browser) {
     isMobile = window.innerWidth < 800;
+  }
+
+  function selectEnhancement(enhancement: string) {
+    selectedEnhancement = enhancement;
   }
 </script>
 
@@ -78,7 +83,14 @@
       </div>
     </div>
     <div class="frame-1410104073">
-      <div class="frame-1410104071">
+      <div 
+        class={selectedEnhancement === "minimal" ? "frame-1410104071 selected_card" : "frame-1410104071"}
+        style="position: relative;"
+        on:click={() => selectEnhancement("minimal")}
+        role="button"
+        tabindex="0"
+        on:keydown={(e) => e.key === 'Enter' && selectEnhancement("minimal")}
+      >
         <div class="frame-16">
           <div class="rectangle-33"></div>
           <div class="frame-1410103721">
@@ -135,8 +147,18 @@
             </div>
           </div>
         </div>
+        {#if selectedEnhancement === "minimal"}
+          <img src={purple_check} alt="purple_check" class="purple_check" />
+        {/if}
       </div>
-      <div class="frame-1410104076 selected_card" style="position: relative;">
+      <div 
+        class={selectedEnhancement === "normal" ? "frame-1410104076 selected_card" : "frame-1410104076"}
+        style="position: relative;"
+        on:click={() => selectEnhancement("normal")}
+        role="button"
+        tabindex="0"
+        on:keydown={(e) => e.key === 'Enter' && selectEnhancement("normal")}
+      >
         <div class="tag_card">
           <img src={star} alt="star" />
           <div class="most-popular">
@@ -203,9 +225,18 @@
             </div>
           </div>
         </div>
-        <img src={purple_check} alt="purple_check" class="purple_check" />
+        {#if selectedEnhancement === "normal"}
+          <img src={purple_check} alt="purple_check" class="purple_check" />
+        {/if}
       </div>
-      <div class="frame-1410104075_02">
+      <div 
+        class={selectedEnhancement === "high" ? "frame-1410104075_02 selected_card" : "frame-1410104075_02"}
+        style="position: relative;"
+        on:click={() => selectEnhancement("high")}
+        role="button"
+        tabindex="0"
+        on:keydown={(e) => e.key === 'Enter' && selectEnhancement("high")}
+      >
         <div class="frame-16_02">
           <div class="rectangle-33"></div>
           <div class="frame-1410103721">
@@ -264,6 +295,9 @@
             </div>
           </div>
         </div>
+        {#if selectedEnhancement === "high"}
+          <img src={purple_check} alt="purple_check" class="purple_check" />
+        {/if}
       </div>
     </div>
 
@@ -289,7 +323,7 @@
       >
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"
-            >Continue to Enhancement Selection</span
+            >Continue to Story World</span
           >
         </div>
       </button>
@@ -1322,6 +1356,17 @@
   }
   .selected_card {
     outline: 2px #6912c5 solid;
+    box-shadow: 0px 1px 8px #871fff;
+  }
+  
+  .frame-1410104071, .frame-1410104076, .frame-1410104075_02 {
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .frame-1410104071:hover, .frame-1410104076:hover, .frame-1410104075_02:hover {
+    outline: 1px #438bff solid;
+    box-shadow: 0px 2px 8px rgba(67, 139, 255, 0.1);
   }
   .purple_check {
     position: absolute;

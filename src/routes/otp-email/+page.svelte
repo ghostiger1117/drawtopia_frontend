@@ -4,6 +4,7 @@
   import { verifyEmail, resendEmailOTP } from "../../lib/auth";
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
+  import { addNotification } from "$lib/stores/notification";
 
   // OTP related variables
   let otpValues: string[] = ["", "", "", "", "", ""];
@@ -146,7 +147,10 @@
         localStorage.removeItem('pendingEmailVerification');
         
         // Show success message
-        alert('Email verified successfully! Redirecting to dashboard...');
+        addNotification({
+          type: 'success',
+          message: 'Email verified successfully! Redirecting to dashboard...'
+        });
         
         // Redirect to dashboard or main page
         goto('/');
@@ -181,7 +185,10 @@
       const result = await resendEmailOTP(email);
       
       if (result.success) {
-        alert('A new verification code has been sent to your email address.');
+        addNotification({
+          type: 'success',
+          message: 'A new verification code has been sent to your email address.'
+        });
       } else {
         errors.general = result.error || 'Failed to resend verification code. Please try again.';
       }

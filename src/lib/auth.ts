@@ -311,7 +311,6 @@ export async function signInWithGoogle(): Promise<AuthResponse> {
       }
     });
 
-    alert("signInWithGoogle" + JSON.stringify(data));
     console.log("signInWithGoogle", data);
     if (error) {
       return {

@@ -147,7 +147,10 @@
         console.log("Session:", result.session);
 
         // Redirect to dashboard or home page
-        alert("Login successful! Redirecting...");
+        addNotification({
+          type: 'success',
+          message: 'Login successful! Redirecting...'
+        });
         goto("/"); // You can change this to your dashboard route
       } else {
         // Handle login error

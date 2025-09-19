@@ -8,6 +8,7 @@
   import { goto } from "$app/navigation";
   import { browser } from "$app/environment";
   import { onMount } from "svelte";
+  import { addNotification } from "$lib/stores/notification";
 
   let showPhotoGuideModal = false;
   let selectedAgeGroup = "";
@@ -90,7 +91,10 @@
     console.log("Continuing to story creation with saved profiles");
     // Here you can navigate to the story creation page
     // goto('/story-creation') or similar
-    alert("Child profiles saved successfully! Redirecting to story creation...");
+    addNotification({
+      type: 'success',
+      message: 'Child profiles saved successfully! Redirecting to story creation...'
+    });
     goto('/create-character/1');
   };
 

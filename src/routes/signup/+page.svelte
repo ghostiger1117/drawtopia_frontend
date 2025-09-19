@@ -204,14 +204,16 @@
         // Check if email confirmation is required
         if (result.user && !result.session) {
           // Email verification required
-          alert(
-            "Please check your email for a verification code before logging in."
-          );
+          addNotification({
+            type: 'info',
+            message: 'Please check your email for a verification code before logging in.'
+          });
         } else {
           // User is automatically signed in
-          alert(
-            "Account created successfully! Redirecting to verification page..."
-          );
+          addNotification({
+            type: 'success',
+            message: 'Account created successfully! Redirecting to verification page...'
+          });
         }
 
         // Store email for verification if using email method

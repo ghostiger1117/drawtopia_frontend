@@ -969,7 +969,6 @@
     background: #ededed;
     overflow: hidden;
     border-radius: 12px;
-    background-image: url(https://placehold.co/588x844);
   }
 
   .frame-1410104040 {

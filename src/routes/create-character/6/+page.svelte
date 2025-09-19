@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import StarEmoticon from "../../../components/StarEmoticon.svelte";
   import ProgressBar from "../../../components/ProgressBar.svelte";
   import uploadSimple from "../../../assets/upload-icon.svg";
@@ -18,11 +18,18 @@
   import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
   import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";
   import { browser } from "$app/environment";
+  import treasure from "../../../assets/treasurehunt.png";
+  import helping from "../../../assets/helpfriend.png";
 
   let isMobile = false;
+  let selectedAdventure = "treasure"; // Default selection: "treasure" or "helping"
 
   $: if (browser) {
     isMobile = window.innerWidth < 800;
+  }
+
+  function selectAdventure(adventure: string) {
+    selectedAdventure = adventure;
   }
 </script>
 
@@ -75,10 +82,17 @@
       </div>
     </div>
     <div class="frame-1410103852">
-      <div class="card">
+      <div 
+        class={selectedAdventure === "treasure" ? "card selected_card" : "card"}
+        style="position: relative;"
+        on:click={() => selectAdventure("treasure")}
+        role="button"
+        tabindex="0"
+        on:keydown={(e) => e.key === 'Enter' && selectAdventure("treasure")}
+      >
         <img
           class="image"
-          src="https://placehold.co/468x280"
+          src={treasure}
           alt="image_card_1"
         />
         <div class="frame-10">
@@ -119,16 +133,23 @@
             </div>
           </div>
         </div>
-        <!-- <img src={purple_check} alt="purple_check" class="purple_check"/> -->
+        {#if selectedAdventure === "treasure"}
+          <img src={purple_check} alt="purple_check" class="purple_check" />
+        {/if}
       </div>
-      <div class="card_01">
-        <div class="image_01">
+      <div 
+        class={selectedAdventure === "helping" ? "card_01 selected_card" : "card_01"}
+        style="position: relative;"
+        on:click={() => selectAdventure("helping")}
+        role="button"
+        tabindex="0"
+        on:keydown={(e) => e.key === 'Enter' && selectAdventure("helping")}
+      >
           <img
             class="image-6"
-            src="https://placehold.co/471x471"
+            src={helping}
             alt="image_card_2"
           />
-        </div>
         <div class="frame-10_01">
           <div class="helping-a-friend">
             <span class="helpingafriend_span">Helping a Friend</span>
@@ -169,6 +190,9 @@
             </div>
           </div>
         </div>
+        {#if selectedAdventure === "helping"}
+          <img src={purple_check} alt="purple_check" class="purple_check" />
+        {/if}
       </div>
     </div>
 
@@ -194,7 +218,7 @@
       >
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"
-            >Continue to Final Step</span
+            >Continue to Companion</span
           >
         </div>
       </button>
@@ -537,11 +561,11 @@
     display: inline-flex;
   }
   .image {
-    align-self: stretch;
-    height: 280px;
-    position: relative;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
+    width: 100%;
+    aspect-ratio: 1 / 0.7;
+    object-fit: cover;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
   }
 
   .treasurehunt_span {
@@ -630,11 +654,11 @@
   }
 
   .image-6 {
-    width: 471px;
-    height: 471px;
-    left: -3px;
-    top: -49px;
-    position: absolute;
+    width: 100%;
+    aspect-ratio: 1 / 0.7;
+    object-fit: cover;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
   }
 
   .helpingafriend_span {
@@ -798,16 +822,6 @@
     align-items: center;
     gap: 10px;
     display: flex;
-  }
-
-  .image_01 {
-    align-self: stretch;
-    height: 280px;
-    position: relative;
-    overflow: hidden;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    background-image: url(https://placehold.co/468x280);
   }
 
   .frame-1410104045_01 {
@@ -983,5 +997,26 @@
     .message-content {
       width: 90%;
     }
+  }
+
+  .selected_card {
+    outline: 2px #6912c5 solid;
+    box-shadow: 0px 1px 8px #871fff;
+  }
+  
+  .card, .card_01 {
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .card:hover, .card_01:hover {
+    outline: 1px #438bff solid;
+    box-shadow: 0px 2px 8px rgba(67, 139, 255, 0.1);
+  }
+
+  .purple_check {
+    position: absolute;
+    top: 10px;
+    right: 10px;
   }
 </style>

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import StarEmoticon from "../../../components/StarEmoticon.svelte";
   import ProgressBar from "../../../components/ProgressBar.svelte";
   import uploadSimple from "../../../assets/upload-icon.svg";
@@ -18,11 +18,19 @@
   import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
   import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";
   import { browser } from "$app/environment";
+  import D3 from "../../../assets/3d.png";
+  import Cartoon from "../../../assets/cartoon.png";
+  import Anime from "../../../assets/anime.png";
 
   let isMobile = false;
+  let selectedStyle = "cartoon"; // Default selection: "3d", "cartoon", or "anime"
 
   $: if (browser) {
     isMobile = window.innerWidth < 800;
+  }
+
+  function selectStyle(style: string) {
+    selectedStyle = style;
   }
 </script>
 
@@ -75,10 +83,17 @@
       </div>
     </div>
     <div class="frame-1410103852">
-      <div class="card_02">
+      <div 
+        class={selectedStyle === "3d" ? "card_02_selected" : "card_02"}
+        style="position: relative;"
+        on:click={() => selectStyle("3d")}
+        role="button"
+        tabindex="0"
+        on:keydown={(e) => e.key === 'Enter' && selectStyle("3d")}
+      >
         <img
           class="image_02"
-          src="https://placehold.co/402x375"
+          src={D3}
           alt="3D Realistic"
         />
         <div class="frame-10_02">
@@ -104,11 +119,21 @@
             </div>
           </div>
         </div>
+        {#if selectedStyle === "3d"}
+          <img src={purple_check} alt="purple_check" class="purple_check" />
+        {/if}
       </div>
-      <div class="card_02">
+      <div 
+        class={selectedStyle === "cartoon" ? "card_02_selected" : "card_02"}
+        style="position: relative;"
+        on:click={() => selectStyle("cartoon")}
+        role="button"
+        tabindex="0"
+        on:keydown={(e) => e.key === 'Enter' && selectStyle("cartoon")}
+      >
         <img
           class="image_02"
-          src="https://placehold.co/402x375"
+          src={Cartoon}
           alt="Cartoon"
         />
         <div class="frame-10_02">
@@ -132,9 +157,19 @@
             </div>
           </div>
         </div>
+        {#if selectedStyle === "cartoon"}
+          <img src={purple_check} alt="purple_check" class="purple_check" />
+        {/if}
       </div>
-      <div class="card_02_selected" style="position: relative;">
-        <img class="image_02" src="https://placehold.co/402x375" alt="Anime" />
+      <div 
+        class={selectedStyle === "anime" ? "card_02_selected" : "card_02"}
+        style="position: relative;"
+        on:click={() => selectStyle("anime")}
+        role="button"
+        tabindex="0"
+        on:keydown={(e) => e.key === 'Enter' && selectStyle("anime")}
+      >
+        <img class="image_02" src={Anime} alt="Anime" />
         <div class="frame-10_02">
           <div class="heading_02">
             <div class="anime"><span class="anime_span">Anime</span></div>
@@ -155,7 +190,9 @@
             </div>
           </div>
         </div>
-        <img src={purple_check} alt="purple_check" class="purple_check" />
+        {#if selectedStyle === "anime"}
+          <img src={purple_check} alt="purple_check" class="purple_check" />
+        {/if}
       </div>
     </div>
 
@@ -181,7 +218,7 @@
       >
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"
-            >Continue to Style Selection</span
+            >Continue to Style World</span
           >
         </div>
       </button>
@@ -516,9 +553,9 @@
   }
 
   .image_02 {
-    align-self: stretch;
-    height: 375px;
-    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
     border-top-left-radius: 18px;
     border-top-right-radius: 18px;
     border: 1px #d3d3d3 solid;
@@ -634,7 +671,7 @@
   }
 
   .card_02 {
-    width: 402px;
+    flex: 1 1 0;
     padding-bottom: 10px;
     background: white;
     border-radius: 20px;
@@ -645,9 +682,16 @@
     align-items: flex-start;
     gap: 12px;
     display: inline-flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .card_02:hover {
+    outline: 1px #438bff solid;
+    box-shadow: 0px 2px 8px rgba(67, 139, 255, 0.1);
   }
   .card_02_selected {
-    width: 402px;
+    flex: 1 1 0;
     padding-bottom: 10px;
     background: white;
     border-radius: 20px;
@@ -658,8 +702,8 @@
     gap: 12px;
     display: inline-flex;
     box-shadow: 0px 1px 8px #871fff;
-    outline: 2px #6912c5 solid;
-    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
   }
   .frame-1410103852 {
     width: 100%;

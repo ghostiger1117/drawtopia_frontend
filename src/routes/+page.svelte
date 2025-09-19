@@ -4,6 +4,7 @@
 	import { signOut, getUserProfile } from '$lib/auth';
 	import { goto } from '$app/navigation';
   import { supabase } from '$lib/supabase';
+	import { addNotification } from '$lib/stores/notification';
 
 	let userProfile: any = null;
 	initAuth();
@@ -18,15 +19,24 @@
 			if (result.success) {
 				console.log('User signed out successfully');
 				// Show success message and redirect to login
-				alert('Signed out successfully!');
+				addNotification({
+					type: 'success',
+					message: 'Signed out successfully!'
+				});
 				goto('/login');
 			} else {
 				console.error('Sign out failed:', result.error);
-				alert('Error signing out: ' + result.error);
+				addNotification({
+					type: 'error',
+					message: 'Error signing out: ' + result.error
+				});
 			}
 		} catch (error) {
 			console.error('Sign out error:', error);
-			alert('An unexpected error occurred during sign out');
+			addNotification({
+				type: 'error',
+				message: 'An unexpected error occurred during sign out'
+			});
 		}
 	}
 

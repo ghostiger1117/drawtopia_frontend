@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import StarEmoticon from "../../../components/StarEmoticon.svelte";
   import ProgressBar from "../../../components/ProgressBar.svelte";
   import uploadSimple from "../../../assets/upload-icon.svg";
@@ -20,9 +20,23 @@
   import { browser } from "$app/environment";
 
   let isMobile = false;
+  
+  // Selection state variables
+  let selectedTitle = "The Great Addventure [Your Name]";
+  let selectedCoverDesign = "Classic Storybook";
 
   $: if (browser) {
     isMobile = window.innerWidth < 800;
+  }
+
+  // Title selection handler
+  function selectTitle(title: string) {
+    selectedTitle = title;
+  }
+
+  // Cover design selection handler
+  function selectCoverDesign(design: string) {
+    selectedCoverDesign = design;
   }
 </script>
 
@@ -92,7 +106,16 @@
           <div class="form_01">
             <div><span class="titleselection_span">TItle Selection</span></div>
             <div class="frame-1410103942">
-              <div class="selected">
+              <div 
+                class="selected" 
+                class:selected={selectedTitle === "The Great Addventure [Your Name]"}
+                class:selected_01={selectedTitle !== "The Great Addventure [Your Name]"}
+                on:click={() => selectTitle("The Great Addventure [Your Name]")}
+                on:keydown={(e) => e.key === 'Enter' && selectTitle("The Great Addventure [Your Name]")}
+                tabindex="0"
+                role="button"
+                aria-label="Select The Great Adventure title"
+              >
                 <div class="frame-1410103940">
                   <div class="frame-1410103939">
                     <div>
@@ -102,13 +125,26 @@
                     </div>
                   </div>
                 </div>
-                <div class="ellipse-13"></div>
-                <div class="frame-1410104043">
-                  <div class="ellipse-14"></div>
-                  <div class="ellipse-13_01"></div>
-                </div>
+                <!-- <div class="ellipse-13"></div> -->
+                {#if selectedTitle === "The Great Addventure [Your Name]"}
+                  <div class="frame-1410104043">
+                    <div class="ellipse-14"></div>
+                    <div class="ellipse-13_01"></div>
+                  </div>
+                {:else}
+                  <div class="ellipse-13"></div>
+                {/if}
               </div>
-              <div class="selected_01">
+              <div 
+                class="selected_01" 
+                class:selected={selectedTitle === "The Amazing of Journey [Your Name]"}
+                class:selected_01={selectedTitle !== "The Amazing of Journey [Your Name]"}
+                on:click={() => selectTitle("The Amazing of Journey [Your Name]")}
+                on:keydown={(e) => e.key === 'Enter' && selectTitle("The Amazing of Journey [Your Name]")}
+                tabindex="0"
+                role="button"
+                aria-label="Select The Amazing Journey title"
+              >
                 <div class="frame-1410103940_01">
                   <div class="frame-1410103939_01">
                     <div>
@@ -118,9 +154,25 @@
                     </div>
                   </div>
                 </div>
-                <div class="ellipse-13_02"></div>
+                {#if selectedTitle === "The Amazing of Journey [Your Name]"}
+                  <div class="frame-1410104043">
+                    <div class="ellipse-14"></div>
+                    <div class="ellipse-13_01"></div>
+                  </div>
+                {:else}
+                  <div class="ellipse-13_02"></div>
+                {/if}
               </div>
-              <div class="selected_02">
+              <div 
+                class="selected_02" 
+                class:selected={selectedTitle === "[Your Name] and the Space Adventure"}
+                class:selected_02={selectedTitle !== "[Your Name] and the Space Adventure"}
+                on:click={() => selectTitle("[Your Name] and the Space Adventure")}
+                on:keydown={(e) => e.key === 'Enter' && selectTitle("[Your Name] and the Space Adventure")}
+                tabindex="0"
+                role="button"
+                aria-label="Select Space Adventure title"
+              >
                 <div class="frame-1410103940_02">
                   <div class="frame-1410103939_02">
                     <div>
@@ -130,9 +182,25 @@
                     </div>
                   </div>
                 </div>
-                <div class="ellipse-13_03"></div>
+                {#if selectedTitle === "[Your Name] and the Space Adventure"}
+                  <div class="frame-1410104043">
+                    <div class="ellipse-14"></div>
+                    <div class="ellipse-13_01"></div>
+                  </div>
+                {:else}
+                  <div class="ellipse-13_03"></div>
+                {/if}
               </div>
-              <div class="selected_03">
+              <div 
+                class="selected_03" 
+                class:selected={selectedTitle === "Custom Title"}
+                class:selected_03={selectedTitle !== "Custom Title"}
+                on:click={() => selectTitle("Custom Title")}
+                on:keydown={(e) => e.key === 'Enter' && selectTitle("Custom Title")}
+                tabindex="0"
+                role="button"
+                aria-label="Select Custom Title"
+              >
                 <div class="frame-1410104084">
                   <div class="frame-1410103940_03">
                     <div class="frame-1410103939_03">
@@ -142,7 +210,14 @@
                     </div>
                   </div>
                 </div>
-                <div class="ellipse-13_04"></div>
+                {#if selectedTitle === "Custom Title"}
+                  <div class="frame-1410104043">
+                    <div class="ellipse-14"></div>
+                    <div class="ellipse-13_01"></div>
+                  </div>
+                {:else}
+                  <div class="ellipse-13_04"></div>
+                {/if}
               </div>
             </div>
           </div>
@@ -153,7 +228,16 @@
               >
             </div>
             <div class="frame-1410103942_01">
-              <div class="selected_04">
+              <div 
+                class="selected_04" 
+                class:selected_04={selectedCoverDesign === "Classic Storybook"}
+                class:selected_05={selectedCoverDesign !== "Classic Storybook"}
+                on:click={() => selectCoverDesign("Classic Storybook")}
+                on:keydown={(e) => e.key === 'Enter' && selectCoverDesign("Classic Storybook")}
+                tabindex="0"
+                role="button"
+                aria-label="Select Classic Storybook cover design"
+              >
                 <img
                   class="frame-1410104088"
                   src="https://placehold.co/80x91"
@@ -173,13 +257,25 @@
                     </div>
                   </div>
                 </div>
-                <div class="ellipse-13_05"></div>
-                <div class="frame-1410104043_01">
-                  <div class="ellipse-14_01"></div>
-                  <div class="ellipse-13_06"></div>
-                </div>
+                {#if selectedCoverDesign === "Classic Storybook"}
+                  <div class="frame-1410104043_01">
+                    <div class="ellipse-14_01"></div>
+                    <div class="ellipse-13_06"></div>
+                  </div>
+                {:else}
+                  <div class="ellipse-13_05"></div>
+                {/if}
               </div>
-              <div class="selected_05">
+              <div 
+                class="selected_05" 
+                class:selected_04={selectedCoverDesign === "Modern Minimalist"}
+                class:selected_05={selectedCoverDesign !== "Modern Minimalist"}
+                on:click={() => selectCoverDesign("Modern Minimalist")}
+                on:keydown={(e) => e.key === 'Enter' && selectCoverDesign("Modern Minimalist")}
+                tabindex="0"
+                role="button"
+                aria-label="Select Modern Minimalist cover design"
+              >
                 <div class="frame-1410103940_05">
                   <img
                     class="frame-1410104088_01"
@@ -199,9 +295,25 @@
                     </div>
                   </div>
                 </div>
-                <div class="ellipse-13_07"></div>
+                {#if selectedCoverDesign === "Modern Minimalist"}
+                  <div class="frame-1410104043_01">
+                    <div class="ellipse-14_01"></div>
+                    <div class="ellipse-13_06"></div>
+                  </div>
+                {:else}
+                  <div class="ellipse-13_07"></div>
+                {/if}
               </div>
-              <div class="selected_06">
+              <div 
+                class="selected_06" 
+                class:selected_04={selectedCoverDesign === "Adventure Theme"}
+                class:selected_06={selectedCoverDesign !== "Adventure Theme"}
+                on:click={() => selectCoverDesign("Adventure Theme")}
+                on:keydown={(e) => e.key === 'Enter' && selectCoverDesign("Adventure Theme")}
+                tabindex="0"
+                role="button"
+                aria-label="Select Adventure Theme cover design"
+              >
                 <div class="frame-1410103940_06">
                   <img
                     class="frame-1410104088_02"
@@ -219,7 +331,14 @@
                     </div>
                   </div>
                 </div>
-                <div class="ellipse-13_08"></div>
+                {#if selectedCoverDesign === "Adventure Theme"}
+                  <div class="frame-1410104043_01">
+                    <div class="ellipse-14_01"></div>
+                    <div class="ellipse-13_06"></div>
+                  </div>
+                {:else}
+                  <div class="ellipse-13_08"></div>
+                {/if}
               </div>
             </div>
           </div>
@@ -1014,6 +1133,14 @@
     align-items: center;
     gap: 12px;
     display: inline-flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .selected:hover {
+    background: #d9eaff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(67, 139, 255, 0.15);
   }
 
   .selected_01 {
@@ -1026,6 +1153,15 @@
     align-items: center;
     gap: 12px;
     display: inline-flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .selected_01:hover {
+    background: #f8f9fa;
+    outline: 1px #c0c0c0 solid;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
 
   .selected_02 {
@@ -1038,6 +1174,15 @@
     align-items: center;
     gap: 12px;
     display: inline-flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .selected_02:hover {
+    background: #f8f9fa;
+    outline: 1px #c0c0c0 solid;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
 
   .frame-1410104084 {
@@ -1063,6 +1208,14 @@
     align-items: center;
     gap: 12px;
     display: inline-flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .selected_04:hover {
+    background: #d9eaff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(67, 139, 255, 0.15);
   }
 
   .selected_05 {
@@ -1078,6 +1231,15 @@
     align-items: center;
     gap: 12px;
     display: inline-flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .selected_05:hover {
+    background: #f8f9fa;
+    outline: 1px #c0c0c0 solid;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
 
   .selected_06 {
@@ -1093,6 +1255,15 @@
     align-items: center;
     gap: 12px;
     display: inline-flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .selected_06:hover {
+    background: #f8f9fa;
+    outline: 1px #c0c0c0 solid;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
 
   .selected_03 {
@@ -1105,6 +1276,15 @@
     align-items: center;
     gap: 12px;
     display: inline-flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .selected_03:hover {
+    background: #f8f9fa;
+    outline: 1px #c0c0c0 solid;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
 
   .frame-1410103942_01 {

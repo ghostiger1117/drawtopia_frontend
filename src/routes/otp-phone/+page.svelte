@@ -5,6 +5,7 @@
     CountryCode,
     E164Number,
   } from "svelte-tel-input/types";
+  import { addNotification } from "$lib/stores/notification";
 
   // Any Country Code Alpha-2 (ISO 3166)
   let selectedCountry: CountryCode | null = "HU";
@@ -180,7 +181,10 @@
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       console.log('Phone verification successful');
-      alert('Phone verified successfully! Redirecting to dashboard...');
+      addNotification({
+        type: 'success',
+        message: 'Phone verified successfully! Redirecting to dashboard...'
+      });
       
       // TODO: Redirect to dashboard or main page
       // goto('/');

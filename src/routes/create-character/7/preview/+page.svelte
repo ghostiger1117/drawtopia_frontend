@@ -170,7 +170,7 @@
           <div class="frame-1410103870">
               <div class="button">
                 <img src={FloppyDiskBack} alt="printReady" />
-                  <div class="preview-and-purchase-story"><span class="previewandpurchasestory_span">Preview and Purchase Story</span></div>
+                  <div class="preview-and-purchase-story"><span class="previewandpurchasestory_span">Create Author Story</span></div>
               </div>
           </div>
       </div>

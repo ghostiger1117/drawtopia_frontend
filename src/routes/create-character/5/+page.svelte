@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import StarEmoticon from "../../../components/StarEmoticon.svelte";
   import ProgressBar from "../../../components/ProgressBar.svelte";
   import uploadSimple from "../../../assets/upload-icon.svg";
@@ -21,11 +21,19 @@
   import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
   import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";
   import { browser } from "$app/environment";
+  import forest from "../../../assets/big.png";
+  import outspace from "../../../assets/outspace.png";
+  import underwater from "../../../assets/underwater.png";
 
   let isMobile = false;
+  let selectedWorld = "underwater"; // Default selection: "forest", "outspace", or "underwater"
 
   $: if (browser) {
     isMobile = window.innerWidth < 800;
+  }
+
+  function selectWorld(world: string) {
+    selectedWorld = world;
   }
 </script>
 
@@ -75,10 +83,17 @@
       </div>
     </div>
     <div class="frame-1410103852">
-      <div class="card">
+      <div 
+        class={selectedWorld === "forest" ? "card selected_card" : "card"}
+        style="position: relative;"
+        on:click={() => selectWorld("forest")}
+        role="button"
+        tabindex="0"
+        on:keydown={(e) => e.key === 'Enter' && selectWorld("forest")}
+      >
         <img
-          class="image"
-          src="https://placehold.co/402x280"
+          class="image_02"
+          src={forest}
           alt="image_card_1"
         />
         <div class="frame-10_02">
@@ -108,11 +123,21 @@
             </div>
           </div>
         </div>
+        {#if selectedWorld === "forest"}
+          <img src={purple_check} alt="purple_check" class="purple_check" />
+        {/if}
       </div>
-      <div class="card_01">
+      <div 
+        class={selectedWorld === "outspace" ? "card_01 selected_card" : "card_01"}
+        style="position: relative;"
+        on:click={() => selectWorld("outspace")}
+        role="button"
+        tabindex="0"
+        on:keydown={(e) => e.key === 'Enter' && selectWorld("outspace")}
+      >
         <img
-          class="image_01"
-          src="https://placehold.co/402x280"
+          class="image_02"
+          src={outspace}
           alt="image_card_2"
         />
         <div class="frame-10_02">
@@ -141,11 +166,21 @@
             </div>
           </div>
         </div>
+        {#if selectedWorld === "outspace"}
+          <img src={purple_check} alt="purple_check" class="purple_check" />
+        {/if}
       </div>
-      <div class="card_02 selected_card" style="position: relative;">
+      <div 
+        class={selectedWorld === "underwater" ? "card_02 selected_card" : "card_02"}
+        style="position: relative;"
+        on:click={() => selectWorld("underwater")}
+        role="button"
+        tabindex="0"
+        on:keydown={(e) => e.key === 'Enter' && selectWorld("underwater")}
+      >
         <img
           class="image_02"
-          src="https://placehold.co/402x280"
+          src={underwater}
           alt="image_card_3"
         />
         <div class="frame-10_02">
@@ -171,7 +206,9 @@
             </div>
           </div>
         </div>
-        <img src={purple_check} alt="purple_check" class="purple_check" />
+        {#if selectedWorld === "underwater"}
+          <img src={purple_check} alt="purple_check" class="purple_check" />
+        {/if}
       </div>
     </div>
 
@@ -197,7 +234,7 @@
       >
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"
-            >Continue to Character Creation</span
+            >Continue to Adventure Type</span
           >
         </div>
       </button>
@@ -461,17 +498,6 @@
     width: 100%;
   }
 
-  .image {
-    align-self: stretch;
-    height: 254px;
-    position: relative;
-    background: #f8fafb;
-    overflow: hidden;
-    border-radius: 10px;
-    outline: 2px #ededed solid;
-    outline-offset: -2px;
-  }
-
   .frame-1410103818 {
     width: 100%;
     flex-direction: column;
@@ -514,16 +540,6 @@
     height: 100%;
   }
 
-  .image {
-    align-self: stretch;
-    height: 844px;
-    position: relative;
-    background: #ededed;
-    overflow: hidden;
-    border-radius: 12px;
-    background-image: url(https://placehold.co/588x844);
-  }
-
   .frame-1410104037 {
     width: 100%;
     height: 100%;
@@ -564,23 +580,6 @@
     gap: 10px;
     display: inline-flex;
   }
-  .image {
-    align-self: stretch;
-    height: 375px;
-    position: relative;
-    border-top-left-radius: 18px;
-    border-top-right-radius: 18px;
-    border: 1px #d3d3d3 solid;
-  }
-
-  .image_01 {
-    align-self: stretch;
-    height: 375px;
-    position: relative;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    border: 1px #d3d3d3 solid;
-  }
 
   .frame-10_02 {
     align-self: stretch;
@@ -596,7 +595,7 @@
   }
 
   .card {
-    width: 402px;
+    flex: 1 1 0;
     padding-bottom: 10px;
     background: white;
     border-radius: 20px;
@@ -610,7 +609,7 @@
   }
 
   .card_01 {
-    width: 402px;
+    flex: 1 1 0;
     padding-bottom: 10px;
     background: white;
     border-radius: 20px;
@@ -624,7 +623,7 @@
   }
 
   .card_02 {
-    width: 402px;
+    flex: 1 1 0;
     padding-bottom: 10px;
     background: white;
     border-radius: 20px;
@@ -645,16 +644,6 @@
     gap: 16px;
     display: inline-flex;
   }
-
-  .image {
-    align-self: stretch;
-    height: 280px;
-    position: relative;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    border: 1px #d3d3d3 solid;
-  }
-
   .enchantedforest_span {
     color: #141414;
     font-size: 24px;
@@ -692,15 +681,6 @@
 
   .see-how-character-name-looks-in-the-selected-style-style-in-the-world-name {
     flex: 1 1 0;
-  }
-
-  .image_01 {
-    align-self: stretch;
-    height: 280px;
-    position: relative;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    border: 1px #d3d3d3 solid;
   }
 
   .outerspace_span {
@@ -743,9 +723,9 @@
   }
 
   .image_02 {
-    align-self: stretch;
-    height: 280px;
-    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 0.7;
+    object-fit: cover;
     border-top-left-radius: 18px;
     border-top-right-radius: 18px;
     border: 1px #d3d3d3 solid;
@@ -959,5 +939,26 @@
     .message-content {
       width: 90%;
     }
+  }
+
+  .selected_card {
+    outline: 2px #6912c5 solid;
+    box-shadow: 0px 1px 8px #871fff;
+  }
+  
+  .card, .card_01, .card_02 {
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .card:hover, .card_01:hover, .card_02:hover {
+    outline: 1px #438bff solid;
+    box-shadow: 0px 2px 8px rgba(67, 139, 255, 0.1);
+  }
+
+  .purple_check {
+    position: absolute;
+    top: 10px;
+    right: 10px;
   }
 </style>
