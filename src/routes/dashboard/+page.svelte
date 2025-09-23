@@ -1,4 +1,8 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+  import { goto } from "$app/navigation";
+  import { user } from "../../lib/stores/auth";
+  import { getChildProfiles, type ChildProfile } from "../../lib/database/childProfiles";
   import ChildProfileComponent from "../../components/ChildProfileComponent.svelte";
   import StoryLibraryComponent from "../../components/StoryLibraryComponent.svelte";
   import usercircleplus from "../../assets/UserCirclePlus.svg";
@@ -11,34 +15,96 @@
   import list from "../../assets/List.svg";
   import x from "../../assets/X.svg";
   import GiftTrackingComponent from "../../components/GiftTrackingComponent.svelte";
+
   let showMobileMenu = false;
+  let childProfiles: any[] = [];
+  let loading = true;
+  let error = "";
+
+  // Random story themes for lastStory
+  const storyThemes = [
+    "Birthday", "Bedtime", "Holiday", "Adventure", "Magic", "Friendship", 
+    "Animals", "Space", "Ocean", "Forest", "Castle", "Dragon", "Princess", 
+    "Superhero", "Pirate", "Fairy Tale", "Mystery", "Science", "Sports", "Music"
+  ];
 
   const toggleMobileMenu = () => {
     showMobileMenu = !showMobileMenu;
   };
-  const childProfiles = [
-    {
-      name: "Emma",
-      ageLabel: "6 Years Old",
-      avatarUrl: "https://placehold.co/48x48",
-      storiesCreatedText: "Emma (Age 5-7)",
-      lastStory: "Birthday",
-    },
-    {
-      name: "Mason",
-      ageLabel: "5 Years Old",
-      avatarUrl: "https://placehold.co/48x48",
-      storiesCreatedText: "Mason (Age 3-5)",
-      lastStory: "Bedtime",
-    },
-    {
-      name: "Olivia",
-      ageLabel: "8 Years Old",
-      avatarUrl: "https://placehold.co/48x48",
-      storiesCreatedText: "Olivia (Age 8-10)",
-      lastStory: "Holiday",
-    },
-  ];
+
+  // Function to get a random story theme
+  const getRandomStoryTheme = () => {
+    return storyThemes[Math.floor(Math.random() * storyThemes.length)];
+  };
+
+  // Function to format age group for display
+  const formatAgeLabel = (ageGroup: string) => {
+    // Convert age group like "3-5" to "3-5 Years Old"
+    return `${ageGroup} Years Old`;
+  };
+
+  // Function to format stories created text
+  const formatStoriesCreatedText = (firstName: string, ageGroup: string) => {
+    return `${firstName} (Age ${ageGroup})`;
+  };
+
+  // Fetch child profiles from Supabase
+  const fetchChildProfiles = async (userId: string) => {
+    try {
+      loading = true;
+      error = "";
+      
+      const result = await getChildProfiles(userId);
+      
+      if (result.success && result.data) {
+        // Transform the data to match the component's expected format
+        childProfiles = result.data.map((profile: ChildProfile) => ({
+          id: profile.id,
+          name: profile.first_name,
+          ageLabel: formatAgeLabel(profile.age_group),
+          avatarUrl: profile.avatar_url || "https://placehold.co/48x48",
+          storiesCreatedText: formatStoriesCreatedText(profile.first_name, profile.age_group),
+          lastStory: getRandomStoryTheme(),
+          relationship: profile.relationship
+        }));
+      } else {
+        error = result.error || "Failed to fetch child profiles";
+        childProfiles = [];
+      }
+    } catch (err) {
+      console.error("Error fetching child profiles:", err);
+      error = "An unexpected error occurred while fetching child profiles";
+      childProfiles = [];
+    } finally {
+      loading = false;
+    }
+  };
+
+  // Fetch profiles when component mounts and user is available
+  onMount(() => {
+    const unsubscribe = user.subscribe(($user) => {
+      if ($user?.id) {
+        fetchChildProfiles($user.id);
+      } else {
+        // Reset state if no user
+        childProfiles = [];
+        loading = false;
+        error = "";
+      }
+    });
+
+    return unsubscribe;
+  });
+
+  // Handle Add Children button click
+  const handleAddChildren = () => {
+    goto('/create-child-profile');
+  };
+
+  // Handle New Story button click from child profile component
+  const handleNewStory = (event: CustomEvent) => {
+    goto('/create-character/1');
+  };
 
   const stories: Array<{
     title: string;
@@ -255,7 +321,7 @@
                 >
               </div>
             </div>
-            <div class="frame-1410103868">
+            <div class="frame-1410103868" on:click={handleAddChildren} on:keydown={(e) => e.key === 'Enter' && handleAddChildren()} role="button" tabindex="0">
               <img src={usercircleplus} alt="plus" class="plus" />
               <div class="sub-menu">
                 <div class="add-children">
@@ -265,15 +331,36 @@
             </div>
           </div>
           <div class="child-profiles-grid">
-            {#each childProfiles as c}
-              <ChildProfileComponent
-                name={c.name}
-                ageLabel={c.ageLabel}
-                avatarUrl={c.avatarUrl}
-                storiesCreatedText={c.storiesCreatedText}
-                lastStory={c.lastStory}
-              />
-            {/each}
+            {#if loading}
+              <div class="loading-state">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Loading child profiles...</p>
+              </div>
+            {:else if error}
+              <div class="error-state">
+                <p class="error-text">{error}</p>
+                <button class="retry-button" on:click={() => $user?.id && fetchChildProfiles($user.id)}>
+                  Try Again
+                </button>
+              </div>
+            {:else if childProfiles.length === 0}
+              <div class="empty-state">
+                <p class="empty-text">No child profiles found.</p>
+                <p class="empty-subtext">Add your first child profile to get started!</p>
+              </div>
+            {:else}
+              {#each childProfiles as c}
+                <ChildProfileComponent
+                  name={c.name}
+                  ageLabel={c.ageLabel}
+                  avatarUrl={c.avatarUrl}
+                  storiesCreatedText={c.storiesCreatedText}
+                  lastStory={c.lastStory}
+                  on:newStory={handleNewStory}
+                  on:editChild={() => goto(`/create-child-profile/edit?id=${c.id || ''}&name=${encodeURIComponent(c.name)}`)}
+                />
+              {/each}
+            {/if}
           </div>
         </div>
       </div>
@@ -734,6 +821,12 @@
     align-items: center;
     gap: 10px;
     display: flex;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .frame-1410103868:hover {
+    background: #3b7ce6;
   }
 
   .frame-1410103898 {
@@ -960,7 +1053,7 @@
 
   .child-profiles-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
     gap: 16px;
     width: 100%;
   }
@@ -1344,5 +1437,81 @@
     }
   }
 
+  /* Loading, Error, and Empty States */
+  .loading-state,
+  .error-state,
+  .empty-state {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #438bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .loading-text {
+    color: #666d80;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .error-text {
+    color: #dc2626;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 500;
+    margin: 0 0 16px 0;
+  }
+
+  .retry-button {
+    padding: 8px 16px;
+    background: #438bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: Quicksand;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .retry-button:hover {
+    background: #3b7ce6;
+  }
+
+  .empty-text {
+    color: #666d80;
+    font-size: 18px;
+    font-family: Quicksand;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+  }
+
+  .empty-subtext {
+    color: #90a1b9;
+    font-size: 14px;
+    font-family: Quicksand;
+    font-weight: 400;
+    margin: 0;
+  }
 
 </style>

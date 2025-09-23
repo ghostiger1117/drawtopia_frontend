@@ -1,15 +1,10 @@
 <script lang="ts">
   import StarEmoticon from "../../../components/StarEmoticon.svelte";
   import ProgressBar from "../../../components/ProgressBar.svelte";
-  import uploadSimple from "../../../assets/upload-icon.svg";
-  import darkColors from "../../../assets/day.svg";
-  import pen from "../../../assets/pen.svg";
-  import picture from "../../../assets/picture.svg";
   import cameraBlue from "../../../assets/Camera-blue.svg";
   import arrowLeft from "../../../assets/ArrowLeft.svg";
   import shieldStar from "../../../assets/ShieldStar.svg";
   import sealCheck from "../../../assets/SealCheck.svg";
-  import person from "../../../assets/human.svg";
   import animal from "../../../assets/animal.svg";
   import magical from "../../../assets/monster.svg";
   import PrimarySelect from "../../../components/PrimarySelect.svelte";
@@ -727,15 +722,6 @@
     align-self: stretch;
   }
 
-  .enteryourcharactername_span {
-    color: #727272;
-    font-size: 16px;
-    font-family: Nunito;
-    font-weight: 400;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
   .f200characters_span {
     color: #666d80;
     font-size: 16px;
@@ -781,56 +767,6 @@
   }
 
   .ellipse-13 {
-    width: 24px;
-    height: 24px;
-    border-radius: 9999px;
-    border: 1px #ededed solid;
-  }
-
-  .animal_span {
-    color: #141414;
-    font-size: 16px;
-    font-family: Nunito;
-    font-weight: 500;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .petorwildanimal_span {
-    color: #666d80;
-    font-size: 16px;
-    font-family: Nunito;
-    font-weight: 400;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .ellipse-13_01 {
-    width: 24px;
-    height: 24px;
-    border-radius: 9999px;
-    border: 1px #ededed solid;
-  }
-
-  .magicalfeatures_span {
-    color: #141414;
-    font-size: 16px;
-    font-family: Nunito;
-    font-weight: 500;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .fairydragonetc_span {
-    color: #666d80;
-    font-size: 16px;
-    font-family: Nunito;
-    font-weight: 400;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .ellipse-13_02 {
     width: 24px;
     height: 24px;
     border-radius: 9999px;
@@ -903,43 +839,7 @@
     display: inline-flex;
   }
 
-  .input-placeholder {
-    align-self: stretch;
-    height: 50px;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    background: white;
-    overflow: hidden;
-    border-radius: 12px;
-    outline: 1px #ededed solid;
-    outline-offset: -1px;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 10px;
-    display: inline-flex;
-  }
-
   .frame-1410103939 {
-    flex: 1 1 0;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 2px;
-    display: inline-flex;
-  }
-
-  .frame-1410103939_01 {
-    flex: 1 1 0;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 2px;
-    display: inline-flex;
-  }
-
-  .frame-1410103939_02 {
     flex: 1 1 0;
     flex-direction: column;
     justify-content: center;
@@ -1023,22 +923,6 @@
     display: flex;
   }
 
-  .frame-1410103940_01 {
-    flex: 1 1 0;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 12px;
-    display: flex;
-  }
-
-  .frame-1410103940_02 {
-    flex: 1 1 0;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 12px;
-    display: flex;
-  }
-
   .form {
     align-self: stretch;
     padding: 12px;
@@ -1085,36 +969,6 @@
   }
 
   .selected {
-    align-self: stretch;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    padding-left: 8px;
-    padding-right: 12px;
-    border-radius: 12px;
-    outline: 1px #ededed solid;
-    outline-offset: -1px;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 12px;
-    display: inline-flex;
-  }
-
-  .selected_01 {
-    align-self: stretch;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    padding-left: 8px;
-    padding-right: 12px;
-    border-radius: 12px;
-    outline: 1px #ededed solid;
-    outline-offset: -1px;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 12px;
-    display: inline-flex;
-  }
-
-  .selected_02 {
     align-self: stretch;
     padding-top: 8px;
     padding-bottom: 8px;

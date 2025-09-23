@@ -1,5 +1,4 @@
 <script>
-  import StarEmoticon from "../../../../components/StarEmoticon.svelte";
   import ProgressBar from "../../../../components/ProgressBar.svelte";
   import arrowLeft from "../../../../assets/ArrowLeft.svg";
   import shieldStar from "../../../../assets/ShieldStar.svg";

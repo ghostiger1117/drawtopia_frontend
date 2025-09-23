@@ -1,22 +1,12 @@
 <script lang="ts">
   import StarEmoticon from "../../../components/StarEmoticon.svelte";
   import ProgressBar from "../../../components/ProgressBar.svelte";
-  import uploadSimple from "../../../assets/upload-icon.svg";
-  import darkColors from "../../../assets/day.svg";
-  import pen from "../../../assets/pen.svg";
-  import picture from "../../../assets/picture.svg";
-  import cameraBlue from "../../../assets/Camera-blue.svg";
   import arrowLeft from "../../../assets/ArrowLeft.svg";
   import shieldStar from "../../../assets/ShieldStar.svg";
-  import sealCheck from "../../../assets/SealCheck.svg";
-  import person from "../../../assets/human.svg";
-  import animal from "../../../assets/animal.svg";
-  import magical from "../../../assets/monster.svg";
-  import PrimarySelect from "../../../components/PrimarySelect.svelte";
-  import purple_check from "../../../assets/purple-check.svg";
   import { goto } from "$app/navigation";
   import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
   import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";
+  import AdventureCard from "../../../components/AdventureCard.svelte";
   import { browser } from "$app/environment";
   import treasure from "../../../assets/treasurehunt.png";
   import helping from "../../../assets/helpfriend.png";
@@ -82,118 +72,26 @@
       </div>
     </div>
     <div class="frame-1410103852">
-      <div 
-        class={selectedAdventure === "treasure" ? "card selected_card" : "card"}
-        style="position: relative;"
-        on:click={() => selectAdventure("treasure")}
-        role="button"
-        tabindex="0"
-        on:keydown={(e) => e.key === 'Enter' && selectAdventure("treasure")}
-      >
-        <img
-          class="image"
-          src={treasure}
-          alt="image_card_1"
-        />
-        <div class="frame-10">
-          <div class="treasure-hunt">
-            <span class="treasurehunt_span">Treasure Hunt</span>
-          </div>
-          <div class="frame-1410104045">
-            <div class="your-story-preview">
-              <span class="yourstorypreview_span">Your Story Preview</span>
-            </div>
-            <div class="rectangle-35"></div>
-            <div
-              class="character-name-will-search-for-a-legendary-treasure-hidden-in-the-selected-world"
-            >
-              <span
-                class="characternamewillsearchforalegendarytreasurehiddenintheselectedworld_span"
-                >“[Character Name] will search for a legendary treasure hidden
-                in the [Selected World]”</span
-              >
-            </div>
-          </div>
-          <div class="frame-1410104048">
-            <div class="story-focus">
-              <span class="storyfocus_span">Story Focus</span>
-            </div>
-            <div class="frame-1410104047">
-              <div class="tags">
-                <div>
-                  <span class="problem-solving_span"> Problem-solving</span>
-                </div>
-              </div>
-              <div class="tags_01">
-                <div><span class="discovery_span">discovery</span></div>
-              </div>
-              <div class="tags_02">
-                <div><span class="perseverance_span">perseverance</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        {#if selectedAdventure === "treasure"}
-          <img src={purple_check} alt="purple_check" class="purple_check" />
-        {/if}
-      </div>
-      <div 
-        class={selectedAdventure === "helping" ? "card_01 selected_card" : "card_01"}
-        style="position: relative;"
-        on:click={() => selectAdventure("helping")}
-        role="button"
-        tabindex="0"
-        on:keydown={(e) => e.key === 'Enter' && selectAdventure("helping")}
-      >
-          <img
-            class="image-6"
-            src={helping}
-            alt="image_card_2"
-          />
-        <div class="frame-10_01">
-          <div class="helping-a-friend">
-            <span class="helpingafriend_span">Helping a Friend</span>
-          </div>
-          <div class="frame-1410104045_01">
-            <div class="your-story-preview_01">
-              <span class="yourstorypreview_01_span">Your Story Preview</span>
-            </div>
-            <div class="rectangle-35_01"></div>
-            <div
-              class="character-name-will-help-a-friend-in-need-using-their-special-ability"
-            >
-              <span
-                class="characternamewillhelpafriendinneedusingtheirspecialability_span"
-                >"[Character Name] will help a friend in need using their
-                special [Ability]"</span
-              >
-            </div>
-          </div>
-          <div class="frame-1410104048_01">
-            <div class="story-focus_01">
-              <span class="storyfocus_01_span">Story Focus</span>
-            </div>
-            <div class="frame-1410104047_01">
-              <div class="tags_03">
-                <div><span class="kindness_span">Kindness</span></div>
-              </div>
-              <div class="tags_04">
-                <div><span class="cooperation_span">cooperation</span></div>
-              </div>
-              <div class="tags_05">
-                <div>
-                  <span class="usingtalentsforgood_span"
-                    >using talents for good</span
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        {#if selectedAdventure === "helping"}
-          <img src={purple_check} alt="purple_check" class="purple_check" />
-        {/if}
-      </div>
+      <AdventureCard
+        adventureId="treasure"
+        title="Treasure Hunt"
+        storyPreview='"[Character Name] will search for a legendary treasure hidden in the [Selected World]"'
+        focusTags={["Problem-solving", "discovery", "perseverance"]}
+        imageSrc={treasure}
+        imageAlt="image_card_1"
+        isSelected={selectedAdventure === "treasure"}
+        onSelect={selectAdventure}
+      />
+      <AdventureCard
+        adventureId="helping"
+        title="Helping a Friend"
+        storyPreview='"[Character Name] will help a friend in need using their special [Ability]"'
+        focusTags={["Kindness", "cooperation", "using talents for good"]}
+        imageSrc={helping}
+        imageAlt="image_card_2"
+        isSelected={selectedAdventure === "helping"}
+        onSelect={selectAdventure}
+      />
     </div>
 
     <div
@@ -560,367 +458,6 @@
     gap: 16px;
     display: inline-flex;
   }
-  .image {
-    width: 100%;
-    aspect-ratio: 1 / 0.7;
-    object-fit: cover;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-  }
-
-  .treasurehunt_span {
-    color: #141414;
-    font-size: 24px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 33.6px;
-    word-wrap: break-word;
-  }
-
-  .treasure-hunt {
-    align-self: stretch;
-  }
-
-  .yourstorypreview_span {
-    color: #06a1b4;
-    font-size: 16px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .your-story-preview {
-    align-self: stretch;
-  }
-
-  .rectangle-35 {
-    align-self: stretch;
-    height: 1px;
-    background: #ceffff;
-  }
-
-  .characternamewillsearchforalegendarytreasurehiddenintheselectedworld_span {
-    color: #06a1b4;
-    font-size: 16px;
-    font-family: Quicksand;
-    font-weight: 700;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .character-name-will-search-for-a-legendary-treasure-hidden-in-the-selected-world {
-    align-self: stretch;
-  }
-
-  .storyfocus_span {
-    color: #666d80;
-    font-size: 16px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .story-focus {
-    align-self: stretch;
-  }
-
-  .problem-solving_span {
-    color: black;
-    font-size: 16px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .discovery_span {
-    color: black;
-    font-size: 16px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .perseverance_span {
-    color: black;
-    font-size: 16px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .image-6 {
-    width: 100%;
-    aspect-ratio: 1 / 0.7;
-    object-fit: cover;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-  }
-
-  .helpingafriend_span {
-    color: #141414;
-    font-size: 24px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 33.6px;
-    word-wrap: break-word;
-  }
-
-  .helping-a-friend {
-    align-self: stretch;
-  }
-
-  .yourstorypreview_01_span {
-    color: #06a1b4;
-    font-size: 16px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .your-story-preview_01 {
-    align-self: stretch;
-  }
-
-  .rectangle-35_01 {
-    align-self: stretch;
-    height: 1px;
-    background: #ceffff;
-  }
-
-  .characternamewillhelpafriendinneedusingtheirspecialability_span {
-    color: #06a1b4;
-    font-size: 16px;
-    font-family: Quicksand;
-    font-weight: 700;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .character-name-will-help-a-friend-in-need-using-their-special-ability {
-    align-self: stretch;
-  }
-
-  .storyfocus_01_span {
-    color: #666d80;
-    font-size: 16px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .story-focus_01 {
-    align-self: stretch;
-  }
-
-  .kindness_span {
-    color: black;
-    font-size: 16px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .cooperation_span {
-    color: black;
-    font-size: 16px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .usingtalentsforgood_span {
-    color: black;
-    font-size: 16px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .tags {
-    padding: 10px;
-    border-radius: 12px;
-    outline: 1px #ededed solid;
-    outline-offset: -1px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    display: flex;
-  }
-
-  .tags_01 {
-    padding: 10px;
-    border-radius: 12px;
-    outline: 1px #ededed solid;
-    outline-offset: -1px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    display: flex;
-  }
-
-  .tags_02 {
-    padding: 10px;
-    border-radius: 12px;
-    outline: 1px #ededed solid;
-    outline-offset: -1px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    display: flex;
-  }
-
-  .tags_03 {
-    padding: 10px;
-    border-radius: 12px;
-    outline: 1px #ededed solid;
-    outline-offset: -1px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    display: flex;
-  }
-
-  .tags_04 {
-    padding: 10px;
-    border-radius: 12px;
-    outline: 1px #ededed solid;
-    outline-offset: -1px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    display: flex;
-  }
-
-  .tags_05 {
-    padding: 10px;
-    border-radius: 12px;
-    outline: 1px #ededed solid;
-    outline-offset: -1px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    display: flex;
-  }
-
-  .frame-1410104045 {
-    align-self: stretch;
-    padding: 12px;
-    background: #ecffff;
-    border-radius: 8px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    display: flex;
-  }
-
-  .frame-1410104045_01 {
-    align-self: stretch;
-    padding: 12px;
-    background: #ecffff;
-    border-radius: 8px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    display: flex;
-  }
-
-  .frame-1410104047 {
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 12px;
-    display: inline-flex;
-  }
-
-  .frame-1410104047_01 {
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 12px;
-    display: inline-flex;
-  }
-
-  .frame-1410104048 {
-    align-self: stretch;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 12px;
-    display: flex;
-  }
-
-  .frame-1410104048_01 {
-    align-self: stretch;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 12px;
-    display: flex;
-  }
-
-  .frame-10 {
-    align-self: stretch;
-    padding-top: 8px;
-    padding-bottom: 12px;
-    padding-left: 12px;
-    padding-right: 12px;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 12px;
-    display: flex;
-  }
-
-  .frame-10_01 {
-    align-self: stretch;
-    padding-top: 8px;
-    padding-bottom: 12px;
-    padding-left: 12px;
-    padding-right: 12px;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 12px;
-    display: flex;
-  }
-
-  .card {
-    flex: 1 1 0;
-    padding-bottom: 10px;
-    background: white;
-    border-radius: 20px;
-    outline: 1px #ededed solid;
-    outline-offset: -1px;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 12px;
-    display: inline-flex;
-  }
-
-  .card_01 {
-    flex: 1 1 0;
-    padding-bottom: 10px;
-    background: white;
-    border-radius: 20px;
-    outline: 1px #ededed solid;
-    outline-offset: -1px;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 12px;
-    display: inline-flex;
-  }
 
   .mobile-full-width {
     width: 100% !important;
@@ -931,12 +468,6 @@
       flex-direction: column;
       gap: 12px;
       width: 100%;
-    }
-
-    .card,
-    .card_01 {
-      width: 100%;
-      flex: none;
     }
 
     .character-creation-default {
@@ -966,57 +497,17 @@
 
     .star-container {
       align-self: center;
+      width: 25%;
     }
 
     .message-container {
       margin-left: 0;
       justify-content: center;
-    }
-
-    .frame-1410104047,
-    .frame-1410104047_01 {
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .tags,
-    .tags_01,
-    .tags_02,
-    .tags_03,
-    .tags_04,
-    .tags_05 {
-      padding: 8px;
-      font-size: 14px;
-    }
-    .star-container {
-      width: 25%;
-    }
-    .message-container {
       max-width: 75%;
     }
+
     .message-content {
       width: 90%;
     }
-  }
-
-  .selected_card {
-    outline: 2px #6912c5 solid;
-    box-shadow: 0px 1px 8px #871fff;
-  }
-  
-  .card, .card_01 {
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  
-  .card:hover, .card_01:hover {
-    outline: 1px #438bff solid;
-    box-shadow: 0px 2px 8px rgba(67, 139, 255, 0.1);
-  }
-
-  .purple_check {
-    position: absolute;
-    top: 10px;
-    right: 10px;
   }
 </style>

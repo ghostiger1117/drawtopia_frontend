@@ -9,7 +9,7 @@
   import PrimaryBtn from "../../components/PrimaryBtn.svelte";
   import TextBtn from "../../components/TextBtn.svelte";
   import PrimaryInput from "../../components/PrimaryInput.svelte";
-  import { signInWithEmail, signInWithPhone, signInWithGoogle } from "../../lib/auth";
+  import { signInWithEmail, signInWithPhone, signInWithGoogle, checkUserExists, checkUserExistsByPhone } from "../../lib/auth";
   import { goto } from "$app/navigation";
   import { isAuthenticated } from "$lib/stores/auth";
   import { addNotification } from "$lib/stores/notification";
@@ -104,6 +104,9 @@
     errors = {}; // Clear previous errors
 
     try {
+      // For Google OAuth, we need to let the OAuth flow handle user creation/verification
+      // since we don't have the email until after OAuth completion.
+      // The auth store will handle checking if user needs to complete signup.
       const result = await signInWithGoogle();
       
       if (result.success) {
@@ -130,6 +133,49 @@
     errors = {}; // Clear previous errors
 
     try {
+      // First check if user exists before attempting login
+      if (loginMethod === "email") {
+        const userCheck = await checkUserExists(email);
+        
+        if (userCheck.error) {
+          errors.general = "Unable to verify user. Please try again.";
+          isLoading = false;
+          return;
+        }
+        
+        if (!userCheck.exists) {
+          // User doesn't exist, redirect to signup with error notification
+          addNotification({
+            type: 'error',
+            message: 'No account found with this email. Please sign up first.',
+            duration: 7000
+          });
+          goto("/signup");
+          return;
+        }
+      } else {
+        // Check phone number existence
+        const phoneToUse = value || phoneNumber;
+        const userCheck = await checkUserExistsByPhone(phoneToUse);
+        
+        if (userCheck.error) {
+          errors.general = "Unable to verify user. Please try again.";
+          isLoading = false;
+          return;
+        }
+        
+        if (!userCheck.exists) {
+          // User doesn't exist, redirect to signup with error notification
+          addNotification({
+            type: 'error',
+            message: 'No account found with this phone number. Please sign up first.',
+            duration: 7000
+          });
+          goto("/signup");
+          return;
+        }
+      }
+
       let result;
 
       if (loginMethod === "email") {
@@ -146,12 +192,12 @@
         console.log("Login successful:", result.user);
         console.log("Session:", result.session);
 
-        // Redirect to dashboard or home page
+        // Redirect to dashboard
         addNotification({
           type: 'success',
-          message: 'Login successful! Redirecting...'
+          message: 'Login successful! Redirecting to dashboard...'
         });
-        goto("/"); // You can change this to your dashboard route
+        goto("/dashboard");
       } else {
         // Handle login error
         errors.general =

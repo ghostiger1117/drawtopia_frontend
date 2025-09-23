@@ -16,6 +16,9 @@
   function onNewStory() {
     dispatch("newStory", { name });
   }
+  function onEditChild() {
+    dispatch("editChild", { name });
+  }
 </script>
 
 <div class="card">
@@ -29,7 +32,7 @@
         </div>
       </div>
     </div>
-    <div class="tag">
+    <div class="tag" on:click={onEditChild} on:keydown={(e) => e.key === 'Enter' && onEditChild()} role="button" tabindex="0">
       <div><span class="edit_span">Edit</span></div>
     </div>
   </div>
@@ -193,6 +196,12 @@
     align-items: flex-end;
     gap: 4px;
     display: flex;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .tag:hover {
+    background: #e2e8f0;
   }
 
   .frame-1410104124 {

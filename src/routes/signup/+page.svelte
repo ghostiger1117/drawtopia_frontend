@@ -56,7 +56,7 @@
   let isLoading = false;
   let errors: { [key: string]: string } = {};
   let signupMethod: "phone" | "email" = "phone";
-  let accountType: "adult" | "child";
+  let accountType = "adult";
   let acceptedTerms = false;
   // let selectedCountry = { name: 'United States', code: '+1', flag: '🇺🇸' };
   let showCountryDropdown = false;
@@ -84,10 +84,10 @@
     errors = {}; // Clear errors when switching
   };
 
-  const selectAccountType = (method: string) => {
-    accountType = method as "adult" | "child";
-    errors = {}; // Clear errors when switching
-  };
+  // const selectAccountType = (method: string) => {
+  //   accountType = method as "adult" | "child";
+  //   errors = {}; // Clear errors when switching
+  // };
 
   const selectCountry = (country: (typeof countries)[0]) => {
     // selectedCountry = country;
@@ -141,7 +141,7 @@
 
     try {
       // Ensure we have all required data before proceeding
-      if (!firstName.trim() || !lastName.trim() || !accountType) {
+      if (!firstName.trim() || !lastName.trim()) {
         errors.general = "Please fill in all required fields before signing up with Google.";
         isLoading = false;
         return;
@@ -461,7 +461,7 @@
               </div>
             </div>
 
-            <div class="select-wrapper">
+            <!-- <div class="select-wrapper">
               <label for="accountType">Account Type</label>
               <PrimarySelect
                 {options}
@@ -474,7 +474,7 @@
               {#if errors.accountType}
                 <span class="error-text">{errors.accountType}</span>
               {/if}
-            </div>
+            </div> -->
             {#if signupMethod === "phone"}
               <div class="text-field">
                 <div><span class="phonenumber_01_span">Phone Number</span></div>
@@ -895,19 +895,6 @@
     margin-bottom: 16px;
     text-align: center;
     font-size: 14px;
-  }
-
-  .select-wrapper {
-    display: flex;
-    flex-direction: column;
-    /* font-family: Nunito; */
-    width: 100%;
-  }
-
-  .select-wrapper label {
-    margin-bottom: 6px;
-    font-size: 16px;
-    color: #333;
   }
 
   .policy_terms_1 {

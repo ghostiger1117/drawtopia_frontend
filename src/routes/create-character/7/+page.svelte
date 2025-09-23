@@ -1,19 +1,8 @@
 <script lang="ts">
   import StarEmoticon from "../../../components/StarEmoticon.svelte";
   import ProgressBar from "../../../components/ProgressBar.svelte";
-  import uploadSimple from "../../../assets/upload-icon.svg";
-  import darkColors from "../../../assets/day.svg";
-  import pen from "../../../assets/pen.svg";
-  import picture from "../../../assets/picture.svg";
-  import cameraBlue from "../../../assets/Camera-blue.svg";
   import arrowLeft from "../../../assets/ArrowLeft.svg";
   import shieldStar from "../../../assets/ShieldStar.svg";
-  import sealCheck from "../../../assets/SealCheck.svg";
-  import person from "../../../assets/human.svg";
-  import animal from "../../../assets/animal.svg";
-  import magical from "../../../assets/monster.svg";
-  import PrimarySelect from "../../../components/PrimarySelect.svelte";
-  import purple_check from "../../../assets/purple-check.svg";
   import { goto } from "$app/navigation";
   import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
   import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";

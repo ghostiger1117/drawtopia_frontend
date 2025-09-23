@@ -415,6 +415,118 @@ export async function registerGoogleOAuthUser(user: User): Promise<{ success: bo
 }
 
 /**
+ * Check if user exists by email or Gmail
+ */
+export async function checkUserExists(email: string): Promise<{ exists: boolean; user?: any; error?: string }> {
+  try {
+    const normalizedEmail = email.toLowerCase().trim();
+    
+    // Check in users table by email
+    const { data: emailUser, error: emailError } = await supabaseAdmin
+      .from('users')
+      .select('*')
+      .eq('email', normalizedEmail)
+      .single();
+
+    // If found by email, return user
+    if (emailUser && !emailError) {
+      return {
+        exists: true,
+        user: emailUser
+      };
+    }
+
+    // Also check Supabase auth users to handle cases where user might exist in auth but not in our users table
+    const { data: authUsers, error: authError } = await supabaseAdmin.auth.admin.listUsers();
+    
+    if (authError) {
+      console.error('Error checking auth users:', authError);
+      return {
+        exists: false,
+        error: authError.message
+      };
+    }
+
+    // Check if user exists in Supabase auth
+    const authUser = authUsers.users.find(user => user.email?.toLowerCase() === normalizedEmail);
+    
+    if (authUser) {
+      return {
+        exists: true,
+        user: authUser
+      };
+    }
+
+    // User doesn't exist
+    return {
+      exists: false
+    };
+
+  } catch (error) {
+    console.error('Error checking user existence:', error);
+    return {
+      exists: false,
+      error: error instanceof Error ? error.message : 'An unexpected error occurred'
+    };
+  }
+}
+
+/**
+ * Check if user exists by phone number
+ */
+export async function checkUserExistsByPhone(phone: string): Promise<{ exists: boolean; user?: any; error?: string }> {
+  try {
+    // Check in users table by phone
+    const { data: phoneUser, error: phoneError } = await supabaseAdmin
+      .from('users')
+      .select('*')
+      .eq('phone', phone)
+      .single();
+
+    // If found by phone, return user
+    if (phoneUser && !phoneError) {
+      return {
+        exists: true,
+        user: phoneUser
+      };
+    }
+
+    // Also check Supabase auth users for phone
+    const { data: authUsers, error: authError } = await supabaseAdmin.auth.admin.listUsers();
+    
+    if (authError) {
+      console.error('Error checking auth users:', authError);
+      return {
+        exists: false,
+        error: authError.message
+      };
+    }
+
+    // Check if user exists in Supabase auth by phone
+    const authUser = authUsers.users.find(user => user.phone === phone);
+    
+    if (authUser) {
+      return {
+        exists: true,
+        user: authUser
+      };
+    }
+
+    // User doesn't exist
+    return {
+      exists: false
+    };
+
+  } catch (error) {
+    console.error('Error checking user existence by phone:', error);
+    return {
+      exists: false,
+      error: error instanceof Error ? error.message : 'An unexpected error occurred'
+    };
+  }
+}
+
+/**
  * Get user profile from database
  */
 export async function getUserProfile(userId: string): Promise<{ success: boolean; profile?: any; error?: string }> {

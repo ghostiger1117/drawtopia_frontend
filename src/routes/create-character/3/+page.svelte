@@ -1,22 +1,12 @@
 <script lang="ts">
   import StarEmoticon from "../../../components/StarEmoticon.svelte";
   import ProgressBar from "../../../components/ProgressBar.svelte";
-  import uploadSimple from "../../../assets/upload-icon.svg";
-  import darkColors from "../../../assets/day.svg";
-  import pen from "../../../assets/pen.svg";
-  import picture from "../../../assets/picture.svg";
-  import cameraBlue from "../../../assets/Camera-blue.svg";
   import arrowLeft from "../../../assets/ArrowLeft.svg";
   import shieldStar from "../../../assets/ShieldStar.svg";
-  import sealCheck from "../../../assets/SealCheck.svg";
-  import person from "../../../assets/human.svg";
-  import animal from "../../../assets/animal.svg";
-  import magical from "../../../assets/monster.svg";
-  import PrimarySelect from "../../../components/PrimarySelect.svelte";
-  import purple_check from "../../../assets/purple-check.svg";
   import { goto } from "$app/navigation";
   import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
   import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";
+  import StyleCard from "../../../components/StyleCard.svelte";
   import { browser } from "$app/environment";
   import D3 from "../../../assets/3d.png";
   import Cartoon from "../../../assets/cartoon.png";
@@ -83,117 +73,36 @@
       </div>
     </div>
     <div class="frame-1410103852">
-      <div 
-        class={selectedStyle === "3d" ? "card_02_selected" : "card_02"}
-        style="position: relative;"
-        on:click={() => selectStyle("3d")}
-        role="button"
-        tabindex="0"
-        on:keydown={(e) => e.key === 'Enter' && selectStyle("3d")}
-      >
-        <img
-          class="image_02"
-          src={D3}
-          alt="3D Realistic"
-        />
-        <div class="frame-10_02">
-          <div class="heading_02">
-            <div class="anime">
-              <span class="anime_span">3D Realistic</span>
-            </div>
-            <div class="japanesse-anime-style">
-              <span class="japanesseanimestyle_span"
-                >Like your favorite animated movies</span
-              >
-            </div>
-          </div>
-          <div class="frame-1410104045_02">
-            <div class="best-for_02">
-              <span class="bestfor_02_span">Best For</span>
-            </div>
-            <div class="rectangle-35_02"></div>
-            <div class="kids-who-love-anime-and-manga">
-              <span class="kidswholoveanimeandmanga_span"
-                >Kids who love Disney and Pixar movies</span
-              >
-            </div>
-          </div>
-        </div>
-        {#if selectedStyle === "3d"}
-          <img src={purple_check} alt="purple_check" class="purple_check" />
-        {/if}
-      </div>
-      <div 
-        class={selectedStyle === "cartoon" ? "card_02_selected" : "card_02"}
-        style="position: relative;"
-        on:click={() => selectStyle("cartoon")}
-        role="button"
-        tabindex="0"
-        on:keydown={(e) => e.key === 'Enter' && selectStyle("cartoon")}
-      >
-        <img
-          class="image_02"
-          src={Cartoon}
-          alt="Cartoon"
-        />
-        <div class="frame-10_02">
-          <div class="heading_02">
-            <div class="anime"><span class="anime_span">Cartoon</span></div>
-            <div class="japanesse-anime-style">
-              <span class="japanesseanimestyle_span"
-                >Classic storybook style</span
-              >
-            </div>
-          </div>
-          <div class="frame-1410104045_02">
-            <div class="best-for_02">
-              <span class="bestfor_02_span">Best For</span>
-            </div>
-            <div class="rectangle-35_02"></div>
-            <div class="kids-who-love-anime-and-manga">
-              <span class="kidswholoveanimeandmanga_span"
-                >Timeless storybook adventures</span
-              >
-            </div>
-          </div>
-        </div>
-        {#if selectedStyle === "cartoon"}
-          <img src={purple_check} alt="purple_check" class="purple_check" />
-        {/if}
-      </div>
-      <div 
-        class={selectedStyle === "anime" ? "card_02_selected" : "card_02"}
-        style="position: relative;"
-        on:click={() => selectStyle("anime")}
-        role="button"
-        tabindex="0"
-        on:keydown={(e) => e.key === 'Enter' && selectStyle("anime")}
-      >
-        <img class="image_02" src={Anime} alt="Anime" />
-        <div class="frame-10_02">
-          <div class="heading_02">
-            <div class="anime"><span class="anime_span">Anime</span></div>
-            <div class="japanesse-anime-style">
-              <span class="japanesseanimestyle_span">Japanesse Anime Style</span
-              >
-            </div>
-          </div>
-          <div class="frame-1410104045_02">
-            <div class="best-for_02">
-              <span class="bestfor_02_span">Best For</span>
-            </div>
-            <div class="rectangle-35_02"></div>
-            <div class="kids-who-love-anime-and-manga">
-              <span class="kidswholoveanimeandmanga_span"
-                >Kids who love anime and manga</span
-              >
-            </div>
-          </div>
-        </div>
-        {#if selectedStyle === "anime"}
-          <img src={purple_check} alt="purple_check" class="purple_check" />
-        {/if}
-      </div>
+      <StyleCard
+        styleId="3d"
+        title="3D Realistic"
+        subtitle="Like your favorite animated movies"
+        bestForText="Kids who love Disney and Pixar movies"
+        imageSrc={D3}
+        imageAlt="3D Realistic"
+        isSelected={selectedStyle === "3d"}
+        onSelect={selectStyle}
+      />
+      <StyleCard
+        styleId="cartoon"
+        title="Cartoon"
+        subtitle="Classic storybook style"
+        bestForText="Timeless storybook adventures"
+        imageSrc={Cartoon}
+        imageAlt="Cartoon"
+        isSelected={selectedStyle === "cartoon"}
+        onSelect={selectStyle}
+      />
+      <StyleCard
+        styleId="anime"
+        title="Anime"
+        subtitle="Japanesse Anime Style"
+        bestForText="Kids who love anime and manga"
+        imageSrc={Anime}
+        imageAlt="Anime"
+        isSelected={selectedStyle === "anime"}
+        onSelect={selectStyle}
+      />
     </div>
 
     <div
@@ -552,159 +461,6 @@
     display: inline-flex;
   }
 
-  .image_02 {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    border-top-left-radius: 18px;
-    border-top-right-radius: 18px;
-    border: 1px #d3d3d3 solid;
-  }
-
-  .anime_span {
-    color: #141414;
-    font-size: 24px;
-    font-family: Quicksand;
-    font-weight: 600;
-    line-height: 33.6px;
-    word-wrap: break-word;
-  }
-
-  .anime {
-    align-self: stretch;
-  }
-
-  .japanesseanimestyle_span {
-    color: #666d80;
-    font-size: 18px;
-    font-family: Nunito;
-    font-weight: 400;
-    line-height: 25.2px;
-    word-wrap: break-word;
-  }
-
-  .japanesse-anime-style {
-    align-self: stretch;
-  }
-
-  .bestfor_02_span {
-    color: #141414;
-    font-size: 16px;
-    font-family: Quicksand;
-    font-weight: 400;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .best-for_02 {
-    align-self: stretch;
-  }
-
-  .rectangle-35_02 {
-    align-self: stretch;
-    height: 1px;
-    background: #eceff3;
-  }
-
-  .kidswholoveanimeandmanga_span {
-    color: #141414;
-    font-size: 16px;
-    font-family: Quicksand;
-    font-weight: 700;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .kids-who-love-anime-and-manga {
-    align-self: stretch;
-  }
-
-  /* .heading {
-    align-self: stretch;
-    padding-top: 8px;
-    padding-left: 8px;
-    padding-right: 8px;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 8px;
-    display: flex;
-  } */
-
-  .heading_02 {
-    align-self: stretch;
-    padding-top: 8px;
-    padding-left: 8px;
-    padding-right: 8px;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 8px;
-    display: flex;
-  }
-
-  .frame-1410104045_02 {
-    align-self: stretch;
-    padding: 12px;
-    background: #f8fafb;
-    border-radius: 12px;
-    outline: 1px #ededed solid;
-    outline-offset: -1px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    display: flex;
-  }
-
-  .frame-10_02 {
-    align-self: stretch;
-    padding-top: 8px;
-    padding-bottom: 12px;
-    padding-left: 12px;
-    padding-right: 12px;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 12px;
-    display: flex;
-  }
-
-  .card_02 {
-    flex: 1 1 0;
-    padding-bottom: 10px;
-    background: white;
-    border-radius: 20px;
-    outline: 1px #ededed solid;
-    outline-offset: -1px;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 12px;
-    display: inline-flex;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  
-  .card_02:hover {
-    outline: 1px #438bff solid;
-    box-shadow: 0px 2px 8px rgba(67, 139, 255, 0.1);
-  }
-  .card_02_selected {
-    flex: 1 1 0;
-    padding-bottom: 10px;
-    background: white;
-    border-radius: 20px;
-    outline: 2px #6912c5 solid;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 12px;
-    display: inline-flex;
-    box-shadow: 0px 1px 8px #871fff;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
   .frame-1410103852 {
     width: 100%;
     height: 100%;
@@ -712,11 +468,6 @@
     align-items: flex-start;
     gap: 16px;
     display: inline-flex;
-  }
-  .purple_check {
-    position: absolute;
-    top: 10px;
-    right: 10px;
   }
 
   .mobile-full-width {
@@ -727,12 +478,6 @@
     .frame-1410103852 {
       flex-direction: column;
       gap: 12px;
-    }
-
-    .card_02,
-    .card_02_selected {
-      width: 100%;
-      /* max-width: 350px; */
     }
 
     .character-creation-default {
