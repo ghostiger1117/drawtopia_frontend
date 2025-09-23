@@ -7,16 +7,46 @@
   import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
   import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";
   import { browser } from "$app/environment";
+  import { onMount } from "svelte";
 
   let isMobile = false;
+  let characterName = "";
   
-  // Selection state variables
+  // Selection state variables - these will be updated with the character name
   let selectedTitle = "The Great Addventure [Your Name]";
   let selectedCoverDesign = "Classic Storybook";
+
+  // Title options with character name
+  let titleOptions: string[] = [];
 
   $: if (browser) {
     isMobile = window.innerWidth < 800;
   }
+
+  // Retrieve character data from sessionStorage on component mount
+  onMount(() => {
+    if (browser) {
+      const storedCharacterName = sessionStorage.getItem('characterName');
+      if (storedCharacterName) {
+        characterName = storedCharacterName;
+        // Update title options with character name
+        titleOptions = [
+          `The Great Addventure ${characterName}`,
+          `The Amazing of Journey ${characterName}`,
+          `${characterName} and the Space Adventure`
+        ];
+        // Update selected title with character name
+        selectedTitle = titleOptions[0];
+      } else {
+        // Fallback titles with placeholder
+        titleOptions = [
+          "The Great Addventure [Your Name]",
+          "The Amazing of Journey [Your Name]",
+          "[Your Name] and the Space Adventure"
+        ];
+      }
+    }
+  });
 
   // Title selection handler
   function selectTitle(title: string) {
@@ -97,10 +127,10 @@
             <div class="frame-1410103942">
               <div 
                 class="selected" 
-                class:selected={selectedTitle === "The Great Addventure [Your Name]"}
-                class:selected_01={selectedTitle !== "The Great Addventure [Your Name]"}
-                on:click={() => selectTitle("The Great Addventure [Your Name]")}
-                on:keydown={(e) => e.key === 'Enter' && selectTitle("The Great Addventure [Your Name]")}
+                class:selected={selectedTitle === (titleOptions[0] || "The Great Addventure [Your Name]")}
+                class:selected_01={selectedTitle !== (titleOptions[0] || "The Great Addventure [Your Name]")}
+                on:click={() => selectTitle(titleOptions[0] || "The Great Addventure [Your Name]")}
+                on:keydown={(e) => e.key === 'Enter' && selectTitle(titleOptions[0] || "The Great Addventure [Your Name]")}
                 tabindex="0"
                 role="button"
                 aria-label="Select The Great Adventure title"
@@ -109,13 +139,13 @@
                   <div class="frame-1410103939">
                     <div>
                       <span class="thegreataddventureyourname_span"
-                        >The Great Addventure [Your Name]
+                        >{titleOptions[0] || "The Great Addventure [Your Name]"}
                       </span>
                     </div>
                   </div>
                 </div>
                 <!-- <div class="ellipse-13"></div> -->
-                {#if selectedTitle === "The Great Addventure [Your Name]"}
+                {#if selectedTitle === (titleOptions[0] || "The Great Addventure [Your Name]")}
                   <div class="frame-1410104043">
                     <div class="ellipse-14"></div>
                     <div class="ellipse-13_01"></div>
@@ -126,10 +156,10 @@
               </div>
               <div 
                 class="selected_01" 
-                class:selected={selectedTitle === "The Amazing of Journey [Your Name]"}
-                class:selected_01={selectedTitle !== "The Amazing of Journey [Your Name]"}
-                on:click={() => selectTitle("The Amazing of Journey [Your Name]")}
-                on:keydown={(e) => e.key === 'Enter' && selectTitle("The Amazing of Journey [Your Name]")}
+                class:selected={selectedTitle === (titleOptions[1] || "The Amazing of Journey [Your Name]")}
+                class:selected_01={selectedTitle !== (titleOptions[1] || "The Amazing of Journey [Your Name]")}
+                on:click={() => selectTitle(titleOptions[1] || "The Amazing of Journey [Your Name]")}
+                on:keydown={(e) => e.key === 'Enter' && selectTitle(titleOptions[1] || "The Amazing of Journey [Your Name]")}
                 tabindex="0"
                 role="button"
                 aria-label="Select The Amazing Journey title"
@@ -138,12 +168,12 @@
                   <div class="frame-1410103939_01">
                     <div>
                       <span class="theamazingofjourneyyourname_span"
-                        >The Amazing of Journey [Your Name]
+                        >{titleOptions[1] || "The Amazing of Journey [Your Name]"}
                       </span>
                     </div>
                   </div>
                 </div>
-                {#if selectedTitle === "The Amazing of Journey [Your Name]"}
+                {#if selectedTitle === (titleOptions[1] || "The Amazing of Journey [Your Name]")}
                   <div class="frame-1410104043">
                     <div class="ellipse-14"></div>
                     <div class="ellipse-13_01"></div>
@@ -154,10 +184,10 @@
               </div>
               <div 
                 class="selected_02" 
-                class:selected={selectedTitle === "[Your Name] and the Space Adventure"}
-                class:selected_02={selectedTitle !== "[Your Name] and the Space Adventure"}
-                on:click={() => selectTitle("[Your Name] and the Space Adventure")}
-                on:keydown={(e) => e.key === 'Enter' && selectTitle("[Your Name] and the Space Adventure")}
+                class:selected={selectedTitle === (titleOptions[2] || "[Your Name] and the Space Adventure")}
+                class:selected_02={selectedTitle !== (titleOptions[2] || "[Your Name] and the Space Adventure")}
+                on:click={() => selectTitle(titleOptions[2] || "[Your Name] and the Space Adventure")}
+                on:keydown={(e) => e.key === 'Enter' && selectTitle(titleOptions[2] || "[Your Name] and the Space Adventure")}
                 tabindex="0"
                 role="button"
                 aria-label="Select Space Adventure title"
@@ -166,12 +196,12 @@
                   <div class="frame-1410103939_02">
                     <div>
                       <span class="yournameandthespaceadventure_span"
-                        >[Your Name] and the Space Adventure</span
+                        >{titleOptions[2] || "[Your Name] and the Space Adventure"}</span
                       >
                     </div>
                   </div>
                 </div>
-                {#if selectedTitle === "[Your Name] and the Space Adventure"}
+                {#if selectedTitle === (titleOptions[2] || "[Your Name] and the Space Adventure")}
                   <div class="frame-1410104043">
                     <div class="ellipse-14"></div>
                     <div class="ellipse-13_01"></div>

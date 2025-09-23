@@ -8,19 +8,58 @@
   import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";
   import AdventureCard from "../../../components/AdventureCard.svelte";
   import { browser } from "$app/environment";
+  import { onMount } from "svelte";
   import treasure from "../../../assets/treasurehunt.png";
   import helping from "../../../assets/helpfriend.png";
 
   let isMobile = false;
   let selectedAdventure = "treasure"; // Default selection: "treasure" or "helping"
+  let characterName = "";
+  let selectedWorld = "";
+  let specialAbility = "";
+
+  // World name mapping
+  const worldNames = {
+    forest: "Enchanted Forest",
+    outspace: "Outer Space", 
+    underwater: "Underwater Kingdom"
+  };
 
   $: if (browser) {
     isMobile = window.innerWidth < 800;
   }
 
+  // Retrieve character data from sessionStorage on component mount
+  onMount(() => {
+    if (browser) {
+      const storedCharacterName = sessionStorage.getItem('characterName');
+      const storedSelectedWorld = sessionStorage.getItem('selectedWorld');
+      const storedSpecialAbility = sessionStorage.getItem('specialAbility');
+      
+      if (storedCharacterName) {
+        characterName = storedCharacterName;
+      }
+      if (storedSelectedWorld) {
+        selectedWorld = storedSelectedWorld;
+      }
+      if (storedSpecialAbility) {
+        specialAbility = storedSpecialAbility;
+      }
+    }
+  });
+
   function selectAdventure(adventure: string) {
     selectedAdventure = adventure;
   }
+
+  // Handle continue to next step
+  const handleContinue = () => {
+    if (browser) {
+      // Save selected adventure to sessionStorage
+      sessionStorage.setItem('selectedAdventure', selectedAdventure);
+    }
+    goto("/create-character/7");
+  };
 </script>
 
 <div class="character-creation-default">
@@ -75,7 +114,7 @@
       <AdventureCard
         adventureId="treasure"
         title="Treasure Hunt"
-        storyPreview='"[Character Name] will search for a legendary treasure hidden in the [Selected World]"'
+        storyPreview={`"${characterName || '[Character Name]'} will search for a legendary treasure hidden in the ${worldNames[selectedWorld as keyof typeof worldNames] || '[Selected World]'}"`}
         focusTags={["Problem-solving", "discovery", "perseverance"]}
         imageSrc={treasure}
         imageAlt="image_card_1"
@@ -85,7 +124,7 @@
       <AdventureCard
         adventureId="helping"
         title="Helping a Friend"
-        storyPreview='"[Character Name] will help a friend in need using their special [Ability]"'
+        storyPreview={`"${characterName || '[Character Name]'} will help a friend in need using their special ${specialAbility || '[Ability]'}"`}
         focusTags={["Kindness", "cooperation", "using talents for good"]}
         imageSrc={helping}
         imageAlt="image_card_2"
@@ -112,7 +151,7 @@
       <button
         class="button-fill"
         class:mobile-full-width={isMobile}
-        on:click={() => goto("/create-character/7")}
+        on:click={handleContinue}
       >
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"

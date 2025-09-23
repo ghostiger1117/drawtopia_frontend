@@ -8,20 +8,55 @@
   import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";
   import WorldCard from "../../../components/WorldCard.svelte";
   import { browser } from "$app/environment";
+  import { onMount } from "svelte";
   import forest from "../../../assets/big.png";
   import outspace from "../../../assets/outspace.png";
   import underwater from "../../../assets/underwater.png";
 
   let isMobile = false;
   let selectedWorld = "underwater"; // Default selection: "forest", "outspace", or "underwater"
+  let characterName = "";
+  let selectedStyle = "";
+
+
+  // Style name mapping
+  const styleNames = {
+    "3d": "3D Realistic",
+    "cartoon": "Cartoon",
+    "anime": "Anime"
+  };
 
   $: if (browser) {
     isMobile = window.innerWidth < 800;
   }
 
+  // Retrieve character data from sessionStorage on component mount
+  onMount(() => {
+    if (browser) {
+      const storedCharacterName = sessionStorage.getItem('characterName');
+      const storedSelectedStyle = sessionStorage.getItem('selectedStyle');
+      
+      if (storedCharacterName) {
+        characterName = storedCharacterName;
+      }
+      if (storedSelectedStyle) {
+        selectedStyle = storedSelectedStyle;
+      }
+    }
+  });
+
   function selectWorld(world: string) {
     selectedWorld = world;
   }
+
+  // Handle continue to next step
+  const handleContinue = () => {
+    if (browser) {
+      // Save selected world to sessionStorage
+      sessionStorage.setItem('selectedWorld', selectedWorld);
+    }
+    goto("/create-character/6");
+  };
 </script>
 
 <div class="character-creation-default">
@@ -74,7 +109,7 @@
         worldId="forest"
         title="Enchanted Forest"
         description="A magical forest filled with talking animals and hidden treasures"
-        previewText="See how [Character Name] looks in the [Selected Style] style in the [World Name]"
+        previewText={`See how ${characterName || '[Character Name]'} looks in the ${styleNames[selectedStyle as keyof typeof styleNames] || '[Selected Style]'} style in the Enchanted Forest`}
         imageSrc={forest}
         imageAlt="image_card_1"
         isSelected={selectedWorld === "forest"}
@@ -84,7 +119,7 @@
         worldId="outspace"
         title="Outer Space"
         description="Explore distant planets and meet friendly alien creatures"
-        previewText="See how [Character Name] looks in the [Selected Style] style in the [World Name]"
+        previewText={`See how ${characterName || '[Character Name]'} looks in the ${styleNames[selectedStyle as keyof typeof styleNames] || '[Selected Style]'} style in Outer Space`}
         imageSrc={outspace}
         imageAlt="image_card_2"
         isSelected={selectedWorld === "outspace"}
@@ -94,7 +129,7 @@
         worldId="underwater"
         title="Underwater Kingdom"
         description="Dive deep into an underwater world full of mysteries!"
-        previewText="See how [Character Name] looks in the [Selected Style] style in the [World Name]"
+        previewText={`See how ${characterName || '[Character Name]'} looks in the ${styleNames[selectedStyle as keyof typeof styleNames] || '[Selected Style]'} style in the Underwater Kingdom`}
         imageSrc={underwater}
         imageAlt="image_card_3"
         isSelected={selectedWorld === "underwater"}
@@ -120,7 +155,7 @@
       <button
         class="button-fill"
         class:mobile-full-width={isMobile}
-        on:click={() => goto("/create-character/6")}
+        on:click={handleContinue}
       >
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"

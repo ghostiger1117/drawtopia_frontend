@@ -15,14 +15,10 @@
   import { onMount } from "svelte";
   import PrimaryInput from "../../../components/PrimaryInput.svelte";
   
-  let isMobile = false;
   let uploadedImageUrl = "";
   let characterName = "";
   let selectedCharacterType = "person"; // Default selection
   let specialAbility = "";
-  $: if (browser) {
-    isMobile = window.innerWidth < 800;
-  }
 
   // Retrieve the uploaded image URL from sessionStorage on component mount
   onMount(() => {
@@ -48,6 +44,17 @@
   // Handle character type selection
   const selectCharacterType = (type: string) => {
     selectedCharacterType = type;
+  };
+
+  // Handle continue to next step
+  const handleContinue = () => {
+    if (browser) {
+      // Save character data to sessionStorage
+      sessionStorage.setItem('characterName', characterName);
+      sessionStorage.setItem('selectedCharacterType', selectedCharacterType);
+      sessionStorage.setItem('specialAbility', specialAbility);
+    }
+    goto("/create-character/3");
   };
 </script>
 
@@ -286,7 +293,6 @@
       </div>
     </div>
     <div style="display: flex; justify-content: space-between; width: 100%;">
-      {#if !isMobile}
         <button class="button_01" on:click={() => goto("/create-character/1")}>
           <div class="arrowleft">
             <img src={arrowLeft} alt="arrowLeft" />
@@ -295,9 +301,8 @@
             <span class="backtostep_span">Back To Step</span>
           </div>
         </button>
-      {/if}
 
-      <button class="button-fill" on:click={() => goto("/create-character/3")}>
+      <button class="button-fill" on:click={handleContinue}>
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"
             >Continue to Style Selection</span
@@ -1117,6 +1122,9 @@
     display: inline-flex;
   }
   @media (max-width: 800px) {
+    .button_01 {
+      display: none;
+    }
     .frame-1410104031 {
       width: 100%;
       display: flex;

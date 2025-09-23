@@ -12,16 +12,20 @@
   import Cartoon from "../../../assets/cartoon.png";
   import Anime from "../../../assets/anime.png";
 
-  let isMobile = false;
   let selectedStyle = "cartoon"; // Default selection: "3d", "cartoon", or "anime"
-
-  $: if (browser) {
-    isMobile = window.innerWidth < 800;
-  }
 
   function selectStyle(style: string) {
     selectedStyle = style;
   }
+
+  // Handle continue to next step
+  const handleContinue = () => {
+    if (browser) {
+      // Save selected style to sessionStorage
+      sessionStorage.setItem('selectedStyle', selectedStyle);
+    }
+    goto("/create-character/4");
+  };
 </script>
 
 <div class="character-creation-default">
@@ -105,12 +109,7 @@
       />
     </div>
 
-    <div
-      style="display: flex; justify-content: {isMobile
-        ? 'center'
-        : 'space-between'}; width: 100%;"
-    >
-      {#if !isMobile}
+    <div class="button-container">
         <button class="button_01" on:click={() => goto("/create-character/2")}>
           <div class="arrowleft">
             <img src={arrowLeft} alt="arrowLeft" />
@@ -119,11 +118,9 @@
             <span class="backtostep_span">Back To Step</span>
           </div>
         </button>
-      {/if}
       <button
         class="button-fill"
-        class:mobile-full-width={isMobile}
-        on:click={() => goto("/create-character/4")}
+        on:click={handleContinue}
       >
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"
@@ -469,15 +466,25 @@
     gap: 16px;
     display: inline-flex;
   }
-
-  .mobile-full-width {
-    width: 100% !important;
+  .button-container {
+    display: flex; 
+    justify-content: space-between; 
+    width: 100%;
   }
 
   @media (max-width: 800px) {
+    .button_01 {
+      display: none;
+    }
+    .button-fill {
+      width: 100% ;
+    }
     .frame-1410103852 {
       flex-direction: column;
       gap: 12px;
+    }
+    .button-container {
+      justify-content: center;
     }
 
     .character-creation-default {

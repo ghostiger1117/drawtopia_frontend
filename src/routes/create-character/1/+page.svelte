@@ -15,7 +15,6 @@
   import { uploadCharacterImage } from "../../../lib/storage";
   import { user } from "../../../lib/stores/auth";
   
-  let isMobile = false;
   let fileInput: HTMLInputElement;
   let isDragOver = false;
   let uploading = false;
@@ -23,10 +22,6 @@
   let uploadError = "";
   let uploadedImageUrl = "";
   let selectedFile: File | null = null;
-
-  $: if (browser) {
-    isMobile = window.innerWidth < 800;
-  }
 
   // Handle file selection from input
   const handleFileSelect = (event: Event) => {
@@ -303,7 +298,6 @@
       </div>
     </div>
     <div style="display: flex; justify-content: space-between; width: 100%;">
-      {#if !isMobile}
         <button class="button_01" on:click={() => goto("/")}>
           <div class="arrowleft">
             <img src={arrowLeft} alt="arrowLeft" />
@@ -312,9 +306,7 @@
             <span class="backtostep_span">Back To Step</span>
           </div>
         </button>
-      {/if}
-
-      <button 
+      <!-- <button 
         class="button-fill" 
         on:click={() => goto("/create-character/2")}
         disabled={uploading}
@@ -324,7 +316,7 @@
             {uploading ? 'Uploading...' : 'Continue'}
           </span>
         </div>
-      </button>
+      </button> -->
     </div>
   </div>
   <div class="frame-1410103821">
@@ -982,21 +974,21 @@
     .message-content {
       width: 90%;
     }
-    .button-fill {
+    /* .button-fill {
       width: 100%;
-    }
+    } */
   }
 
-  .continuetostyleselection_span {
+  /* .continuetostyleselection_span {
     color: white;
     font-size: 18px;
     font-family: Quicksand;
     font-weight: 600;
     line-height: 25.2px;
     word-wrap: break-word;
-  }
+  } */
 
-  .continue-to-next-step {
+  /* .continue-to-next-step {
     text-align: center;
   }
 
@@ -1032,7 +1024,7 @@
   .button-fill:disabled:hover {
     background: #cccccc;
     transform: none;
-  }
+  } */
 
   /* Upload area styles */
   .image {
@@ -1172,5 +1164,10 @@
     font-family: Nunito;
     font-weight: 500;
     text-align: center;
+  }
+  @media (max-width: 800px) {
+    .button_01 {
+      display: none;
+    }
   }
 </style>

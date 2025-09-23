@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import ProgressBar from "../../../../components/ProgressBar.svelte";
   import arrowLeft from "../../../../assets/ArrowLeft.svg";
   import shieldStar from "../../../../assets/ShieldStar.svg";
@@ -12,12 +12,65 @@
   import MobileBackBtn from "../../../../components/MobileBackBtn.svelte";
   import MobileStepProgressBar from "../../../../components/MobileStepProgressBar.svelte";
   import { browser } from "$app/environment";
+  import { onMount } from "svelte";
 
   let isMobile = false;
+  let characterName = "";
+  let specialAbility = "";
+  let selectedStyle = "";
+  let selectedWorld = "";
+  let selectedAdventure = "";
+
+  // Style name mapping
+  const styleNames = {
+    "3d": "3D Realistic",
+    "cartoon": "Cartoon",
+    "anime": "Anime"
+  };
+
+  // World name mapping
+  const worldNames = {
+    forest: "Enchanted Forest",
+    outspace: "Outer Space", 
+    underwater: "Underwater Kingdom"
+  };
+
+  // Adventure name mapping
+  const adventureNames = {
+    treasure: "Treasure Hunt",
+    helping: "Helping a Friend"
+  };
 
   $: if (browser) {
     isMobile = window.innerWidth < 800;
   }
+
+  // Retrieve character data from sessionStorage on component mount
+  onMount(() => {
+    if (browser) {
+      const storedCharacterName = sessionStorage.getItem('characterName');
+      const storedSpecialAbility = sessionStorage.getItem('specialAbility');
+      const storedSelectedStyle = sessionStorage.getItem('selectedStyle');
+      const storedSelectedWorld = sessionStorage.getItem('selectedWorld');
+      const storedSelectedAdventure = sessionStorage.getItem('selectedAdventure');
+      
+      if (storedCharacterName) {
+        characterName = storedCharacterName;
+      }
+      if (storedSpecialAbility) {
+        specialAbility = storedSpecialAbility;
+      }
+      if (storedSelectedStyle) {
+        selectedStyle = storedSelectedStyle;
+      }
+      if (storedSelectedWorld) {
+        selectedWorld = storedSelectedWorld;
+      }
+      if (storedSelectedAdventure) {
+        selectedAdventure = storedSelectedAdventure;
+      }
+    }
+  });
 </script>
 
 <div class="character-creation-default">
@@ -62,8 +115,8 @@
               <div class="frame-1410104091">
                   <img class="frame-1410104089" src="https://placehold.co/91x90" alt="image_card_2"/>
                   <div class="frame-1410104090">
-                      <div class="your-name-character"><span class="yournamecharacter_span">[Your Name Character]</span></div>
-                      <div class="person-with-special-ability"><span class="personwithspecialability_span">Person with [Special Ability]</span></div>
+                      <div class="your-name-character"><span class="yournamecharacter_span">{characterName || "[Your Name Character]"}</span></div>
+                      <div class="person-with-special-ability"><span class="personwithspecialability_span">Person with {specialAbility || "[Special Ability]"}</span></div>
                   </div>
               </div>
               <div class="stroke"></div>
@@ -75,7 +128,7 @@
                           </div>
                           <div class="frame-1410104098">
                               <div class="style"><span class="style_span">Style</span></div>
-                              <div class="anime"><span class="anime_span">Anime</span></div>
+                              <div class="anime"><span class="anime_span">{styleNames[selectedStyle as keyof typeof styleNames] || "Anime"}</span></div>
                           </div>
                       </div>
                       <div class="frame-1410104093">
@@ -95,7 +148,7 @@
                           </div>
                           <div class="frame-1410104102">
                               <div class="world"><span class="world_span">World:</span></div>
-                              <div class="cartoon"><span class="cartoon_span">Cartoon</span></div>
+                              <div class="cartoon"><span class="cartoon_span">{worldNames[selectedWorld as keyof typeof worldNames] || "Cartoon"}</span></div>
                           </div>
                       </div>
                       <div class="frame-1410104093_01">
@@ -104,7 +157,7 @@
                           </div>
                           <div class="frame-1410104101">
                               <div class="adventure"><span class="adventure_span">Adventure:</span></div>
-                              <div class="making-friends"><span class="makingfriends_span">Making Friends</span></div>
+                              <div class="making-friends"><span class="makingfriends_span">{adventureNames[selectedAdventure as keyof typeof adventureNames] || "Making Friends"}</span></div>
                           </div>
                       </div>
                   </div>
