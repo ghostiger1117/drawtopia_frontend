@@ -8,6 +8,7 @@
   export let imageSrc: string;
   export let imageAlt: string;
   export let isSelected: boolean = false;
+  export let isGenerating: boolean = false;
   export let onSelect: (worldId: string) => void;
 
   function handleClick() {
@@ -29,11 +30,19 @@
   tabindex="0"
   on:keydown={handleKeydown}
 >
-  <img
-    class="image_02"
-    src={imageSrc}
-    alt={imageAlt}
-  />
+  <div class="image-container">
+    <img
+      class="image_02"
+      src={imageSrc}
+      alt={imageAlt}
+    />
+    {#if isGenerating}
+      <div class="generating-overlay">
+        <div class="spinner"></div>
+        <div class="generating-text">Generating...</div>
+      </div>
+    {/if}
+  </div>
   <div class="frame-10_02">
     <div class="story_heading_02">
       <div class="world-title">
@@ -81,6 +90,11 @@
     box-shadow: 0px 1px 8px #871fff;
   }
 
+  .image-container {
+    position: relative;
+    width: 100%;
+  }
+
   .image_02 {
     width: 100%;
     aspect-ratio: 1 / 0.7;
@@ -88,6 +102,43 @@
     border-top-left-radius: 18px;
     border-top-right-radius: 18px;
     border: 1px #d3d3d3 solid;
+  }
+
+  .generating-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    gap: 8px;
+  }
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #438bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  .generating-text {
+    color: #438bff;
+    font-size: 14px;
+    font-family: Quicksand;
+    font-weight: 600;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 
   .frame-10_02 {

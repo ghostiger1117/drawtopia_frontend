@@ -14,6 +14,7 @@
   import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
   import { onMount } from "svelte";
   import PrimaryInput from "../../../components/PrimaryInput.svelte";
+  import { saveSelectedImageUrl } from "../../../lib/imageGeneration";
   
   let uploadedImageUrl = "";
   let characterName = "";
@@ -26,6 +27,8 @@
       const storedImageUrl = sessionStorage.getItem('characterImageUrl');
       if (storedImageUrl) {
         uploadedImageUrl = storedImageUrl;
+        // Save this as the selected image for step 2
+        saveSelectedImageUrl('2', storedImageUrl);
       } else {
         // If no image URL is found, redirect back to step 1
         goto('/create-character/1');

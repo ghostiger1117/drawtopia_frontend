@@ -8,16 +8,69 @@
   import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";
   import EnhancementCard from "../../../components/EnhancementCard.svelte";
   import { browser } from "$app/environment";
+  import { onMount } from "svelte";
+  import { 
+    loadGeneratedImages,
+    saveSelectedImageUrl,
+    hasSelectedImageChanged,
+    getSelectedImageUrl
+  } from "../../../lib/imageGeneration";
 
   let isMobile = false;
   let selectedEnhancement = "normal"; // Default selection: "minimal", "normal", or "high"
+  let uploadedImageUrl = "";
+  let selectedStyle = "";
+  let generatedImages: { [key: string]: string } = {};
+  let lastSelectedStyle = "";
 
   $: if (browser) {
     isMobile = window.innerWidth < 800;
   }
 
+  onMount(() => {
+    if (browser) {
+      // Get the uploaded image URL and selected style from previous steps
+      uploadedImageUrl = sessionStorage.getItem('characterImageUrl') || "";
+      selectedStyle = sessionStorage.getItem('selectedStyle') || "cartoon";
+      lastSelectedStyle = selectedStyle;
+      
+      // Check if the selected image from step 3 has changed
+      const step3SelectedImage = getSelectedImageUrl('3');
+      if (step3SelectedImage && hasSelectedImageChanged('3', step3SelectedImage)) {
+        // Clear enhancement cache if the source image changed
+        ['minimal', 'normal', 'high'].forEach(enhancement => {
+          ['3d', 'cartoon', 'anime'].forEach(style => {
+            sessionStorage.removeItem(`enhancementImage_${style}_${enhancement}`);
+          });
+        });
+      }
+      
+      // Load generated images from step 3
+      generatedImages = loadGeneratedImages(['3d', 'cartoon', 'anime']);
+    }
+  });
+
+  // Watch for style changes and reload images if needed
+  $: if (browser && selectedStyle && lastSelectedStyle && selectedStyle !== lastSelectedStyle) {
+    // Style has changed, reload generated images
+    generatedImages = loadGeneratedImages(['3d', 'cartoon', 'anime']);
+    lastSelectedStyle = selectedStyle;
+  }
+
   function selectEnhancement(enhancement: string) {
     selectedEnhancement = enhancement;
+    
+    // Save selected enhancement to sessionStorage
+    if (browser) {
+      sessionStorage.setItem('selectedEnhancement', enhancement);
+      
+      // Save the selected enhanced image URL if available
+      const enhancementKey = `enhancementImage_${selectedStyle}_${enhancement}`;
+      const enhancedImageUrl = sessionStorage.getItem(enhancementKey);
+      if (enhancedImageUrl) {
+        saveSelectedImageUrl('4', enhancedImageUrl.split('?')[0]);
+      }
+    }
   }
 </script>
 
@@ -81,6 +134,10 @@
         ]}
         isSelected={selectedEnhancement === "minimal"}
         onSelect={selectEnhancement}
+        afterImage={generatedImages[selectedStyle] || ""}
+        beforeImage=""
+        originalImageUrl={uploadedImageUrl}
+        selectedStyle={selectedStyle}
       />
       <EnhancementCard
         enhancementId="normal"
@@ -94,6 +151,10 @@
         isSelected={selectedEnhancement === "normal"}
         onSelect={selectEnhancement}
         showMostPopular={true}
+        afterImage={generatedImages[selectedStyle] || ""}
+        beforeImage=""
+        originalImageUrl={uploadedImageUrl}
+        selectedStyle={selectedStyle}
       />
       <EnhancementCard
         enhancementId="high"
@@ -106,6 +167,10 @@
         ]}
         isSelected={selectedEnhancement === "high"}
         onSelect={selectEnhancement}
+        afterImage={generatedImages[selectedStyle] || ""}
+        beforeImage=""
+        originalImageUrl={uploadedImageUrl}
+        selectedStyle={selectedStyle}
       />
     </div>
 

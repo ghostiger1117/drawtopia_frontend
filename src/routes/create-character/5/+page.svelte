@@ -12,11 +12,23 @@
   import forest from "../../../assets/big.png";
   import outspace from "../../../assets/outspace.png";
   import underwater from "../../../assets/underwater.png";
+  import { 
+    generateStyledImage, 
+    loadGeneratedImages,
+    saveSelectedImageUrl,
+    hasSelectedImageChanged,
+    getSelectedImageUrl
+  } from "../../../lib/imageGeneration";
 
   let isMobile = false;
   let selectedWorld = "underwater"; // Default selection: "forest", "outspace", or "underwater"
   let characterName = "";
   let selectedStyle = "";
+  let selectedEnhancement = "";
+  let enhancedCharacterImage = "";
+  let originalImageUrl = "";
+  let environmentImages: { [key: string]: string } = {};
+  let generatingStates: { [key: string]: boolean } = {};
 
 
   // Style name mapping
@@ -35,19 +47,116 @@
     if (browser) {
       const storedCharacterName = sessionStorage.getItem('characterName');
       const storedSelectedStyle = sessionStorage.getItem('selectedStyle');
+      const storedSelectedEnhancement = sessionStorage.getItem('selectedEnhancement');
+      const storedOriginalImageUrl = sessionStorage.getItem('characterImageUrl');
       
-      if (storedCharacterName) {
-        characterName = storedCharacterName;
+      if (storedCharacterName) characterName = storedCharacterName;
+      if (storedSelectedStyle) selectedStyle = storedSelectedStyle;
+      if (storedSelectedEnhancement) selectedEnhancement = storedSelectedEnhancement;
+      if (storedOriginalImageUrl) originalImageUrl = storedOriginalImageUrl;
+      
+      // Get the enhanced character image from step 4
+      const enhancementKey = `enhancementImage_${selectedStyle}_${selectedEnhancement}`;
+      const storedEnhancedImage = sessionStorage.getItem(enhancementKey);
+      if (storedEnhancedImage) {
+        enhancedCharacterImage = storedEnhancedImage.split('?')[0];
       }
-      if (storedSelectedStyle) {
-        selectedStyle = storedSelectedStyle;
+      
+      // Check if the selected image from step 4 has changed
+      const step4SelectedImage = getSelectedImageUrl('4');
+      if (step4SelectedImage && hasSelectedImageChanged('4', step4SelectedImage)) {
+        // Clear environment cache if the source image changed
+        ['forest', 'underwater', 'outerspace'].forEach(env => {
+          ['3d', 'cartoon', 'anime'].forEach(style => {
+            ['minimal', 'normal', 'high'].forEach(enhancement => {
+              sessionStorage.removeItem(`environmentImage_${style}_${enhancement}_${env}`);
+            });
+          });
+        });
       }
+      
+      // Load any previously generated environment images
+      loadEnvironmentImages();
+      
+      // Generate environment images for all worlds
+      generateAllEnvironmentImages();
     }
   });
 
   function selectWorld(world: string) {
     selectedWorld = world;
+    
+    // Save the selected world image URL
+    if (browser && environmentImages[world]) {
+      saveSelectedImageUrl('5', environmentImages[world]);
+    }
   }
+
+  // Load previously generated environment images
+  const loadEnvironmentImages = () => {
+    const environments = ['forest', 'underwater', 'outerspace'];
+    environments.forEach(env => {
+      const cachedImage = sessionStorage.getItem(`environmentImage_${selectedStyle}_${selectedEnhancement}_${env}`);
+      if (cachedImage) {
+        environmentImages[env] = cachedImage.split('?')[0];
+      }
+    });
+    environmentImages = { ...environmentImages };
+  };
+
+  // Generate environment images for all worlds
+  const generateAllEnvironmentImages = async () => {
+    if (!enhancedCharacterImage && !originalImageUrl) return;
+    
+    const environments = ['forest', 'underwater', 'outerspace'];
+    const baseImage = enhancedCharacterImage || originalImageUrl;
+    
+    // Generate all environment images in parallel
+    const promises = environments.map(env => generateEnvironmentImage(env, baseImage));
+    await Promise.allSettled(promises);
+  };
+
+  // Generate environment image for a specific world
+  const generateEnvironmentImage = async (environment: string, baseImage: string) => {
+    if (!baseImage || generatingStates[environment]) return;
+    
+    // Check if already cached
+    const cacheKey = `environmentImage_${selectedStyle}_${selectedEnhancement}_${environment}`;
+    const cachedImage = sessionStorage.getItem(cacheKey);
+    if (cachedImage) {
+      environmentImages[environment] = cachedImage.split('?')[0];
+      environmentImages = { ...environmentImages };
+      return;
+    }
+    
+    generatingStates[environment] = true;
+    generatingStates = { ...generatingStates };
+    
+    try {
+      const result = await generateStyledImage({
+        imageUrl: baseImage,
+        style: 'environment',
+        quality: environment as 'forest' | 'underwater' | 'outerspace',
+        saveToStorage: true,
+        storageKey: cacheKey
+      });
+
+      if (result.success && result.url) {
+        environmentImages[environment] = result.url;
+        environmentImages = { ...environmentImages };
+        
+        // If this is the currently selected world, save it
+        if (environment === selectedWorld) {
+          saveSelectedImageUrl('5', result.url);
+        }
+      }
+    } catch (error) {
+      console.error(`Error generating ${environment} image:`, error);
+    } finally {
+      generatingStates[environment] = false;
+      generatingStates = { ...generatingStates };
+    }
+  };
 
   // Handle continue to next step
   const handleContinue = () => {
@@ -110,30 +219,33 @@
         title="Enchanted Forest"
         description="A magical forest filled with talking animals and hidden treasures"
         previewText={`See how ${characterName || '[Character Name]'} looks in the ${styleNames[selectedStyle as keyof typeof styleNames] || '[Selected Style]'} style in the Enchanted Forest`}
-        imageSrc={forest}
+        imageSrc={environmentImages["forest"] || forest}
         imageAlt="image_card_1"
         isSelected={selectedWorld === "forest"}
         onSelect={selectWorld}
+        isGenerating={generatingStates["forest"] || false}
       />
       <WorldCard
-        worldId="outspace"
+        worldId="outerspace"
         title="Outer Space"
         description="Explore distant planets and meet friendly alien creatures"
         previewText={`See how ${characterName || '[Character Name]'} looks in the ${styleNames[selectedStyle as keyof typeof styleNames] || '[Selected Style]'} style in Outer Space`}
-        imageSrc={outspace}
+        imageSrc={environmentImages["outerspace"] || outspace}
         imageAlt="image_card_2"
-        isSelected={selectedWorld === "outspace"}
+        isSelected={selectedWorld === "outerspace"}
         onSelect={selectWorld}
+        isGenerating={generatingStates["outerspace"] || false}
       />
       <WorldCard
         worldId="underwater"
         title="Underwater Kingdom"
         description="Dive deep into an underwater world full of mysteries!"
         previewText={`See how ${characterName || '[Character Name]'} looks in the ${styleNames[selectedStyle as keyof typeof styleNames] || '[Selected Style]'} style in the Underwater Kingdom`}
-        imageSrc={underwater}
+        imageSrc={environmentImages["underwater"] || underwater}
         imageAlt="image_card_3"
         isSelected={selectedWorld === "underwater"}
         onSelect={selectWorld}
+        isGenerating={generatingStates["underwater"] || false}
       />
     </div>
 

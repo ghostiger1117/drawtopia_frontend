@@ -11,12 +11,23 @@
   import { onMount } from "svelte";
   import treasure from "../../../assets/treasurehunt.png";
   import helping from "../../../assets/helpfriend.png";
+  import { 
+    generateStyledImage,
+    saveSelectedImageUrl,
+    hasSelectedImageChanged,
+    getSelectedImageUrl
+  } from "../../../lib/imageGeneration";
 
   let isMobile = false;
   let selectedAdventure = "treasure"; // Default selection: "treasure" or "helping"
   let characterName = "";
   let selectedWorld = "";
   let specialAbility = "";
+  let selectedStyle = "";
+  let selectedEnhancement = "";
+  let environmentImage = "";
+  let adventureImages: { [key: string]: string } = {};
+  let generatingStates: { [key: string]: boolean } = {};
 
   // World name mapping
   const worldNames = {
@@ -35,22 +46,124 @@
       const storedCharacterName = sessionStorage.getItem('characterName');
       const storedSelectedWorld = sessionStorage.getItem('selectedWorld');
       const storedSpecialAbility = sessionStorage.getItem('specialAbility');
+      const storedSelectedStyle = sessionStorage.getItem('selectedStyle');
+      const storedSelectedEnhancement = sessionStorage.getItem('selectedEnhancement');
       
-      if (storedCharacterName) {
-        characterName = storedCharacterName;
+      if (storedCharacterName) characterName = storedCharacterName;
+      if (storedSelectedWorld) selectedWorld = storedSelectedWorld;
+      if (storedSpecialAbility) specialAbility = storedSpecialAbility;
+      if (storedSelectedStyle) selectedStyle = storedSelectedStyle;
+      if (storedSelectedEnhancement) selectedEnhancement = storedSelectedEnhancement;
+      
+      // Get the environment image from step 5
+      if (selectedWorld && selectedStyle && selectedEnhancement) {
+        const environmentKey = `environmentImage_${selectedStyle}_${selectedEnhancement}_${selectedWorld}`;
+        const storedEnvironmentImage = sessionStorage.getItem(environmentKey);
+        if (storedEnvironmentImage) {
+          environmentImage = storedEnvironmentImage.split('?')[0];
+        }
       }
-      if (storedSelectedWorld) {
-        selectedWorld = storedSelectedWorld;
+      
+      // Check if the selected image from step 5 has changed
+      const step5SelectedImage = getSelectedImageUrl('5');
+      if (step5SelectedImage && hasSelectedImageChanged('5', step5SelectedImage)) {
+        // Clear adventure cache if the source image changed
+        ['treasure', 'helping'].forEach(adventure => {
+          ['forest', 'underwater', 'outerspace'].forEach(world => {
+            sessionStorage.removeItem(`adventureImage_${world}_${adventure}`);
+          });
+        });
       }
-      if (storedSpecialAbility) {
-        specialAbility = storedSpecialAbility;
-      }
+      
+      // Load any previously generated adventure images
+      loadAdventureImages();
+      
+      // Generate adventure images for all adventure types
+      generateAllAdventureImages();
     }
   });
 
   function selectAdventure(adventure: string) {
     selectedAdventure = adventure;
+    
+    // Save the selected adventure image URL
+    if (browser && adventureImages[adventure]) {
+      saveSelectedImageUrl('6', adventureImages[adventure]);
+    }
   }
+
+  // Load previously generated adventure images
+  const loadAdventureImages = () => {
+    const adventures = ['treasure', 'helping'];
+    adventures.forEach(adventure => {
+      const cachedImage = sessionStorage.getItem(`adventureImage_${selectedWorld}_${adventure}`);
+      if (cachedImage) {
+        adventureImages[adventure] = cachedImage.split('?')[0];
+      }
+    });
+    adventureImages = { ...adventureImages };
+  };
+
+  // Generate adventure images for all adventure types
+  const generateAllAdventureImages = async () => {
+    if (!environmentImage || !selectedWorld) return;
+    
+    const adventures = ['treasure', 'helping'];
+    
+    // Generate all adventure images in parallel
+    const promises = adventures.map(adventure => generateAdventureImage(adventure, environmentImage));
+    await Promise.allSettled(promises);
+  };
+
+  // Generate adventure image for a specific adventure type
+  const generateAdventureImage = async (adventure: string, baseImage: string) => {
+    if (!baseImage || generatingStates[adventure]) return;
+    
+    // Check if already cached
+    const cacheKey = `adventureImage_${selectedWorld}_${adventure}`;
+    const cachedImage = sessionStorage.getItem(cacheKey);
+    if (cachedImage) {
+      adventureImages[adventure] = cachedImage.split('?')[0];
+      adventureImages = { ...adventureImages };
+      return;
+    }
+    
+    generatingStates[adventure] = true;
+    generatingStates = { ...generatingStates };
+    
+    try {
+      // Map adventure names to match prompt.json structure
+      const adventureMapping: { [key: string]: string } = {
+        'treasure': 'treasurehunt',
+        'helping': 'helpfriend'
+      };
+      
+      const adventureKey = adventureMapping[adventure] || adventure;
+      
+      const result = await generateStyledImage({
+        imageUrl: baseImage,
+        style: 'adventure',
+        quality: `${selectedWorld}_${adventureKey}` as any,
+        saveToStorage: true,
+        storageKey: cacheKey
+      });
+
+      if (result.success && result.url) {
+        adventureImages[adventure] = result.url;
+        adventureImages = { ...adventureImages };
+        
+        // If this is the currently selected adventure, save it
+        if (adventure === selectedAdventure) {
+          saveSelectedImageUrl('6', result.url);
+        }
+      }
+    } catch (error) {
+      console.error(`Error generating ${adventure} image:`, error);
+    } finally {
+      generatingStates[adventure] = false;
+      generatingStates = { ...generatingStates };
+    }
+  };
 
   // Handle continue to next step
   const handleContinue = () => {
@@ -116,20 +229,22 @@
         title="Treasure Hunt"
         storyPreview={`"${characterName || '[Character Name]'} will search for a legendary treasure hidden in the ${worldNames[selectedWorld as keyof typeof worldNames] || '[Selected World]'}"`}
         focusTags={["Problem-solving", "discovery", "perseverance"]}
-        imageSrc={treasure}
+        imageSrc={adventureImages["treasure"] || treasure}
         imageAlt="image_card_1"
         isSelected={selectedAdventure === "treasure"}
         onSelect={selectAdventure}
+        isGenerating={generatingStates["treasure"] || false}
       />
       <AdventureCard
         adventureId="helping"
         title="Helping a Friend"
         storyPreview={`"${characterName || '[Character Name]'} will help a friend in need using their special ${specialAbility || '[Ability]'}"`}
         focusTags={["Kindness", "cooperation", "using talents for good"]}
-        imageSrc={helping}
+        imageSrc={adventureImages["helping"] || helping}
         imageAlt="image_card_2"
         isSelected={selectedAdventure === "helping"}
         onSelect={selectAdventure}
+        isGenerating={generatingStates["helping"] || false}
       />
     </div>
 

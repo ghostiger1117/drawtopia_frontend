@@ -3,6 +3,8 @@
   import arrowUpDown from "../assets/CaretUpDown.svg";
   import check from "../assets/Check.svg";
   import star from "../assets/Star.svg";
+  import { onMount } from 'svelte';
+  import { generateStyledImage } from "../lib/imageGeneration";
 
   export let enhancementId: string;
   export let title: string;
@@ -11,16 +13,169 @@
   export let isSelected: boolean = false;
   export let onSelect: (enhancementId: string) => void;
   export let showMostPopular: boolean = false;
+  export let beforeImage: string = "";
+  export let afterImage: string = "";
+  export let originalImageUrl: string = "";
+  export let selectedStyle: string = "";
 
-  function handleClick() {
-    onSelect(enhancementId);
+  let containerRef: HTMLDivElement;
+  let sliderPosition = 50; // Percentage from left
+  let isDragging = false;
+  let generatedEnhancementImage: string = "";
+  let isGeneratingEnhancement = false;
+  let lastProcessedStyle = "";
+  let lastProcessedImageUrl = "";
+
+  // Sample images for testing
+  const sampleImages = {
+    minimal: {
+      before: "",
+      after: ""
+    },
+    normal: {
+      before: "",
+      after: ""
+    },
+    high: {
+      before: "",
+      after: ""
+    }
+  };
+
+  // Use the selected image from step 3 as before, and generated enhancement as after
+  $: currentBeforeImage = afterImage || sampleImages[enhancementId as keyof typeof sampleImages]?.before || sampleImages.normal.before;
+  $: currentAfterImage = generatedEnhancementImage || beforeImage || sampleImages[enhancementId as keyof typeof sampleImages]?.after || sampleImages.normal.after;
+
+  // Generate enhancement image when component mounts or when originalImageUrl/selectedStyle changes
+  $: if (originalImageUrl && selectedStyle) {
+    const styleChanged = lastProcessedStyle && lastProcessedStyle !== selectedStyle;
+    const imageChanged = lastProcessedImageUrl && lastProcessedImageUrl !== originalImageUrl;
+    
+    if (styleChanged || imageChanged || !generatedEnhancementImage) {
+      // Clear the old image if style or original image changed
+      if (styleChanged || imageChanged) {
+        generatedEnhancementImage = "";
+        // Clear cached images for this enhancement level
+        if (typeof window !== 'undefined') {
+          if (styleChanged) {
+            // Clear all enhancement images for the old style
+            sessionStorage.removeItem(`enhancementImage_${lastProcessedStyle}_minimal`);
+            sessionStorage.removeItem(`enhancementImage_${lastProcessedStyle}_normal`);
+            sessionStorage.removeItem(`enhancementImage_${lastProcessedStyle}_high`);
+          }
+          // Clear the specific cached image
+          sessionStorage.removeItem(`enhancementImage_${selectedStyle}_${enhancementId}`);
+        }
+      }
+      loadOrGenerateEnhancementImage();
+      lastProcessedStyle = selectedStyle;
+      lastProcessedImageUrl = originalImageUrl;
+    }
+  }
+
+  // Load cached enhancement image or generate new one
+  const loadOrGenerateEnhancementImage = async () => {
+    if (typeof window !== 'undefined') {
+      const cachedImage = sessionStorage.getItem(`enhancementImage_${selectedStyle}_${enhancementId}`);
+      if (cachedImage) {
+        generatedEnhancementImage = cachedImage.split('?')[0];
+        return;
+      }
+    }
+    generateEnhancementImage();
+  };
+
+  onMount(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging || !containerRef) return;
+      
+      const rect = containerRef.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+      sliderPosition = percentage;
+    };
+
+    const handleMouseUp = () => {
+      isDragging = false;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDragging || !containerRef) return;
+      
+      const rect = containerRef.getBoundingClientRect();
+      const x = e.touches[0].clientX - rect.left;
+      const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+      sliderPosition = percentage;
+    };
+
+    const handleTouchEnd = () => {
+      isDragging = false;
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+  });
+
+  function handleClick(event: Event) {
+    // Only handle card selection if not clicking on the slider area
+    if (!isDragging) {
+      onSelect(enhancementId);
+    }
   }
 
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === 'Enter') {
-      handleClick();
+      handleClick(event);
     }
   }
+
+  const handleSliderMouseDown = (e: MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    isDragging = true;
+  };
+
+  const handleSliderTouchStart = (e: TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    isDragging = true;
+  };
+
+  // Generate enhancement image based on the enhancement level
+  const generateEnhancementImage = async () => {
+    if (!originalImageUrl || isGeneratingEnhancement) return;
+    
+    isGeneratingEnhancement = true;
+    
+    try {
+      const result = await generateStyledImage({
+        imageUrl: originalImageUrl,
+        style: selectedStyle,
+        quality: enhancementId as 'minimal' | 'normal' | 'high',
+        saveToStorage: true,
+        storageKey: `enhancementImage_${selectedStyle}_${enhancementId}`
+      });
+
+      if (result.success && result.url) {
+        generatedEnhancementImage = result.url;
+      } else {
+        console.error('Failed to generate enhancement image:', result.error);
+      }
+    } catch (error) {
+      console.error('Error generating enhancement image:', error);
+    } finally {
+      isGeneratingEnhancement = false;
+    }
+  };
 </script>
 
 <div 
@@ -41,11 +196,50 @@
   {/if}
   
   <div class="card-content">
-    <div class="frame-16">
-      <div class="rectangle-33"></div>
-      <div class="frame-1410103721">
-        <img src={arrowUpDown} alt="arrowUpDown" />
+    <div class="frame-16" bind:this={containerRef}>
+      <!-- Before Image (Right side) -->
+      <div class="before-image">
+        <img src={currentAfterImage} alt="Before" />
       </div>
+      
+      <!-- After Image (Left side, clipped) -->
+      <div 
+        class="after-image" 
+        style="clip-path: inset(0 {100 - sliderPosition}% 0 0);"
+      >
+        {#if isGeneratingEnhancement}
+          <div class="generating-overlay">
+            <div class="spinner"></div>
+            <div class="generating-text">Generating...</div>
+          </div>
+        {:else}
+          <img src={currentBeforeImage} alt="After" />
+        {/if}
+      </div>
+      
+      <!-- Slider Line -->
+      <div 
+        class="rectangle-33" 
+        style="left: {sliderPosition}%"
+      ></div>
+      
+      <!-- Draggable Slider Handle -->
+      <div 
+        class="frame-1410103721"
+        style="left: {sliderPosition}%"
+        on:mousedown={handleSliderMouseDown}
+        on:touchstart={handleSliderTouchStart}
+        role="slider"
+        tabindex="0"
+        aria-label="Comparison slider"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow={sliderPosition}
+      >
+        <img src={arrowUpDown} alt="Drag to compare" />
+      </div>
+      
+      <!-- Labels -->
       <div class="frame-1410103722">
         <div class="before"><span class="before_span">Before</span></div>
       </div>
@@ -126,18 +320,71 @@
     display: flex;
   }
 
+  .before-image,
+  .after-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .before-image img,
+  .after-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .generating-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #438bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  .generating-text {
+    color: #438bff;
+    font-size: 14px;
+    font-family: Quicksand;
+    font-weight: 600;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
   .rectangle-33 {
     width: 2px;
     height: 346px;
-    left: 50%;
     top: 0px;
     position: absolute;
-    background: #eef6ff;
+    background: #438bff;
+    transform: translateX(-1px);
+    pointer-events: none;
+    z-index: 3;
   }
 
   .frame-1410103721 {
     padding: 4px;
-    left: calc(50% - 20px);
     top: calc(50% - 20px);
     position: absolute;
     background: #438bff;
@@ -146,6 +393,27 @@
     align-items: center;
     gap: 10px;
     display: inline-flex;
+    cursor: grab;
+    transform: translateX(-50%);
+    z-index: 4;
+    box-shadow: 0 2px 8px rgba(67, 139, 255, 0.3);
+    transition: box-shadow 0.2s ease;
+    width: 40px;
+    height: 40px;
+  }
+
+  .frame-1410103721:hover {
+    box-shadow: 0 4px 12px rgba(67, 139, 255, 0.4);
+  }
+
+  .frame-1410103721:active {
+    cursor: grabbing;
+  }
+
+  .frame-1410103721 img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1);
   }
 
   .frame-1410103722 {
@@ -153,7 +421,7 @@
     padding-right: 16px;
     padding-top: 4px;
     padding-bottom: 4px;
-    left: 25%;
+    left: calc(25% - 42px);
     bottom: 30px;
     position: absolute;
     background: white;
@@ -171,7 +439,7 @@
     padding-right: 16px;
     padding-top: 4px;
     padding-bottom: 4px;
-    left: 75%;
+    left: calc(75% - 35px);
     bottom: 30px;
     position: absolute;
     background: white;
@@ -206,6 +474,8 @@
     border-radius: 12px;
     outline: 1px #ededed solid;
     outline-offset: -1px;
+    cursor: ew-resize;
+    user-select: none;
   }
 
   .card_heading {

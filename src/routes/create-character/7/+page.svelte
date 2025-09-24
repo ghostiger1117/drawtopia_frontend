@@ -8,6 +8,8 @@
   import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";
   import { browser } from "$app/environment";
   import { onMount } from "svelte";
+  import small from "../../../assets/small.png";
+  import classic from "../../../assets/classic.png";
 
   let isMobile = false;
   let characterName = "";
@@ -113,7 +115,7 @@
         </div>
         <img
           class="image"
-          src="https://placehold.co/569x837"
+          src={small}
           alt="image_card_1"
         />
       </div>
@@ -259,7 +261,7 @@
               >
                 <img
                   class="frame-1410104088"
-                  src="https://placehold.co/80x91"
+                  src={classic}
                   alt="image_card_2"
                 />
                 <div class="frame-1410103940_04">
@@ -298,7 +300,7 @@
                 <div class="frame-1410103940_05">
                   <img
                     class="frame-1410104088_01"
-                    src="https://placehold.co/80x91"
+                    src={small}
                     alt="image_card_3"
                   />
                   <div class="frame-1410103939_05">
@@ -336,7 +338,7 @@
                 <div class="frame-1410103940_06">
                   <img
                     class="frame-1410104088_02"
-                    src="https://placehold.co/80x91"
+                    src={small}
                     alt="image_card_4"
                   />
                   <div class="frame-1410103939_06">
@@ -720,8 +722,6 @@
   }
 
   .image {
-    align-self: stretch;
-    height: 280px;
     position: relative;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;

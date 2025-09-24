@@ -8,15 +8,129 @@
   import MobileStepProgressBar from "../../../components/MobileStepProgressBar.svelte";
   import StyleCard from "../../../components/StyleCard.svelte";
   import { browser } from "$app/environment";
+  import { onMount } from "svelte";
   import D3 from "../../../assets/3d.png";
   import Cartoon from "../../../assets/cartoon.png";
   import Anime from "../../../assets/anime.png";
+  import { 
+    generateStyledImage, 
+    generateMultipleStyledImages, 
+    loadGeneratedImages, 
+    handleImageUrlChange,
+    saveSelectedImageUrl,
+    hasSelectedImageChanged,
+    clearAllCachedImages
+  } from "../../../lib/imageGeneration";
 
   let selectedStyle = "cartoon"; // Default selection: "3d", "cartoon", or "anime"
+  let uploadedImageUrl = "";
+  let characterName = "";
+  let selectedCharacterType = "";
+  let specialAbility = "";
+  let generatingStates: { [key: string]: boolean } = {};
+  let generatedImages: { [key: string]: string } = {};
+  let error = "";
+  
+  const styles = ['3d', 'cartoon', 'anime'];
+
+  // Retrieve data from sessionStorage on component mount
+  onMount(() => {
+    if (browser) {
+      const storedImageUrl = sessionStorage.getItem('characterImageUrl');
+      const storedCharacterName = sessionStorage.getItem('characterName');
+      const storedCharacterType = sessionStorage.getItem('selectedCharacterType');
+      const storedSpecialAbility = sessionStorage.getItem('specialAbility');
+      
+      if (storedImageUrl) {
+        uploadedImageUrl = storedImageUrl;
+      } else {
+        // If no image URL is found, redirect back to step 1
+        goto('/create-character/1');
+        return;
+      }
+      
+      if (storedCharacterName) characterName = storedCharacterName;
+      if (storedCharacterType) selectedCharacterType = storedCharacterType;
+      if (storedSpecialAbility) specialAbility = storedSpecialAbility;
+      
+      // Check if the original image URL has changed from step 2
+      const step2ImageChanged = hasSelectedImageChanged('2', uploadedImageUrl);
+      const imageUrlChanged = handleImageUrlChange(uploadedImageUrl, styles);
+      
+      if (imageUrlChanged || step2ImageChanged) {
+        // Clear all cached images and generate new ones
+        clearAllCachedImages();
+        generatedImages = {};
+        generateStyleImages(styles);
+      } else {
+        // Load previously generated images from sessionStorage
+        generatedImages = loadGeneratedImages(styles);
+        
+        // Only generate images that haven't been generated yet
+        const missingStyles = styles.filter(style => !generatedImages[style]);
+        if (missingStyles.length > 0) {
+          generateStyleImages(missingStyles);
+        }
+      }
+    }
+  });
 
   function selectStyle(style: string) {
     selectedStyle = style;
+    
+    // Save the selected styled image URL
+    if (browser && generatedImages[style]) {
+      saveSelectedImageUrl('3', generatedImages[style]);
+    }
   }
+
+  // Generate images for specified styles simultaneously
+  const generateStyleImages = async (stylesToGenerate: string[]) => {
+    if (!uploadedImageUrl) return;
+    
+    error = ""; // Clear previous errors
+    
+    // Set specified styles to generating state
+    stylesToGenerate.forEach(style => {
+      generatingStates[style] = true;
+    });
+    generatingStates = { ...generatingStates };
+    
+    // Generate specified images in parallel
+    const promises = stylesToGenerate.map(style => generateSingleStyledImage(style));
+    await Promise.allSettled(promises);
+  };
+
+  // Generate a single styled image using the utility function
+  const generateSingleStyledImage = async (style: string) => {
+    try {
+      const result = await generateStyledImage({
+        imageUrl: uploadedImageUrl,
+        style: style,
+        quality: 'normal',
+        saveToStorage: true
+      });
+
+      if (result.success && result.url) {
+        generatedImages[style] = result.url;
+        // Force reactivity update
+        generatedImages = { ...generatedImages };
+        
+        // If this is the currently selected style, save it
+        if (style === selectedStyle) {
+          saveSelectedImageUrl('3', result.url);
+        }
+      } else {
+        error = result.error || `Failed to generate ${style} image`;
+      }
+    } catch (err) {
+      console.error(`Error generating ${style} image:`, err);
+      error = err instanceof Error ? err.message : `Failed to generate ${style} image. Please try again.`;
+    } finally {
+      generatingStates[style] = false;
+      generatingStates = { ...generatingStates };
+    }
+  };
 
   // Handle continue to next step
   const handleContinue = () => {
@@ -76,36 +190,46 @@
         </div>
       </div>
     </div>
+    
+    {#if error}
+      <div class="error-message">
+        <span class="error-text">{error}</span>
+      </div>
+    {/if}
+    
     <div class="frame-1410103852">
       <StyleCard
         styleId="3d"
         title="3D Realistic"
         subtitle="Like your favorite animated movies"
         bestForText="Kids who love Disney and Pixar movies"
-        imageSrc={D3}
+        imageSrc={generatedImages["3d"] || ""}
         imageAlt="3D Realistic"
         isSelected={selectedStyle === "3d"}
         onSelect={selectStyle}
+        isGenerating={generatingStates["3d"] || false}
       />
       <StyleCard
         styleId="cartoon"
         title="Cartoon"
         subtitle="Classic storybook style"
         bestForText="Timeless storybook adventures"
-        imageSrc={Cartoon}
+        imageSrc={generatedImages["cartoon"] || ""}
         imageAlt="Cartoon"
         isSelected={selectedStyle === "cartoon"}
         onSelect={selectStyle}
+        isGenerating={generatingStates["cartoon"] || false}
       />
       <StyleCard
         styleId="anime"
         title="Anime"
         subtitle="Japanesse Anime Style"
         bestForText="Kids who love anime and manga"
-        imageSrc={Anime}
+        imageSrc={generatedImages["anime"] || ""}
         imageAlt="Anime"
         isSelected={selectedStyle === "anime"}
         onSelect={selectStyle}
+        isGenerating={generatingStates["anime"] || false}
       />
     </div>
 
@@ -470,6 +594,22 @@
     display: flex; 
     justify-content: space-between; 
     width: 100%;
+  }
+
+  .error-message {
+    background: #fee;
+    border: 1px solid #fcc;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin: 8px 0;
+    text-align: center;
+  }
+
+  .error-text {
+    color: #d32f2f;
+    font-size: 14px;
+    font-family: Nunito;
+    font-weight: 500;
   }
 
   @media (max-width: 800px) {

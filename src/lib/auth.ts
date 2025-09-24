@@ -128,7 +128,6 @@ export async function signUpWithPhone(phone: string, password: string, firstName
     const { data: otpData, error: otpError } = await supabase.auth.signInWithOtp({
       phone: phone.trim(),
       options: {
-        // phoneRedirectTo : 'http://localhost:3000',
       }
     });
     // console.log('OTP data:', otpData);

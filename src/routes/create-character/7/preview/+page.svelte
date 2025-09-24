@@ -13,6 +13,7 @@
   import MobileStepProgressBar from "../../../../components/MobileStepProgressBar.svelte";
   import { browser } from "$app/environment";
   import { onMount } from "svelte";
+  import { getSelectedImageUrl } from "../../../../lib/imageGeneration";
 
   let isMobile = false;
   let characterName = "";
@@ -20,6 +21,7 @@
   let selectedStyle = "";
   let selectedWorld = "";
   let selectedAdventure = "";
+  let selectedAdventureImageUrl = "";
 
   // Style name mapping
   const styleNames = {
@@ -69,6 +71,19 @@
       if (storedSelectedAdventure) {
         selectedAdventure = storedSelectedAdventure;
       }
+      
+      // Load the selected adventure image from step 6
+      const step6SelectedImage = getSelectedImageUrl('6');
+      if (step6SelectedImage) {
+        selectedAdventureImageUrl = step6SelectedImage;
+      } else if (selectedWorld && selectedAdventure) {
+        // Fallback: try to get the adventure image from sessionStorage
+        const adventureImageKey = `adventureImage_${selectedWorld}_${selectedAdventure}`;
+        const storedAdventureImage = sessionStorage.getItem(adventureImageKey);
+        if (storedAdventureImage) {
+          selectedAdventureImageUrl = storedAdventureImage.split('?')[0];
+        }
+      }
     }
   });
 </script>
@@ -113,7 +128,7 @@
           <div class="story-summary"><span class="storysummary_span">Story Summary</span></div>
           <div class="frame-1410104097">
               <div class="frame-1410104091">
-                  <img class="frame-1410104089" src="https://placehold.co/91x90" alt="image_card_2"/>
+                  <img class="frame-1410104089" src={selectedAdventureImageUrl || "https://placehold.co/91x90"} alt="image_card_2"/>
                   <div class="frame-1410104090">
                       <div class="your-name-character"><span class="yournamecharacter_span">{characterName || "[Your Name Character]"}</span></div>
                       <div class="person-with-special-ability"><span class="personwithspecialability_span">Person with {specialAbility || "[Special Ability]"}</span></div>
@@ -197,7 +212,7 @@
       <div class="form">
           <div class="information-book-cover"><span class="informationbookcover_span">Information Book Cover</span></div>
           <div class="frame-1410104103">
-              <img class="image" src="https://placehold.co/287x431" alt="image_card_1"/>
+              <img class="image" src={selectedAdventureImageUrl || "https://placehold.co/287x431"} alt="image_card_1"/>
               <div class="frame-1410104075">
                   <div class="checklist">
                       <div class="check">
@@ -516,15 +531,6 @@
     gap: 10px;
     display: inline-flex;
   }
-
-  .image {
-      align-self: stretch;
-      height: 280px;
-      position: relative;
-      border-top-left-radius: 12px;
-      border-top-right-radius: 12px;
-  }
-
   
   .form {
       align-self: stretch;
