@@ -14,6 +14,8 @@
   import MobileBackBtn from "../../../components/MobileBackBtn.svelte";
   import { uploadCharacterImage } from "../../../lib/storage";
   import { user } from "../../../lib/stores/auth";
+  import { storyCreation } from "../../../lib/stores/storyCreation";
+  import { onMount } from "svelte";
   
   let fileInput: HTMLInputElement;
   let isDragOver = false;
@@ -22,6 +24,23 @@
   let uploadError = "";
   let uploadedImageUrl = "";
   let selectedFile: File | null = null;
+  let selectedChildProfileName = "";
+
+  // Reactive statement to keep local state in sync with store
+  $: if ($storyCreation.selectedChildProfileName) {
+    selectedChildProfileName = $storyCreation.selectedChildProfileName;
+  }
+
+  // Check for selected child profile
+  onMount(() => {
+    if (browser) {
+      // If no child profile is selected, redirect to dashboard
+      const childProfileId = sessionStorage.getItem('selectedChildProfileId');
+      if (!childProfileId) {
+        goto('/dashboard');
+      }
+    }
+  });
 
   // Handle file selection from input
   const handleFileSelect = (event: Event) => {
@@ -95,10 +114,8 @@
       if (result.success && result.url) {
         uploadedImageUrl = result.url;
         
-        // Store the uploaded image URL in sessionStorage for step 2
-        if (browser) {
-          sessionStorage.setItem('characterImageUrl', result.url);
-        }
+        // Update the story creation store with the image URL
+        storyCreation.setOriginalImageUrl(result.url);
         
         // Auto-navigate to step 2 after a brief delay
         setTimeout(() => {
@@ -135,6 +152,11 @@
       <div class="create-your-character">
         <span class="createyourcharacter_span">Create Your Character</span>
       </div>
+      {#if selectedChildProfileName}
+        <div class="selected-child-info">
+          <span class="selectedchild_span">Creating story for: {selectedChildProfileName}</span>
+        </div>
+      {/if}
       <div class="upload-your-drawing-or-draw-your-own-character-right-here">
         <span class="uploadyourdrawingordrawyourowncharacterrighthere_span"
           >Upload your drawing or draw your own character right here!</span
@@ -350,6 +372,24 @@
   .create-your-character {
     align-self: stretch;
     text-align: center;
+  }
+
+  .selected-child-info {
+    align-self: stretch;
+    text-align: center;
+    padding: 8px 16px;
+    background: #eef6ff;
+    border-radius: 12px;
+    margin: 8px 0;
+  }
+
+  .selectedchild_span {
+    color: #438bff;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 22.4px;
+    word-wrap: break-word;
   }
 
   .uploadyourdrawingordrawyourowncharacterrighthere_span {

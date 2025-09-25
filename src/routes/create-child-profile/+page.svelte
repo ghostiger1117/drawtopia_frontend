@@ -93,9 +93,9 @@
     // goto('/story-creation') or similar
     addNotification({
       type: 'success',
-      message: 'Child profiles saved successfully! Redirecting to story creation...'
+      message: 'Child profiles saved successfully! Redirecting to dashboard...'
     });
-    goto('/create-character/1');
+    goto('/dashboard');
   };
 
 </script>

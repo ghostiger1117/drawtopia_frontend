@@ -17,6 +17,7 @@
     hasSelectedImageChanged,
     getSelectedImageUrl
   } from "../../../lib/imageGeneration";
+  import { storyCreation } from "../../../lib/stores/storyCreation";
 
   let isMobile = false;
   let selectedAdventure = "treasure"; // Default selection: "treasure" or "helping"
@@ -166,11 +167,10 @@
   };
 
   // Handle continue to next step
-  const handleContinue = () => {
-    if (browser) {
-      // Save selected adventure to sessionStorage
-      sessionStorage.setItem('selectedAdventure', selectedAdventure);
-    }
+  const handleContinue = async () => {
+      // Update story creation store with selected adventure
+      const adventureType = selectedAdventure === 'treasure' ? 'treasure_hunt' : 'helping_friend';
+      storyCreation.setAdventureType(adventureType);
     goto("/create-character/7");
   };
 </script>

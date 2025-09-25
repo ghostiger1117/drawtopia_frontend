@@ -15,6 +15,7 @@
     hasSelectedImageChanged,
     getSelectedImageUrl
   } from "../../../lib/imageGeneration";
+  import { storyCreation } from "../../../lib/stores/storyCreation";
 
   let isMobile = false;
   let selectedEnhancement = "normal"; // Default selection: "minimal", "normal", or "high"
@@ -72,6 +73,31 @@
       }
     }
   }
+
+  // Handle continue to next step - collect all enhanced images
+  const handleContinue = () => {
+    if (browser) {
+      // Collect all enhanced images for the selected style
+      const enhancedImages: string[] = [];
+      const enhancements = ['minimal', 'normal', 'high'];
+      
+      enhancements.forEach(enhancement => {
+        const enhancementKey = `enhancementImage_${selectedStyle}_${enhancement}`;
+        const enhancedImageUrl = sessionStorage.getItem(enhancementKey);
+        if (enhancedImageUrl) {
+          // Clean the URL (remove query parameters)
+          enhancedImages.push(enhancedImageUrl.split('?')[0]);
+        }
+      });
+      
+      // Save enhanced images to story creation store
+      storyCreation.setEnhancedImages(enhancedImages);
+      
+      console.log('Enhanced images collected:', enhancedImages);
+    }
+    
+    goto("/create-character/5");
+  };
 </script>
 
 <div class="character-creation-default">
@@ -192,7 +218,7 @@
       <button
         class="button-fill"
         class:mobile-full-width={isMobile}
-        on:click={() => goto("/create-character/5")}
+        on:click={handleContinue}
       >
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"

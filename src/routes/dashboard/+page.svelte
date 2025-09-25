@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
+  import { browser } from "$app/environment";
   import { user } from "../../lib/stores/auth";
   import { getChildProfiles, type ChildProfile } from "../../lib/database/childProfiles";
   import ChildProfileComponent from "../../components/ChildProfileComponent.svelte";
@@ -103,6 +104,17 @@
 
   // Handle New Story button click from child profile component
   const handleNewStory = (event: CustomEvent) => {
+    const childName = event.detail.name;
+    
+    // Find the selected child profile
+    const selectedChild = childProfiles.find(child => child.name === childName);
+    
+    if (selectedChild && browser) {
+      // Store only the child profile ID for the character creation flow
+      sessionStorage.setItem('selectedChildProfileId', selectedChild.id.toString());
+      sessionStorage.setItem('selectedChildProfileName', selectedChild.name); // For display purposes
+    }
+    
     goto('/create-character/1');
   };
 

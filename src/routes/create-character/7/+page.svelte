@@ -10,6 +10,7 @@
   import { onMount } from "svelte";
   import small from "../../../assets/small.png";
   import classic from "../../../assets/classic.png";
+  import { storyCreation } from "../../../lib/stores/storyCreation";
 
   let isMobile = false;
   let characterName = "";
@@ -59,6 +60,15 @@
   function selectCoverDesign(design: string) {
     selectedCoverDesign = design;
   }
+
+  // Handle preview story button click
+  const handlePreviewStory = () => {
+    // Update story creation store with final story presentation data
+    storyCreation.setStoryPresentation(selectedTitle, selectedCoverDesign);
+    
+    // Navigate to preview page
+    goto("/create-character/7/preview");
+  };
 </script>
 
 <div class="character-creation-default">
@@ -385,7 +395,7 @@
       <button
         class="button-fill"
         class:mobile-full-width={isMobile}
-        on:click={() => goto("/create-character/7/preview")}
+        on:click={handlePreviewStory}
       >
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span">Preview Your Story</span>

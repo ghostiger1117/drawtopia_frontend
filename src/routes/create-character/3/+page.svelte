@@ -21,6 +21,7 @@
     hasSelectedImageChanged,
     clearAllCachedImages
   } from "../../../lib/imageGeneration";
+  import { storyCreation } from "../../../lib/stores/storyCreation";
 
   let selectedStyle = "cartoon"; // Default selection: "3d", "cartoon", or "anime"
   let uploadedImageUrl = "";
@@ -134,10 +135,9 @@
 
   // Handle continue to next step
   const handleContinue = () => {
-    if (browser) {
-      // Save selected style to sessionStorage
-      sessionStorage.setItem('selectedStyle', selectedStyle);
-    }
+    // Update story creation store with selected style
+    storyCreation.setCharacterStyle(selectedStyle as any);
+    
     goto("/create-character/4");
   };
 </script>

@@ -144,7 +144,7 @@
       type: 'success',
       message: 'Profile updated successfully! Redirecting to story creation...'
     });
-    goto('/create-character/1');
+    goto('/dashboard');
   };
 </script>
 

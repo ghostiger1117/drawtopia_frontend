@@ -14,6 +14,8 @@
   import { browser } from "$app/environment";
   import { onMount } from "svelte";
   import { getSelectedImageUrl } from "../../../../lib/imageGeneration";
+  import { storyCreation } from "../../../../lib/stores/storyCreation";
+  import { createStory } from "../../../../lib/database/stories";
 
   let isMobile = false;
   let characterName = "";
@@ -86,6 +88,51 @@
       }
     }
   });
+
+  // Handle complete story creation button click
+  const handleCompleteStoryCreation = async () => {
+    try {
+      console.log("=========1==========")
+
+      // Get current story state
+      let currentState;
+      const unsubscribe = storyCreation.subscribe(state => {
+        currentState = state;
+      });
+      unsubscribe();
+      console.log("=========2==========")
+      if (currentState) {
+      console.log("=========3==========",currentState)
+
+        // Create story in database
+        const storyData = storyCreation.toStoryObject(currentState);
+        console.log("=========4==========")
+
+        const result = await createStory(storyData as any);
+        
+        if (result.success) {
+          console.log('Story created successfully:', result.data);
+          
+          // Clear the story creation data after successful creation
+          storyCreation.clear();
+          
+          // Navigate to dashboard or success page
+          goto('/dashboard');
+        } else {
+          console.log("=========4==========")
+
+          console.error('Failed to create story:', result.error);
+          alert('Failed to create story. Please try again.');
+        }
+      } else {
+        console.error('No story data found');
+        alert('Story data is missing. Please go back and complete all steps.');
+      }
+    } catch (error) {
+      console.error('Error creating story:', error);
+      alert('An error occurred while creating the story. Please try again.');
+    }
+  };
 </script>
 
 <div class="character-creation-default">
@@ -254,7 +301,7 @@
         </div>
       </button>
       {/if}
-      <button class="button-fill" class:mobile-full-width={isMobile} on:click={() => goto('/')}>
+      <button class="button-fill" class:mobile-full-width={isMobile} on:click={handleCompleteStoryCreation}>
         <div class="continue-to-style-selection">
           <span class="continuetostyleselection_span"
             >Complete Story Creation</span

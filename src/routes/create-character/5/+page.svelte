@@ -19,6 +19,7 @@
     hasSelectedImageChanged,
     getSelectedImageUrl
   } from "../../../lib/imageGeneration";
+  import { storyCreation } from "../../../lib/stores/storyCreation";
 
   let isMobile = false;
   let selectedWorld = "underwater"; // Default selection: "forest", "outspace", or "underwater"
@@ -160,10 +161,9 @@
 
   // Handle continue to next step
   const handleContinue = () => {
-    if (browser) {
-      // Save selected world to sessionStorage
-      sessionStorage.setItem('selectedWorld', selectedWorld);
-    }
+    // Update story creation store with selected world
+    storyCreation.setStoryWorld(selectedWorld as any);
+    
     goto("/create-character/6");
   };
 </script>

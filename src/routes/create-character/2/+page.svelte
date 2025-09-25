@@ -15,6 +15,7 @@
   import { onMount } from "svelte";
   import PrimaryInput from "../../../components/PrimaryInput.svelte";
   import { saveSelectedImageUrl } from "../../../lib/imageGeneration";
+  import { storyCreation } from "../../../lib/stores/storyCreation";
   
   let uploadedImageUrl = "";
   let characterName = "";
@@ -51,12 +52,13 @@
 
   // Handle continue to next step
   const handleContinue = () => {
-    if (browser) {
-      // Save character data to sessionStorage
-      sessionStorage.setItem('characterName', characterName);
-      sessionStorage.setItem('selectedCharacterType', selectedCharacterType);
-      sessionStorage.setItem('specialAbility', specialAbility);
-    }
+    // Update story creation store with character details
+    storyCreation.setCharacterDetails({
+      characterName,
+      characterType: selectedCharacterType as any,
+      specialAbility
+    });
+    
     goto("/create-character/3");
   };
 </script>

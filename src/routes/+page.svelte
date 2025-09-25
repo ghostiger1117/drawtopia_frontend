@@ -80,6 +80,7 @@
 				{/if}
 			</div>
 			<div class="auth-buttons">
+				<a href="/dashboard" class="btn btn-primary">Go to Dashboard</a>
 				<button on:click={handleSignOut} class="btn btn-primary">Sign Out</button>
 			</div>
 			<a href="/create-child-profile" class="btn btn-primary">Create Child Profile</a>
