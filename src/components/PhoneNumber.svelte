@@ -160,6 +160,7 @@
   .wrapper :global(.country-select) {
     height: 50px;
     width: 20%;
+    min-width: 120px;
     align-items: center;
     justify-content: center;
     padding-left: 12px;

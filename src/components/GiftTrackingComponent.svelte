@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import check from "../assets/completed.svg";
   import generating from "../assets/generating.svg";
   import draft from "../assets/draft.svg";
@@ -8,6 +8,76 @@
   import PaperPlaneTilt from "../assets/PaperPlaneTilt.svg";
   import ArrowsClockwise from "../assets/ArrowsClockwise.svg";
   import ArrowsCounterClockwise from "../assets/ArrowsCounterClockwise.svg";
+  import { goto } from "$app/navigation";
+
+  interface GiftData {
+    id: string;
+    childName: string;
+    ageGroup: string;
+    status: 'completed' | 'generating' | 'failed' | 'waiting';
+    giftFrom: string;
+    occasion: string;
+    expectedDelivery: string;
+    createdAt: Date;
+  }
+
+  export let gifts: GiftData[] = [];
+  export let loadingGifts: boolean = false;
+  export let giftsError: string = "";
+
+  const handlePurchaseGift = () => {
+    goto("/gift/1");
+  };
+
+  // Helper function to get status icon
+  const getStatusIcon = (status: string): string => {
+    switch (status) {
+      case 'completed': return check;
+      case 'generating': return generating;
+      case 'failed': return failed;
+      default: return draft;
+    }
+  };
+
+  // Helper function to get status text
+  const getStatusText = (status: string): string => {
+    switch (status) {
+      case 'completed': return 'Completed';
+      case 'generating': return 'Generating';
+      case 'failed': return 'Failed';
+      default: return 'Waiting For Creation';
+    }
+  };
+
+  // Helper function to get status class
+  const getStatusClass = (status: string): string => {
+    switch (status) {
+      case 'completed': return 'frame_gift_1410103869';
+      case 'generating': return 'frame_gift_1410104162';
+      case 'failed': return 'frame_gift_1410104162_01';
+      default: return 'frame_gift_1410103869_01';
+    }
+  };
+
+  // Helper function to get status message
+  const getStatusMessage = (status: string): string => {
+    switch (status) {
+      case 'completed': return 'Story ready and delivered';
+      case 'generating': return 'Story is being created now!';
+      case 'failed': return 'Creation link expired, needs resend';
+      default: return 'Invitation sent, waiting for story creation';
+    }
+  };
+
+  // Helper function to get status message class
+  const getStatusMessageClass = (status: string): string => {
+    switch (status) {
+      case 'completed': return 'frame_gift_1410104167';
+      case 'generating': return 'frame_gift_1410104166';
+      case 'failed': return 'frame_gift_1410104166_02';
+      default: return 'frame_gift_1410104166_01';
+    }
+  };
 </script>
 
 <div class="frame_gift_1410104151">
@@ -23,7 +93,13 @@
           >
         </div>
       </div>
-      <div class="frame_gift_1410103868">
+      <div 
+        class="frame_gift_1410103868"
+        role="button"
+        tabindex="0"
+        on:click={handlePurchaseGift}
+        on:keydown={(e) => e.key === "Enter" && handlePurchaseGift()}
+      >
         <div class="basket">
           <img src={basket} alt="basket" />
         </div>
@@ -35,248 +111,116 @@
       </div>
     </div>
     <div class="frame_gift_1410104170">
-      <div class="frame_gift_1410104168">
-        <div class="card">
-          <div class="frame_gift_1410104153">
-            <div class="frame_gift_1410104161">
-              <div class="frame_gift_1410104152">
-                <div class="emma"><span class="emma_span">Emma</span></div>
-                <div class="text-6-years-old">
-                  <span class="fyearsold_span">6 Years Old</span>
-                </div>
-              </div>
-            </div>
-            <div class="frame_gift_1410103869">
-              <div class="check">
-                  <img src={check} alt="check" />
-              </div>
-              <div class="sub-menu_01">
-                <div class="completed">
-                  <span class="completed_span">Completed</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="rectangle-41"></div>
-          <div class="frame_gift_1410104158">
-            <div class="frame_gift_1410104124">
-              <div><span class="giftfrom_span">Gift From:</span></div>
-              <div><span class="dad_span">Dad</span></div>
-            </div>
-            <div class="frame_gift_1410104126">
-              <div><span class="occasion_span">Occasion:</span></div>
-              <div><span class="birthday_span">Birthday</span></div>
-            </div>
-            <div class="frame_gift_1410104125">
-              <div>
-                <span class="expecteddelivery_span">Expected Delivery</span>
-              </div>
-              <div><span class="f5012024_span">15/01/2024</span></div>
-            </div>
-          </div>
-          <div class="frame_gift_1410104167">
-            <div class="story-ready-and-delivered">
-              <span class="storyreadyanddelivered_span"
-                >Story ready and delivered</span
-              >
-            </div>
-          </div>
-          <div class="frame_gift_1410104156">
-            <div class="frame_gift_1410104157">
-              <div class="button">
-                <img src={eye} alt="eye" />
-                <div class="view-story">
-                  <span class="viewstory_span">View Story</span>
-                </div>
-              </div>
-              <div class="button_01">
-                <img src={PaperPlaneTilt} alt="PaperPlaneTilt" />
-                <div class="resend-link">
-                  <span class="resendlink_span">Resend Link</span>
-                </div>
-              </div>
-            </div>
-          </div>
+      {#if loadingGifts}
+        <div class="loading-state">
+          <div class="loading-spinner"></div>
+          <p class="loading-text">Loading gifts...</p>
         </div>
-        <div class="card_01">
-          <div class="frame_gift_1410104153_01">
-            <div class="frame_gift_1410104161_01">
-              <div class="frame_gift_1410104152_01">
-                <div class="emma_01">
-                  <span class="emma_01_span">Emma</span>
-                </div>
-                <div class="text-6-years-old_01">
-                  <span class="fyearsold_01_span">6 Years Old</span>
-                </div>
-              </div>
-            </div>
-            <div class="frame_gift_1410104162">
-              <div class="spinner">
-                  <img src={generating} alt="generating" />
-              </div>
-              <div class="sub-menu_02">
-                <div class="generating">
-                  <span class="generating_span">Generating</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="rectangle-41_01"></div>
-          <div class="frame_gift_1410104158_01">
-            <div class="frame_gift_1410104124_01">
-              <div><span class="giftfrom_01_span">Gift From:</span></div>
-              <div><span class="dad_01_span">Dad</span></div>
-            </div>
-            <div class="frame_gift_1410104126_01">
-              <div><span class="occasion_01_span">Occasion:</span></div>
-              <div><span class="birthday_01_span">Birthday</span></div>
-            </div>
-            <div class="frame_gift_1410104125_01">
-              <div>
-                <span class="expecteddelivery_01_span">Expected Delivery</span>
-              </div>
-              <div><span class="f5012024_01_span">15/01/2024</span></div>
-            </div>
-          </div>
-          <div class="frame_gift_1410104166">
-            <div class="story-is-being-created-now">
-              <span class="storyisbeingcreatednow_span"
-                >Story is being created now!</span
-              >
-            </div>
-          </div>
-          <div class="button_02">
-            <div class="arrowsclockwise">
-              <img src={ArrowsClockwise} alt="ArrowsClockwise" />
-            </div>
-            <div class="creating-story">
-              <span class="creatingstory_span">Creating Story</span>
-            </div>
-          </div>
+      {:else if giftsError}
+        <div class="error-state">
+          <p class="error-text">{giftsError}</p>
+          <button class="retry-button" on:click={() => window.location.reload()}>
+            Try Again
+          </button>
         </div>
-      </div>
-      <div class="frame_gift_1410104169">
-        <div class="card_02">
-          <div class="frame_gift_1410104153_02">
-            <div class="frame_gift_1410104161_02">
-              <div class="frame_gift_1410104152_02">
-                <div class="emma_02">
-                  <span class="emma_02_span">Emma</span>
-                </div>
-                <div class="text-6-years-old_02">
-                  <span class="fyearsold_02_span">6 Years Old</span>
-                </div>
-              </div>
-            </div>
-            <div class="frame_gift_1410103869_01">
-              <div class="archive">
-                  <img src={draft} alt="draft" />
-              </div>
-              <div class="sub-menu_03">
-                <div class="waiting-for-creation">
-                  <span class="waitingforcreation_span"
-                    >Waiting For Creation</span
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="rectangle-41_02"></div>
-          <div class="frame_gift_1410104158_02">
-            <div class="frame_gift_1410104124_02">
-              <div><span class="giftfrom_02_span">Gift From:</span></div>
-              <div><span class="dad_02_span">Dad</span></div>
-            </div>
-            <div class="frame_gift_1410104126_02">
-              <div><span class="occasion_02_span">Occasion:</span></div>
-              <div><span class="birthday_02_span">Birthday</span></div>
-            </div>
-            <div class="frame_gift_1410104125_02">
-              <div>
-                <span class="expecteddelivery_02_span">Expected Delivery</span>
-              </div>
-              <div><span class="f5012024_02_span">15/01/2024</span></div>
-            </div>
-          </div>
-          <div class="frame_gift_1410104166_01">
-            <div class="invitation-sent-waiting-for-story-creation">
-              <span class="invitationsentwaitingforstorycreation_span"
-                >Invitation sent, waiting for story creation</span
-              >
-            </div>
-          </div>
-          <div class="frame_gift_1410104156_01">
-            <div class="frame_gift_1410104157_01">
-              <div class="button_03">
-                <img src={PaperPlaneTilt} alt="PaperPlaneTilt" />
-                <div class="resend-link_01">
-                  <span class="resendlink_01_span">Resend Link</span>
-                </div>
-              </div>
-            </div>
-          </div>
+      {:else if gifts.length === 0}
+        <div class="empty-state">
+          <p class="empty-text">No gifts found.</p>
+          <p class="empty-subtext">Purchase your first gift to get started!</p>
         </div>
-        <div class="card_03">
-          <div class="frame_gift_1410104153_03">
-            <div class="frame_gift_1410104161_03">
-              <div class="frame_gift_1410104152_03">
-                <div class="emma_03">
-                  <span class="emma_03_span">Emma</span>
+      {:else}
+        <div class="gifts-grid">
+          {#each gifts as gift}
+            <div class="card">
+              <div class="frame_gift_1410104153">
+                <div class="frame_gift_1410104161">
+                  <div class="frame_gift_1410104152">
+                    <div class="emma"><span class="emma_span">{gift.childName}</span></div>
+                    <div class="text-6-years-old">
+                      <span class="fyearsold_span">{gift.ageGroup} Years Old</span>
+                    </div>
+                  </div>
                 </div>
-                <div class="text-6-years-old_03">
-                  <span class="fyearsold_03_span">6 Years Old</span>
+                <div class={getStatusClass(gift.status)}>
+                  <div class="status-icon">
+                    <img src={getStatusIcon(gift.status)} alt={gift.status} />
+                  </div>
+                  <div class="sub-menu_01">
+                    <div class="status-text">
+                      <span class="status_span">{getStatusText(gift.status)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="rectangle-41"></div>
+              <div class="frame_gift_1410104158">
+                <div class="frame_gift_1410104124">
+                  <div><span class="giftfrom_span">Gift From:</span></div>
+                  <div><span class="dad_span">{gift.giftFrom}</span></div>
+                </div>
+                <div class="frame_gift_1410104126">
+                  <div><span class="occasion_span">Occasion:</span></div>
+                  <div><span class="birthday_span">{gift.occasion}</span></div>
+                </div>
+                <div class="frame_gift_1410104125">
+                  <div>
+                    <span class="expecteddelivery_span">Expected Delivery</span>
+                  </div>
+                  <div><span class="f5012024_span">{gift.expectedDelivery}</span></div>
+                </div>
+              </div>
+              <div class={getStatusMessageClass(gift.status)}>
+                <div class="status-message">
+                  <span class="statusmessage_span">{getStatusMessage(gift.status)}</span>
+                </div>
+              </div>
+              <div class="frame_gift_1410104156">
+                <div class="frame_gift_1410104157">
+                  {#if gift.status === 'completed'}
+                    <div class="button">
+                      <img src={eye} alt="eye" />
+                      <div class="view-story">
+                        <span class="viewstory_span">View Story</span>
+                      </div>
+                    </div>
+                    <div class="button_01">
+                      <img src={PaperPlaneTilt} alt="PaperPlaneTilt" />
+                      <div class="resend-link">
+                        <span class="resendlink_span">Resend Link</span>
+                      </div>
+                    </div>
+                  {:else if gift.status === 'generating'}
+                    <div class="button_02">
+                      <div class="arrowsclockwise">
+                        <img src={ArrowsClockwise} alt="ArrowsClockwise" />
+                      </div>
+                      <div class="creating-story">
+                        <span class="creatingstory_span">Creating Story</span>
+                      </div>
+                    </div>
+                  {:else if gift.status === 'failed'}
+                    <div class="button_04">
+                      <div class="arrowscounterclockwise">
+                        <img src={ArrowsCounterClockwise} alt="ArrowsCounterClockwise" />
+                      </div>
+                      <div class="resend-invitation">
+                        <span class="resendinvitation_span">Resend Invitation</span>
+                      </div>
+                    </div>
+                  {:else}
+                    <div class="button_03">
+                      <img src={PaperPlaneTilt} alt="PaperPlaneTilt" />
+                      <div class="resend-link_01">
+                        <span class="resendlink_01_span">Resend Link</span>
+                      </div>
+                    </div>
+                  {/if}
                 </div>
               </div>
             </div>
-            <div class="frame_gift_1410104162_01">
-              <div class="warning">
-                  <img src={failed} alt="failed" />
-              </div>
-              <div class="sub-menu_04">
-                <div class="failed">
-                  <span class="failed_span">Failed</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="rectangle-41_03"></div>
-          <div class="frame_gift_1410104158_03">
-            <div class="frame_gift_1410104124_03">
-              <div><span class="giftfrom_03_span">Gift From:</span></div>
-              <div><span class="dad_03_span">Dad</span></div>
-            </div>
-            <div class="frame_gift_1410104126_03">
-              <div><span class="occasion_03_span">Occasion:</span></div>
-              <div><span class="birthday_03_span">Birthday</span></div>
-            </div>
-            <div class="frame_gift_1410104125_03">
-              <div>
-                <span class="expecteddelivery_03_span">Expected Delivery</span>
-              </div>
-              <div><span class="f5012024_03_span">15/01/2024</span></div>
-            </div>
-          </div>
-          <div class="frame_gift_1410104166_02">
-            <div class="creation-link-expired-needs-resend">
-              <span class="creationlinkexpiredneedsresend_span"
-                >Creation link expired, needs resend</span
-              >
-            </div>
-          </div>
-          <div class="frame_gift_1410104156_02">
-            <div class="frame_gift_1410104157_02">
-              <div class="button_04">
-                <div class="arrowscounterclockwise">
-                  <img src={ArrowsCounterClockwise} alt="ArrowsCounterClockwise" />
-                </div>
-                <div class="resend-invitation">
-                  <span class="resendinvitation_span">Resend Invitation</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/each}
         </div>
-      </div>
+      {/if}
     </div>
   </div>
 </div>
@@ -855,7 +799,7 @@
   }
 
   .frame_gift_1410104152 {
-    width: 84px;
+    width: 100%;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
@@ -1187,6 +1131,54 @@
     align-items: center;
     gap: 10px;
     display: flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .frame_gift_1410103868:hover {
+    background: #3a7ae4;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(67, 139, 255, 0.3);
+  }
+
+  .frame_gift_1410103868:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(67, 139, 255, 0.2);
+    background: #2e6bc7;
+  }
+
+  .frame_gift_1410103868:focus {
+    outline: 2px solid #438bff;
+    outline-offset: 2px;
+  }
+
+  /* Ripple effect */
+  /* .frame_gift_1410103868::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: width 0.3s, height 0.3s;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  } */
+
+  .frame_gift_1410103868:active::before {
+    width: 100px;
+    height: 100px;
+  }
+
+  .frame_gift_1410103868 .basket,
+  .frame_gift_1410103868 .sub-menu {
+    position: relative;
+    z-index: 2;
   }
 
   .frame_gift_1410103869 {
@@ -1513,6 +1505,156 @@
     display: inline-flex;
   }
 
+  /* Loading, Error, and Empty States */
+  .loading-state,
+  .error-state,
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #438bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .loading-text {
+    color: #666d80;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .error-text {
+    color: #dc2626;
+    font-size: 16px;
+    font-family: Quicksand;
+    font-weight: 500;
+    margin: 0 0 16px 0;
+  }
+
+  .retry-button {
+    padding: 8px 16px;
+    background: #438bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: Quicksand;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .retry-button:hover {
+    background: #3b7ce6;
+  }
+
+  .empty-text {
+    color: #666d80;
+    font-size: 18px;
+    font-family: Quicksand;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+  }
+
+  .empty-subtext {
+    color: #90a1b9;
+    font-size: 14px;
+    font-family: Quicksand;
+    font-weight: 400;
+    margin: 0;
+  }
+
+  /* Gifts Grid */
+  .gifts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 24px;
+    width: 100%;
+  }
+
+  /* Status icon and text classes */
+  .status-icon {
+    width: 16px;
+    height: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .status-text {
+    text-align: center;
+  }
+
+  .status_span {
+    font-size: 14px;
+    font-family: Quicksand;
+    font-weight: 700;
+    line-height: 19.6px;
+    word-wrap: break-word;
+  }
+
+  .status-message {
+    text-align: center;
+  }
+
+  .statusmessage_span {
+    font-size: 14px;
+    font-family: Quicksand;
+    font-weight: 600;
+    line-height: 19.6px;
+    word-wrap: break-word;
+  }
+
+  /* Status-specific colors */
+  .frame_gift_1410103869 .status_span {
+    color: #40c4aa;
+  }
+
+  .frame_gift_1410104162 .status_span {
+    color: #438bff;
+  }
+
+  .frame_gift_1410103869_01 .status_span {
+    color: #ffbe4c;
+  }
+
+  .frame_gift_1410104162_01 .status_span {
+    color: #df1c41;
+  }
+
+  .frame_gift_1410104167 .statusmessage_span {
+    color: #03c9d7;
+  }
+
+  .frame_gift_1410104166 .statusmessage_span {
+    color: #ffbe4c;
+  }
+
+  .frame_gift_1410104166_01 .statusmessage_span {
+    color: #964dff;
+  }
+
+  .frame_gift_1410104166_02 .statusmessage_span {
+    color: #141414;
+  }
+
   /* Mobile responsive styles */
   @media (max-width: 800px) {
     .frame_gift_1410104151 {
@@ -1553,6 +1695,18 @@
       padding-right: 16px;
       padding-top: 4px;
       padding-bottom: 4px;
+      touch-action: manipulation;
+    }
+
+    /* Optimize button effects for mobile */
+    .frame_gift_1410103868:hover {
+      transform: translateY(-0.5px);
+      box-shadow: 0 1px 4px rgba(67, 139, 255, 0.25);
+    }
+
+    .frame_gift_1410103868:active::before {
+      width: 80px;
+      height: 80px;
     }
 
     .purchasegift_span {
@@ -1755,6 +1909,12 @@
       padding-bottom: 4px;
       padding-left: 8px;
       padding-right: 10px;
+    }
+
+    .gifts-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      width: 100%;
     }
   }
 </style>

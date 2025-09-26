@@ -599,6 +599,7 @@
     text-align: center;
     height: 75px;
     width: 100%;
+    min-width: 30px;
     padding-left: 10px;
     padding-right: 10px;
     padding-top: 4px;
@@ -677,6 +678,9 @@
 
     .background-image {
       display: none;
+    }
+    .frame-1410103856 {
+      gap: 12px;
     }
   }
 </style>

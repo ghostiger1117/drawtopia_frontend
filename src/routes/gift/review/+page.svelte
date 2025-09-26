@@ -2,10 +2,71 @@
   import arrow_left from "../../../assets/ArrowLeft.svg";
   import arrowsquareout from "../../../assets/ArrowSquareOut.svg";
   import sealcheck from "../../../assets/SealCheck_green.svg";
-  const handleBack = () => {
-    if (typeof window !== "undefined") {
-      window.history.back();
+  import { giftCreation } from "../../../lib/stores/giftCreation";
+  import { goto } from "$app/navigation";
+  import { onMount } from "svelte";
+  import { user, authLoading, isAuthenticated } from "../../../lib/stores/auth";
+  import { browser } from "$app/environment";
+
+  let giftState: any = {};
+
+  // Reactive statements for auth state
+  $: currentUser = $user;
+  $: loading = $authLoading;
+  $: authenticated = $isAuthenticated;
+  $: userId = currentUser?.id;
+  
+  // Additional safety check for SSR
+  $: safeToRedirect = browser && !loading && currentUser !== undefined;
+
+  // Subscribe to gift creation state
+  onMount(() => {
+    // Only run on client side
+    if (browser) {
+      // Add a small delay to ensure auth state is fully loaded
+      setTimeout(() => {
+        if (safeToRedirect && !authenticated) {
+          goto('/login');
+          return;
+        }
+      }, 100);
     }
+
+    const unsubscribe = giftCreation.subscribe(state => {
+      giftState = state;
+    });
+    
+    return unsubscribe;
+  });
+
+  // Reactive redirect when auth state changes (client-side only)
+  $: if (safeToRedirect && !authenticated) {
+    // Only redirect if we're sure about the auth state
+    goto('/login');
+  }
+
+  const handleBack = () => {
+    // Navigate back to step 3
+    goto("/gift/3");
+  };
+
+  const handlePurchase = () => {
+    // Navigate to purchase page
+    goto("/gift/purchase");
+  };
+
+  // Format delivery time for display
+  const formatDeliveryTime = (deliveryOption: string, deliveryTime: string) => {
+    if (deliveryOption === 'surprise') {
+      return 'Immediate delivery';
+    } else if (deliveryOption === 'scheduled' && deliveryTime) {
+      return new Date(deliveryTime).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+    return deliveryTime || 'Not specified';
   };
 </script>
 
@@ -58,29 +119,35 @@
         <div class="frame-1410104126">
           <div class="frame-1410104124">
             <div><span class="recipient_span">Recipient:</span></div>
-            <div><span class="emmaage5-7_span">Emma (Age 5-7)</span></div>
+            <div><span class="emmaage5-7_span">
+              {giftState.childName || 'Not specified'} 
+              {#if giftState.ageGroup}
+                (Age {giftState.ageGroup})
+              {/if}
+            </span></div>
           </div>
           <div class="frame-1410104125">
             <div><span class="occasion_span">Occasion:</span></div>
-            <div><span class="birthday_span">Birthday</span></div>
+            <div><span class="birthday_span">{giftState.occasion || 'Not specified'}</span></div>
           </div>
           <div class="frame-1410104128">
             <div><span class="message_span">Message:</span></div>
             <div class="this-is-present-give-to-you-i-hope-you-like-it">
-              <span class="thisispresentgivetoyouihopeyoulikeit_span"
-                >“This is Present Give to you, i hope you like it.”</span
-              >
+              <span class="thisispresentgivetoyouihopeyoulikeit_span">
+                "{giftState.specialMsg || 'No special message'}"
+              </span>
             </div>
           </div>
           <div class="frame-1410104126_01">
             <div><span class="delivery_span">Delivery:</span></div>
             <div class="frame-1410104127">
               <div class="july-31st-2025-to-drawtopiaexamplecom">
-                <span class="july31st2025todrawtopiaexamplecom_span_01"
-                  >July 31st, 2025<br /></span
-                ><span class="july31st2025todrawtopiaexamplecom_span_02"
-                  >to drawtopia@example.com</span
-                >
+                <span class="july31st2025todrawtopiaexamplecom_span_01">
+                  {formatDeliveryTime(giftState.deliveryOption, giftState.deliveryTime)}<br />
+                </span>
+                <span class="july31st2025todrawtopiaexamplecom_span_02">
+                  to {giftState.deliveryEmail || 'No email specified'}
+                </span>
               </div>
             </div>
           </div>
@@ -136,7 +203,7 @@
             <div class="card-number">
               <span class="cardnumber_span">Card Number</span>
             </div>
-            <div class="input-placeholder">
+            <div class="input-placeholder" role="button" tabindex="0">
               <div><span class="f242_span">•••• •••• •••• 4242</span></div>
             </div>
           </div>
@@ -145,13 +212,13 @@
               <div class="expiry-date">
                 <span class="expirydate_span">Expiry Date</span>
               </div>
-              <div class="input-placeholder_01">
+              <div class="input-placeholder_01" role="button" tabindex="0">
                 <div><span class="f228_span">12/28</span></div>
               </div>
             </div>
             <div class="form_02">
               <div class="cvc"><span class="cvc_span">CVC</span></div>
-              <div class="input-placeholder_02">
+              <div class="input-placeholder_02" role="button" tabindex="0">
                 <div><span class="fspan">•••</span></div>
               </div>
             </div>
@@ -160,7 +227,7 @@
             <div class="billing-name">
               <span class="billingname_span">Billing Name</span>
             </div>
-            <div class="input-placeholder_03">
+            <div class="input-placeholder_03" role="button" tabindex="0">
               <div><span class="johndoe_span">John Doe</span></div>
             </div>
           </div>
@@ -205,7 +272,13 @@
     </div>
     <div class="frame-1410104113">
       <div class="frame-1410103991">
-        <div class="button_01">
+        <div 
+          class="button_01"
+          role="button"
+          tabindex="0"
+          on:click={handlePurchase}
+          on:keydown={(e) => e.key === "Enter" && handlePurchase()}
+        >
           <div class="purchase-gift-story">
             <span class="purchasegiftstory_span">Purchase Gift Story</span>
           </div>
@@ -766,6 +839,20 @@
     align-items: center;
     gap: 10px;
     display: inline-flex;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .input-placeholder:hover {
+    outline: 1px #438bff solid;
+    box-shadow: 0 0 0 2px rgba(67, 139, 255, 0.1);
+  }
+
+  .input-placeholder:focus {
+    outline: 2px solid #438bff;
+    outline-offset: -2px;
+    box-shadow: 0 0 0 3px rgba(67, 139, 255, 0.1);
+    transform: translateY(-1px);
   }
 
   .input-placeholder_01 {
@@ -784,6 +871,20 @@
     align-items: center;
     gap: 10px;
     display: inline-flex;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .input-placeholder_01:hover {
+    outline: 1px #438bff solid;
+    box-shadow: 0 0 0 2px rgba(67, 139, 255, 0.1);
+  }
+
+  .input-placeholder_01:focus {
+    outline: 2px solid #438bff;
+    outline-offset: -2px;
+    box-shadow: 0 0 0 3px rgba(67, 139, 255, 0.1);
+    transform: translateY(-1px);
   }
 
   .input-placeholder_02 {
@@ -802,6 +903,20 @@
     align-items: center;
     gap: 10px;
     display: inline-flex;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .input-placeholder_02:hover {
+    outline: 1px #438bff solid;
+    box-shadow: 0 0 0 2px rgba(67, 139, 255, 0.1);
+  }
+
+  .input-placeholder_02:focus {
+    outline: 2px solid #438bff;
+    outline-offset: -2px;
+    box-shadow: 0 0 0 3px rgba(67, 139, 255, 0.1);
+    transform: translateY(-1px);
   }
 
   .input-placeholder_03 {
@@ -820,6 +935,20 @@
     align-items: center;
     gap: 10px;
     display: inline-flex;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .input-placeholder_03:hover {
+    outline: 1px #438bff solid;
+    box-shadow: 0 0 0 2px rgba(67, 139, 255, 0.1);
+  }
+
+  .input-placeholder_03:focus {
+    outline: 2px solid #438bff;
+    outline-offset: -2px;
+    box-shadow: 0 0 0 3px rgba(67, 139, 255, 0.1);
+    transform: translateY(-1px);
   }
 
   .frame-1410104050 {
@@ -852,6 +981,47 @@
     align-items: center;
     gap: 10px;
     display: inline-flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .button_01:hover {
+    background: #3a7ae4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(67, 139, 255, 0.3);
+  }
+
+  .button_01:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(67, 139, 255, 0.2);
+    background: #2e6bc7;
+  }
+
+  .button_01:focus {
+    outline: 2px solid #438bff;
+    outline-offset: 2px;
+  }
+
+  /* Ripple effect */
+  /* .button_01::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: width 0.3s, height 0.3s;
+    transform: translate(-50%, -50%);
+  } */
+
+  .button_01:active::before {
+    width: 300px;
+    height: 300px;
   }
 
   .frame-1410103820 {
@@ -1025,6 +1195,28 @@
     align-items: center;
     gap: 10px;
     display: flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    background: white;
+  }
+
+  .button:hover {
+    background: #f0f7ff;
+    outline-color: #3a7ae4;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(67, 139, 255, 0.2);
+  }
+
+  .button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(67, 139, 255, 0.1);
+    background: #e6f3ff;
+  }
+
+  .button:focus {
+    outline: 2px solid #438bff;
+    outline-offset: 2px;
   }
 
   .frame-1410104035 {
@@ -1063,6 +1255,28 @@
     align-items: center;
     gap: 10px;
     display: inline-flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    background: white;
+  }
+
+  .button_02:hover {
+    background: #f8fafb;
+    transform: translateY(-1px);
+    box-shadow: 0px 6px 8px rgba(98.89, 98.89, 98.89, 0.3);
+    outline-color: #bbb;
+  }
+
+  .button_02:active {
+    transform: translateY(1px);
+    box-shadow: 0px 2px 4px rgba(98.89, 98.89, 98.89, 0.2);
+    background: #f0f0f0;
+  }
+
+  .button_02:focus {
+    outline: 2px solid #438bff;
+    outline-offset: 2px;
   }
 
   .frame-5 {
@@ -1380,6 +1594,14 @@
      .input-placeholder_03 {
        height: 45px;
        padding: 8px;
+     }
+
+     .input-placeholder:focus,
+     .input-placeholder_01:focus,
+     .input-placeholder_02:focus,
+     .input-placeholder_03:focus {
+       transform: translateY(-2px);
+       box-shadow: 0 0 0 2px rgba(67, 139, 255, 0.15);
      }
 
      .button_01,

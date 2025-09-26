@@ -2,6 +2,11 @@
   import GiftStepComponent from "../../../components/GiftStepComponent.svelte";
   import PrimarySelect from "../../../components/PrimarySelect.svelte";
   import arrow_left from "../../../assets/ArrowLeft.svg";
+  import { giftCreation } from "../../../lib/stores/giftCreation";
+  import { goto } from "$app/navigation";
+  import { onMount } from "svelte";
+  import { user, authLoading, isAuthenticated } from "../../../lib/stores/auth";
+  import { browser } from "$app/environment";
 
   // Age group options
   const ageGroupOptions = [
@@ -26,25 +31,87 @@
   let selectedRelationship = "grandparent";
   let childName = "Emma";
 
+  // Reactive statements for auth state
+  $: currentUser = $user;
+  $: loading = $authLoading;
+  $: authenticated = $isAuthenticated;
+  $: userId = currentUser?.id;
+  
+  // Additional safety check for SSR
+  $: safeToRedirect = browser && !loading && currentUser !== undefined;
+
+  // Check authentication on mount (client-side only)
+  onMount(() => {
+    // Only run on client side
+    if (browser) {
+      // Add a small delay to ensure auth state is fully loaded
+      setTimeout(() => {
+        if (safeToRedirect && !authenticated) {
+          goto('/login');
+          return;
+        }
+      }, 100);
+    }
+
+    // Initialize from store on mount
+    const unsubscribe = giftCreation.subscribe(state => {
+      if (state.childName) childName = state.childName;
+      if (state.ageGroup) selectedAgeGroup = state.ageGroup;
+      if (state.relationship) selectedRelationship = state.relationship;
+    });
+    
+    return unsubscribe;
+  });
+
+  // Reactive redirect when auth state changes (client-side only)
+  $: if (safeToRedirect && !authenticated) {
+    // Only redirect if we're sure about the auth state
+    goto('/login');
+  }
+
   const handleAgeGroupChange = (event: Event) => {
     const target = event.target as HTMLSelectElement;
     selectedAgeGroup = target.value;
+    updateGiftStore();
   };
 
   const handleRelationshipChange = (event: Event) => {
     const target = event.target as HTMLSelectElement;
     selectedRelationship = target.value;
+    updateGiftStore();
   };
 
   const handleChildNameChange = (event: Event) => {
     const target = event.target as HTMLInputElement;
     childName = target.value;
+    updateGiftStore();
+  };
+
+  const updateGiftStore = () => {
+    giftCreation.setRecipientDetails({
+      childName,
+      ageGroup: selectedAgeGroup,
+      relationship: selectedRelationship
+    });
+  };
+
+  const handleContinue = () => {
+    // Validate required fields
+    if (!childName.trim()) {
+      alert("Please enter the child's name");
+      return;
+    }
+    
+    // Save data to store
+    updateGiftStore();
+    
+    // Navigate to step 2
+    goto("/gift/2");
   };
 
   const handleBack = () => {
-    if (typeof window !== "undefined") {
-      window.history.back();
-    }
+    // Navigate back to dashboard or previous page
+    goto("/dashboard");
   };
 </script>
 
@@ -143,7 +210,13 @@
           </div>
         </div>
         <div class="frame-1410103991">
-          <div class="button">
+          <div 
+            class="button"
+            role="button"
+            tabindex="0"
+            on:click={handleContinue}
+            on:keydown={(e) => e.key === "Enter" && handleContinue()}
+          >
             <div class="continue-to-occassion-selection">
               <span class="continuetooccassionselection_span"
                 >Continue to Occassion Selection</span
@@ -151,7 +224,13 @@
             </div>
           </div>
         </div>
-        <div class="button_01">
+        <div 
+          class="button_01"
+          role="button"
+          tabindex="0"
+          on:click={handleBack}
+          on:keydown={(e) => e.key === "Enter" && handleBack()}
+        >
           <img src={arrow_left} alt="arrow left" class="arrowleft" />
           <div class="back"><span class="back_span">Back</span></div>
         </div>
@@ -386,6 +465,14 @@
     align-items: center;
     gap: 10px;
     display: inline-flex;
+    transition: all 0.2s ease;
+  }
+
+  .input-placeholder:focus-within {
+    outline: 2px solid #438bff;
+    outline-offset: -2px;
+    box-shadow: 0 0 0 3px rgba(67, 139, 255, 0.1);
+    transform: translateY(-1px);
   }
 
   .name-input {
@@ -420,6 +507,47 @@
     align-items: center;
     gap: 10px;
     display: inline-flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .button:hover {
+    background: #3a7ae4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(67, 139, 255, 0.3);
+  }
+
+  .button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(67, 139, 255, 0.2);
+    background: #2e6bc7;
+  }
+
+  .button:focus {
+    outline: 2px solid #438bff;
+    outline-offset: 2px;
+  }
+
+  /* Ripple effect */
+  /* .button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: width 0.3s, height 0.3s;
+    transform: translate(-50%, -50%);
+  } */
+
+  .button:active::before {
+    width: 300px;
+    height: 300px;
   }
 
   .frame-1410103820 {
@@ -498,6 +626,28 @@
     align-items: center;
     gap: 10px;
     display: inline-flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    background: white;
+  }
+
+  .button_01:hover {
+    background: #f8fafb;
+    transform: translateY(-1px);
+    box-shadow: 0px 6px 8px rgba(98.89, 98.89, 98.89, 0.3);
+    outline-color: #bbb;
+  }
+
+  .button_01:active {
+    transform: translateY(1px);
+    box-shadow: 0px 2px 4px rgba(98.89, 98.89, 98.89, 0.2);
+    background: #f0f0f0;
+  }
+
+  .button_01:focus {
+    outline: 2px solid #438bff;
+    outline-offset: 2px;
   }
 
   .frame-5 {
@@ -764,6 +914,11 @@
       padding: 8px 12px;
     }
 
+    .input-placeholder:focus-within {
+      transform: translateY(-2px);
+      box-shadow: 0 0 0 2px rgba(67, 139, 255, 0.15);
+    }
+
     .name-input {
       width: 100%;
       border: none;
@@ -776,6 +931,18 @@
     .button {
       width: 100%;
       padding: 14px 20px;
+      touch-action: manipulation;
+    }
+    
+    /* Optimize button effects for mobile */
+    .button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(67, 139, 255, 0.25);
+    }
+    
+    .button:active::before {
+      width: 200px;
+      height: 200px;
     }
 
     .button_01 {

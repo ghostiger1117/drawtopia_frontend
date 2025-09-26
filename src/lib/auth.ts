@@ -305,7 +305,7 @@ export async function signInWithGoogle(): Promise<AuthResponse> {
           access_type: 'offline',
           prompt: 'consent',
         },
-        redirectTo: `${window.location.origin}`,
+        redirectTo: `${window.location.origin}/dashboard`,
         // flow : 'popup'
       }
     });

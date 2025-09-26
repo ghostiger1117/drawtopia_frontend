@@ -9,6 +9,7 @@
   import { browser } from "$app/environment";
   import { onMount } from "svelte";
   import { addNotification } from "$lib/stores/notification";
+  import MobileBackBtn from "../../components/MobileBackBtn.svelte";
 
   let showPhotoGuideModal = false;
   let selectedAgeGroup = "";
@@ -117,6 +118,7 @@
           <div class="logo-img"></div>
         </div>
       </div>
+      <MobileBackBtn backText="Back"/>
       <div class="back-btn-container">
         <BackBtn />
       </div>
@@ -694,5 +696,16 @@
     background: #f8fafb;
     border-radius: 8px;
     border: 1px dashed #dcdcdc;
+  }
+  @media (max-width: 800px) {
+    .main-pane {
+      width: 100%;
+    }
+    .createchildprofile_span {
+      font-size: 32px;
+    }
+    .back-btn-container {
+      display: none;
+    }
   }
 </style>

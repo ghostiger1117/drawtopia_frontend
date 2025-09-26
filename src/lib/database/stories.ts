@@ -2,7 +2,6 @@
  * Stories Database Operations
  */
 
-import { getCurrentUser } from '$lib/auth';
 import { supabase } from '../supabase';
 
 export interface Story {
@@ -37,11 +36,9 @@ export interface DatabaseResult {
 export async function createStory(story: Story): Promise<DatabaseResult> {
   console.log('Creating story:', story);
   try {
-    const user = await getCurrentUser();
     const { data, error } = await supabase
       .from('stories')
       .insert([{
-        user_id : user?.id,
         child_profile_id: story.child_profile_id,
         child_profile_name: story.child_profile_name,
         character_name: story.character_name,
@@ -160,31 +157,57 @@ export async function getStoriesForChild(childProfileId: string): Promise<Databa
  */
 export async function getAllStoriesForParent(parentId: string): Promise<DatabaseResult> {
   try {
-    const { data, error } = await supabase
-      .from('stories')
-      .select(`
-        *,
-        child_profiles!inner (
-          id,
-          first_name,
-          age_group,
-          parent_id
-        )
-      `)
-      .eq('child_profiles.parent_id', parentId)
-      .order('created_at', { ascending: false });
+    // First, get all child profile IDs for this parent
+    const { data: childProfiles, error: childError } = await supabase
+      .from('child_profiles')
+      .select('id, first_name, age_group')
+      .eq('parent_id', parentId);
 
-    if (error) {
-      console.error('Error fetching stories for parent:', error);
+    if (childError) {
+      console.error('Error fetching child profiles:', childError);
       return {
         success: false,
-        error: error.message
+        error: childError.message
       };
     }
 
+    if (!childProfiles || childProfiles.length === 0) {
+      return {
+        success: true,
+        data: []
+      };
+    }
+
+    // Extract child profile IDs
+    const childProfileIds = childProfiles.map(profile => profile.id);
+
+    // Now get all stories for these child profiles
+    const { data: stories, error: storiesError } = await supabase
+      .from('stories')
+      .select('*')
+      .in('child_profile_id', childProfileIds)
+      .order('created_at', { ascending: false });
+
+    if (storiesError) {
+      console.error('Error fetching stories for parent:', storiesError);
+      return {
+        success: false,
+        error: storiesError.message
+      };
+    }
+
+    // Merge child profile data with stories
+    const storiesWithChildData = stories?.map(story => {
+      const childProfile = childProfiles.find(cp => cp.id === story.child_profile_id);
+      return {
+        ...story,
+        child_profiles: childProfile
+      };
+    }) || [];
+
     return {
       success: true,
-      data: data || []
+      data: storiesWithChildData
     };
 
   } catch (error) {

@@ -25,11 +25,11 @@
 <style>
   .select-wrapper {
     padding: 12px 14px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+    border: 1px solid #dcdcdc;
+    border-radius: 12px;
     background-color: white;
     font-size: 16px;
-    color: #333;
+    color: #141414;
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -38,11 +38,16 @@
     background-position: right 10px center;
     background-size: 20px;
     cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
   }
 
   .select-wrapper:focus {
-    outline: none;
-    border-color: #666;
+    outline: 2px solid #438bff;
+    outline-offset: -2px;
+    box-shadow: 0 0 0 3px rgba(67, 139, 255, 0.1);
+    transform: translateY(-1px);
+    border-color: #438bff;
   }
   .selectyouraccount_span {
     color: #666d80;

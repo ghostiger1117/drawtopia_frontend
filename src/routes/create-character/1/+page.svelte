@@ -362,7 +362,7 @@
 <style>
   .createyourcharacter_span {
     color: #121212;
-    font-size: 48px;
+    font-size: 32px;
     font-family: Quicksand;
     font-weight: 700;
     line-height: 67.2px;
@@ -1208,6 +1208,15 @@
   @media (max-width: 800px) {
     .button_01 {
       display: none;
+    }
+    .create-your-character {
+      text-align: left;
+    }
+    .upload-your-drawing-or-draw-your-own-character-right-here {
+      text-align: left;
+    }
+    .heading {
+      align-items: flex-start;
     }
   }
 </style>

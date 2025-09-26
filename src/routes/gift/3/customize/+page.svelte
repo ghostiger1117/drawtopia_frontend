@@ -5,8 +5,41 @@
   import eye from "../../../../assets/Eye.svg";
   import gift from "../../../../assets/Gift_yellow.svg";
   import purple_check from "../../../../assets/purple-check.svg";
+  import { onMount } from "svelte";
+  import { user, authLoading, isAuthenticated } from "../../../../lib/stores/auth";
+  import { browser } from "$app/environment";
+  import { goto } from "$app/navigation";
 
   let showEditGiftCardModal = false;
+
+  // Reactive statements for auth state
+  $: currentUser = $user;
+  $: loading = $authLoading;
+  $: authenticated = $isAuthenticated;
+  $: userId = currentUser?.id;
+  
+  // Additional safety check for SSR
+  $: safeToRedirect = browser && !loading && currentUser !== undefined;
+
+  // Check authentication on mount (client-side only)
+  onMount(() => {
+    // Only run on client side
+    if (browser) {
+      // Add a small delay to ensure auth state is fully loaded
+      setTimeout(() => {
+        if (safeToRedirect && !authenticated) {
+          goto('/login');
+          return;
+        }
+      }, 100);
+    }
+  });
+
+  // Reactive redirect when auth state changes (client-side only)
+  $: if (safeToRedirect && !authenticated) {
+    // Only redirect if we're sure about the auth state
+    goto('/login');
+  }
 
   const handleReviewPurchaseClick = () => {
     console.log("Review Purchase clicked!"); // Debug

@@ -1,14 +1,90 @@
-<script>
+<script lang="ts">
   import Confetti from "../../../assets/Confetti.svg";
   import scheduled_delivery from "../../../assets/Calendar.svg";
   import calenderblank from "../../../assets/CalendarBlank.svg";
   import arrow_left from "../../../assets/ArrowLeft.svg";
   import GiftStepComponent from "../../../components/GiftStepComponent.svelte";
+  import { giftCreation } from "../../../lib/stores/giftCreation";
+  import { goto } from "$app/navigation";
+  import { onMount } from "svelte";
+  import { user, authLoading, isAuthenticated } from "../../../lib/stores/auth";
+  import { browser } from "$app/environment";
+
+  let specialMessage = "This is Present Give to you, i hope you like it, thank you emma.\nLove, Grandma!";
+  let deliveryEmail = "drawtopia@example.com";
+  let deliveryOption = "scheduled"; // "surprise" or "scheduled"
+  let deliveryDate = "12/12/2025";
+
+  // Reactive statements for auth state
+  $: currentUser = $user;
+  $: loading = $authLoading;
+  $: authenticated = $isAuthenticated;
+  $: userId = currentUser?.id;
+  
+  // Additional safety check for SSR
+  $: safeToRedirect = browser && !loading && currentUser !== undefined;
+
+  // Check authentication on mount (client-side only)
+  onMount(() => {
+    // Only run on client side
+    if (browser) {
+      // Add a small delay to ensure auth state is fully loaded
+      setTimeout(() => {
+        if (safeToRedirect && !authenticated) {
+          goto('/login');
+          return;
+        }
+      }, 100);
+    }
+  });
+
+  // Reactive redirect when auth state changes (client-side only)
+  $: if (safeToRedirect && !authenticated) {
+    // Only redirect if we're sure about the auth state
+    goto('/login');
+  }
+
+  const handleSpecialMessageChange = (event: Event) => {
+    const target = event.target as HTMLTextAreaElement;
+    specialMessage = target.value;
+  };
+
+  const handleDeliveryEmailChange = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    deliveryEmail = target.value;
+  };
+
+  const handleDeliveryOptionChange = (option: string) => {
+    deliveryOption = option;
+  };
+
+  const handleDeliveryDateChange = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    deliveryDate = target.value;
+  };
+
+  const handleContinue = () => {
+    // Validate required fields
+    if (!deliveryEmail.trim()) {
+      alert("Please enter a delivery email");
+      return;
+    }
+
+    // Save delivery details to gift store
+    giftCreation.setDeliveryDetails({
+      specialMsg: specialMessage,
+      deliveryEmail: deliveryEmail.trim(),
+      deliveryOption: deliveryOption as 'surprise' | 'scheduled',
+      deliveryTime: deliveryOption === 'scheduled' ? deliveryDate : 'immediate'
+    });
+
+    // Navigate to review page
+    goto("/gift/review");
+  };
 
   const handleBack = () => {
-    if (typeof window !== "undefined") {
-      window.history.back();
-    }
+    // Navigate back to step 2
+    goto("/gift/2");
   };
 </script>
 <div class="finishing-touches-filled">
@@ -66,15 +142,13 @@
             </div>
             <div class="frame-1410104041">
               <div class="input-placeholder">
-                <div
-                  class="this-is-present-give-to-you-i-hope-you-like-it-thank-you-emma-love-grandma"
-                >
-                  <span
-                    class="thisispresentgivetoyouihopeyoulikeitthankyouemmalovegrandma_span"
-                    >This is Present Give to you, i hope you like it, thank you
-                    emma.<br />Love, Grandma!</span
-                  >
-                </div>
+                <textarea
+                  bind:value={specialMessage}
+                  on:input={handleSpecialMessageChange}
+                  placeholder="Enter your special message..."
+                  class="special-message-input"
+                  maxlength="200"
+                ></textarea>
               </div>
               <div class="text-0200-characters">
                 <span class="f200characters_span">0/200 Characters</span>
@@ -87,14 +161,26 @@
             <div class="example"><span class="example_span">Example</span></div>
             <div class="frame-1410104041_01">
               <div class="frame-1410104116">
-                <div class="input-placeholder_01">
+                <div 
+                  class="input-placeholder_01"
+                  role="button"
+                  tabindex="0"
+                  on:click={() => specialMessage = "Happy Birthday, Emma!"}
+                  on:keydown={(e) => e.key === "Enter" && (specialMessage = "Happy Birthday, Emma!")}
+                >
                   <div>
                     <span class="happybirthdayemma_span"
                       >Happy Birthday, Emma!</span
                     >
                   </div>
                 </div>
-                <div class="input-placeholder_02">
+                <div 
+                  class="input-placeholder_02"
+                  role="button"
+                  tabindex="0"
+                  on:click={() => specialMessage = "Congratulations, Emma!"}
+                  on:keydown={(e) => e.key === "Enter" && (specialMessage = "Congratulations, Emma!")}
+                >
                   <div>
                     <span class="congratulationsemma_span"
                       >Congratulations, Emma!</span
@@ -103,15 +189,33 @@
                 </div>
               </div>
               <div class="frame-1410104117">
-                <div class="input-placeholder_03">
+                <div 
+                  class="input-placeholder_03"
+                  role="button"
+                  tabindex="0"
+                  on:click={() => specialMessage = "You're Amazing"}
+                  on:keydown={(e) => e.key === "Enter" && (specialMessage = "You're Amazing")}
+                >
                   <div>
-                    <span class="youreamazing_span">You’re Amazing</span>
+                    <span class="youreamazing_span">You're Amazing</span>
                   </div>
                 </div>
-                <div class="input-placeholder_04">
+                <div 
+                  class="input-placeholder_04"
+                  role="button"
+                  tabindex="0"
+                  on:click={() => specialMessage = "Love, Grandma"}
+                  on:keydown={(e) => e.key === "Enter" && (specialMessage = "Love, Grandma")}
+                >
                   <div><span class="lovegrandma_span">Love, Grandma</span></div>
                 </div>
-                <div class="input-placeholder_05">
+                <div 
+                  class="input-placeholder_05"
+                  role="button"
+                  tabindex="0"
+                  on:click={() => specialMessage = "Proud of You!"}
+                  on:keydown={(e) => e.key === "Enter" && (specialMessage = "Proud of You!")}
+                >
                   <div><span class="proudofyou_span">Proud of You!</span></div>
                 </div>
               </div>
@@ -130,10 +234,14 @@
             >
           </div>
           <div class="input-placeholder_06">
-            <div>
-              <span class="drawtopiaexamplecom_span">drawtopia@example.com</span
-              >
-            </div>
+            <input
+              type="email"
+              bind:value={deliveryEmail}
+              on:input={handleDeliveryEmailChange}
+              placeholder="Enter parent/guardian email"
+              class="email-input"
+              required
+            />
           </div>
           <div class="well-send-the-story-creation-link-to-this-email">
             <span class="wellsendthestorycreationlinktothisemail_span"
@@ -148,7 +256,14 @@
             >
           </div>
           <div class="frame-1410104179">
-            <div class="selected">
+            <div 
+              class="selected"
+              class:active={deliveryOption === 'surprise'}
+              role="button"
+              tabindex="0"
+              on:click={() => handleDeliveryOptionChange('surprise')}
+              on:keydown={(e) => e.key === "Enter" && handleDeliveryOptionChange('surprise')}
+            >
               <img src={Confetti} alt="surprise delivery"/>
               <div class="frame-1410103940">
                 <div class="frame-1410103939">
@@ -166,9 +281,21 @@
                   </div>
                 </div>
               </div>
-              <div class="ellipse-13"></div>
+              <div class="frame-1410104043">
+                <div class="ellipse-14" class:selected={deliveryOption === 'scheduled'}></div>
+                {#if deliveryOption === 'surprise'}
+                  <div class="ellipse-13_01"></div>
+                {/if}
+              </div>
             </div>
-            <div class="selected_01">
+            <div 
+              class="selected_01"
+              class:active={deliveryOption === 'scheduled'}
+              role="button"
+              tabindex="0"
+              on:click={() => handleDeliveryOptionChange('scheduled')}
+              on:keydown={(e) => e.key === "Enter" && handleDeliveryOptionChange('scheduled')}
+            >
               <img src={scheduled_delivery} alt="scheduled delivery"/>
               <div class="frame-1410103940_01">
                 <div class="frame-1410103939_01">
@@ -189,15 +316,23 @@
                 </div>
               </div>
               <div class="frame-1410104043">
-                <div class="ellipse-14"></div>
-                <div class="ellipse-13_01"></div>
+                <div class="ellipse-14" class:selected={deliveryOption === 'surprise'}></div>
+                {#if deliveryOption === 'scheduled'}
+                  <div class="ellipse-13_01"></div>
+                {/if}
               </div>
             </div>
           </div>
-          <div class="input-placeholder_07">
-            <div><span class="f2122025_span">12/12/2025</span></div>
-            <img src={calenderblank} alt="scheduled delivery"/>
-          </div>
+          {#if deliveryOption === 'scheduled'}
+            <div class="input-placeholder_07">
+              <input
+                type="date"
+                bind:value={deliveryDate}
+                on:input={handleDeliveryDateChange}
+                class="date-input"
+              />
+            </div>
+          {/if}
         </div>
         <div class="frame-1410104037">
           <div class="how-it-works">
@@ -218,7 +353,13 @@
     </div>
     <div class="frame-1410104113_01">
       <div class="frame-1410103991">
-        <div class="button">
+        <div 
+          class="button"
+          role="button"
+          tabindex="0"
+          on:click={handleContinue}
+          on:keydown={(e) => e.key === "Enter" && handleContinue()}
+        >
           <div class="continue-to-give-packaging">
             <span class="continuetogivepackaging_span"
               >Continue to Give Packaging</span
@@ -226,8 +367,14 @@
           </div>
         </div>
       </div>
-      <div class="button_01">
-          <img src={arrow_left} alt="arrow left"/>
+      <div 
+        class="button_01"
+        role="button"
+        tabindex="0"
+        on:click={handleBack}
+        on:keydown={(e) => e.key === "Enter" && handleBack()}
+      >
+        <img src={arrow_left} alt="arrow left"/>
         <div class="back"><span class="back_span">Back</span></div>
       </div>
     </div>
@@ -312,19 +459,6 @@
 
   .your-message-to-the-child {
     align-self: stretch;
-  }
-
-  .thisispresentgivetoyouihopeyoulikeitthankyouemmalovegrandma_span {
-    color: #141414;
-    font-size: 16px;
-    font-family: Nunito;
-    font-weight: 400;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
-  .this-is-present-give-to-you-i-hope-you-like-it-thank-you-emma-love-grandma {
-    flex: 1 1 0;
   }
 
   .f200characters_span {
@@ -424,15 +558,6 @@
     align-self: stretch;
   }
 
-  .drawtopiaexamplecom_span {
-    color: #141414;
-    font-size: 16px;
-    font-family: Nunito;
-    font-weight: 400;
-    line-height: 22.4px;
-    word-wrap: break-word;
-  }
-
   .wellsendthestorycreationlinktothisemail_span {
     color: #666d80;
     font-size: 14px;
@@ -481,13 +606,6 @@
     align-self: stretch;
   }
 
-  .ellipse-13 {
-    width: 24px;
-    height: 24px;
-    border-radius: 9999px;
-    border: 1px #ededed solid;
-  }
-
   .scheduleddelivery_span {
     color: #141414;
     font-size: 16px;
@@ -529,15 +647,6 @@
     background: #438bff;
     border-radius: 9999px;
     border: 1px #438bff solid;
-  }
-
-  .f2122025_span {
-    color: #141414;
-    font-size: 16px;
-    font-family: Nunito;
-    font-weight: 400;
-    line-height: 22.4px;
-    word-wrap: break-word;
   }
 
   .howitworks_span {
@@ -659,6 +768,14 @@
     align-items: flex-start;
     gap: 10px;
     display: inline-flex;
+    transition: all 0.2s ease;
+  }
+
+  .input-placeholder:focus-within {
+    outline: 2px solid #438bff;
+    outline-offset: -2px;
+    box-shadow: 0 0 0 3px rgba(67, 139, 255, 0.1);
+    transform: translateY(-1px);
   }
 
   .input-placeholder_01 {
@@ -672,6 +789,21 @@
     align-items: flex-start;
     gap: 10px;
     display: flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+
+  .input-placeholder_01:hover {
+    background: #f8fafb;
+    outline-color: #438bff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(67, 139, 255, 0.15);
+  }
+
+  .input-placeholder_01:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(67, 139, 255, 0.1);
   }
 
   .input-placeholder_02 {
@@ -685,6 +817,21 @@
     align-items: flex-start;
     gap: 10px;
     display: flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+
+  .input-placeholder_02:hover {
+    background: #f8fafb;
+    outline-color: #438bff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(67, 139, 255, 0.15);
+  }
+
+  .input-placeholder_02:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(67, 139, 255, 0.1);
   }
 
   .input-placeholder_03 {
@@ -698,6 +845,21 @@
     align-items: flex-start;
     gap: 10px;
     display: flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+
+  .input-placeholder_03:hover {
+    background: #f8fafb;
+    outline-color: #438bff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(67, 139, 255, 0.15);
+  }
+
+  .input-placeholder_03:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(67, 139, 255, 0.1);
   }
 
   .input-placeholder_04 {
@@ -711,6 +873,21 @@
     align-items: flex-start;
     gap: 10px;
     display: flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+
+  .input-placeholder_04:hover {
+    background: #f8fafb;
+    outline-color: #438bff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(67, 139, 255, 0.15);
+  }
+
+  .input-placeholder_04:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(67, 139, 255, 0.1);
   }
 
   .input-placeholder_05 {
@@ -724,6 +901,21 @@
     align-items: flex-start;
     gap: 10px;
     display: flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+
+  .input-placeholder_05:hover {
+    background: #f8fafb;
+    outline-color: #438bff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(67, 139, 255, 0.15);
+  }
+
+  .input-placeholder_05:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 4px rgba(67, 139, 255, 0.1);
   }
 
   .input-placeholder_06 {
@@ -742,6 +934,14 @@
     align-items: center;
     gap: 10px;
     display: inline-flex;
+    transition: all 0.2s ease;
+  }
+
+  .input-placeholder_06:focus-within {
+    outline: 2px solid #438bff;
+    outline-offset: -2px;
+    box-shadow: 0 0 0 3px rgba(67, 139, 255, 0.1);
+    transform: translateY(-1px);
   }
 
   .frame-1410103939 {
@@ -788,6 +988,47 @@
     align-items: center;
     gap: 10px;
     display: inline-flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .button:hover {
+    background: #3a7ae4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(67, 139, 255, 0.3);
+  }
+
+  .button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(67, 139, 255, 0.2);
+    background: #2e6bc7;
+  }
+
+  .button:focus {
+    outline: 2px solid #438bff;
+    outline-offset: 2px;
+  }
+
+  /* Ripple effect */
+  /* .button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: width 0.3s, height 0.3s;
+    transform: translate(-50%, -50%);
+  } */
+
+  .button:active::before {
+    width: 300px;
+    height: 300px;
   }
 
   .frame-1410103820 {
@@ -913,6 +1154,14 @@
     justify-content: space-between;
     align-items: center;
     display: inline-flex;
+    transition: all 0.2s ease;
+  }
+
+  .input-placeholder_07:focus-within {
+    outline: 2px solid #438bff;
+    outline-offset: -2px;
+    box-shadow: 0 0 0 3px rgba(67, 139, 255, 0.1);
+    transform: translateY(-1px);
   }
 
   .button_01 {
@@ -929,6 +1178,28 @@
     align-items: center;
     gap: 10px;
     display: inline-flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    background: white;
+  }
+
+  .button_01:hover {
+    background: #f8fafb;
+    transform: translateY(-1px);
+    box-shadow: 0px 6px 8px rgba(98.89, 98.89, 98.89, 0.3);
+    outline-color: #bbb;
+  }
+
+  .button_01:active {
+    transform: translateY(1px);
+    box-shadow: 0px 2px 4px rgba(98.89, 98.89, 98.89, 0.2);
+    background: #f0f0f0;
+  }
+
+  .button_01:focus {
+    outline: 2px solid #438bff;
+    outline-offset: 2px;
   }
 
   .frame-5 {
@@ -1094,6 +1365,92 @@
     display: flex;
   }
 
+  /* Form input styles */
+  .special-message-input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    resize: none;
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 22.4px;
+    color: #141414;
+  }
+
+  .email-input, .date-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 22.4px;
+    color: #141414;
+  }
+
+  .email-input::placeholder {
+    color: #727272;
+  }
+
+  /* Delivery option interactive styles */
+  .selected, .selected_01 {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    user-select: none;
+  }
+
+  .selected:hover, .selected_01:hover {
+    background-color: #f8fafb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .selected:active, .selected_01:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .selected.active, .selected_01.active {
+    outline: 2px solid #438bff;
+    outline-offset: -2px;
+    background-color: #f0f7ff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(67, 139, 255, 0.15);
+  }
+
+  .selected.active:hover, .selected_01.active:hover {
+    background-color: #e6f3ff;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(67, 139, 255, 0.2);
+  }
+
+  /* Delivery option ripple effect */
+  .selected::before, .selected_01::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(67, 139, 255, 0.1);
+    transition: width 0.4s, height 0.4s;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+  }
+
+  .selected:active::before, .selected_01:active::before {
+    width: 200px;
+    height: 200px;
+  }
+
+  .ellipse-14.selected {
+    border-color: #438bff;
+  }
+
   .finishing-touches-filled {
     width: 100%;
     height: 100%;
@@ -1231,6 +1588,13 @@
     .input-placeholder_07 {
       height: 100%;
       padding: 8px 12px;
+    }
+
+    .input-placeholder:focus-within,
+    .input-placeholder_06:focus-within,
+    .input-placeholder_07:focus-within {
+      transform: translateY(-2px);
+      box-shadow: 0 0 0 2px rgba(67, 139, 255, 0.15);
     }
 
     /* Example messages mobile layout */

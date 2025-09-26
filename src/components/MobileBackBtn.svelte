@@ -3,6 +3,7 @@
   import arrowLeft from "../assets/ArrowLeft.svg";
 
   export let backRoute = "/";
+  export let backText = "Back To Step";
 </script>
 
 <div class="mobile-back-btn">
@@ -12,7 +13,7 @@
     </div>
   </button>
   <div class="back-to-step">
-    <span class="backtostep_span">Back To Step</span>
+    <span class="backtostep_span">{backText}</span>
   </div>
 </div>
 

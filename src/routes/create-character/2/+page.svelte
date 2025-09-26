@@ -836,8 +836,7 @@
     padding-right: 12px;
     padding-top: 8px;
     padding-bottom: 8px;
-    left: 120px;
-    top: 791px;
+    left: calc(50% - 173px);
     position: absolute;
     background: #fff6e0;
     border-radius: 10px;
@@ -847,6 +846,7 @@
     align-items: center;
     gap: 12px;
     display: inline-flex;
+    bottom : 20px
   }
 
   .frame-1410103939 {
@@ -1130,12 +1130,31 @@
     .button_01 {
       display: none;
     }
+    .yourcharacterlooksamazing_span {
+      font-size: 20px;
+    }
+    .create-your-character {
+      text-align: left;
+    }
+    .upload-your-drawing-or-draw-your-own-character-right-here {
+      text-align: left;
+    }
+    .heading {
+      align-items: flex-start;
+    }
     .frame-1410104031 {
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+    }
+    .image {
+      height: 400px;
+    }
+    .createyourcharacter_span {
+      font-size: 32px;
+      line-height: 44.8px;
     }
     .frame-1410104032 {
       width: 100%;

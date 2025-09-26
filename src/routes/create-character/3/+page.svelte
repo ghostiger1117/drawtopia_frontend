@@ -616,6 +616,19 @@
     .button_01 {
       display: none;
     }
+    .create-your-character {
+      text-align: left;
+    }
+    .upload-your-drawing-or-draw-your-own-character-right-here {
+      text-align: left;
+    }
+    .createyourcharacter_span {
+      font-size: 32px;
+      line-height : 44.8px;
+    }
+    .heading {
+      align-items: flex-start;
+    }
     .button-fill {
       width: 100% ;
     }

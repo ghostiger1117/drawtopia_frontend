@@ -575,6 +575,15 @@
   }
 
   @media (max-width: 800px) {
+    .create-your-character {
+      text-align: left;
+    }
+    .upload-your-drawing-or-draw-your-own-character-right-here {
+      text-align: left;
+    }
+    .heading {
+      align-items: flex-start;
+    }
     .frame-1410104073 {
       flex-direction: column;
       gap: 12px;

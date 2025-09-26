@@ -3,56 +3,67 @@
   import PrimarySelect from "../../../components/PrimarySelect.svelte";
   import arrow_left from "../../../assets/ArrowLeft.svg";
   import GiftStoryComponent from "../../../components/GiftStoryComponent.svelte";
+  import { giftCreation } from "../../../lib/stores/giftCreation";
+  import { goto } from "$app/navigation";
+  import { onMount } from "svelte";
+  import { user, authLoading, isAuthenticated } from "../../../lib/stores/auth";
+  import { browser } from "$app/environment";
+  import school from '../../../assets/school.png';
+  import birth from '../../../assets/birth.png';
+  import grad from '../../../assets/grad.png';
+  import holiday from '../../../assets/holiday.png';
+  import baby from '../../../assets/baby.png';
+  import just from '../../../assets/just.png';
 
   // Sample story data
   const stories = [
     {
       id: 1,
-      image: "https://placehold.co/402x280",
+      image: birth,
+      ageRange: "All Ages",
+      title: "First Day of School",
+      description:
+        "A special birthday adventure celebrating another year",
+    },
+    {
+      id: 2,
+      image: grad,
+      ageRange: "Ages 5-12",
+      title: "Graduation",
+      description:
+        "An inspiring story about courage and new beginnings",
+    },
+    {
+      id: 3,
+      image: school,
       ageRange: "Ages 3-8",
       title: "First Day of School",
       description:
         "A confidence-building adventure about making friends and being brave",
     },
     {
-      id: 2,
-      image: "https://placehold.co/402x280",
-      ageRange: "Ages 4-9",
-      title: "Birthday Surprise",
-      description:
-        "A magical story about celebrating special moments and family love",
-    },
-    {
-      id: 3,
-      image: "https://placehold.co/402x280",
-      ageRange: "Ages 5-10",
-      title: "Space Explorer",
-      description:
-        "An exciting journey through the galaxy filled with wonder and discovery",
-    },
-    {
       id: 4,
-      image: "https://placehold.co/402x280",
-      ageRange: "Ages 3-7",
-      title: "Animal Friends",
+      image: holiday,
+      ageRange: "All Ages",
+      title: "Holiday/Christmas",
       description:
-        "A heartwarming tale about friendship and caring for our furry companions",
+        "A magical seasonal adventure filled with joy and wonder",
     },
     {
       id: 5,
-      image: "https://placehold.co/402x280",
-      ageRange: "Ages 6-11",
-      title: "Superhero Training",
+      image: baby,
+      ageRange: "Ages 3-10",
+      title: "New Sibling",
       description:
-        "An empowering story about discovering your unique strengths and abilities",
+        "A heartwarming story about being a caring big brother or sister",
     },
     {
       id: 6,
-      image: "https://placehold.co/402x280",
-      ageRange: "Ages 4-8",
-      title: "Ocean Adventure",
+      image: just,
+      ageRange: "All Ages",
+      title: "Just Because",
       description:
-        "A thrilling underwater expedition filled with marine life and mysteries",
+        "A special story showing how amazing they are, any day of the year",
     },
   ];
 
@@ -78,6 +89,36 @@
   let selectedAgeGroup = "3-5";
   let selectedRelationship = "grandparent";
   let childName = "Emma";
+  let selectedStory: any = null;
+
+  // Reactive statements for auth state
+  $: currentUser = $user;
+  $: loading = $authLoading;
+  $: authenticated = $isAuthenticated;
+  $: userId = currentUser?.id;
+
+  // Additional safety check for SSR
+  $: safeToRedirect = browser && !loading && currentUser !== undefined;
+
+  // Check authentication on mount (client-side only)
+  onMount(() => {
+    // Only run on client side
+    if (browser) {
+      // Add a small delay to ensure auth state is fully loaded
+      setTimeout(() => {
+        if (safeToRedirect && !authenticated) {
+          goto("/login");
+          return;
+        }
+      }, 100);
+    }
+  });
+
+  // Reactive redirect when auth state changes (client-side only)
+  $: if (safeToRedirect && !authenticated) {
+    // Only redirect if we're sure about the auth state
+    goto("/login");
+  }
 
   const handleAgeGroupChange = (event: Event) => {
     const target = event.target as HTMLSelectElement;
@@ -94,10 +135,30 @@
     childName = target.value;
   };
 
-  const handleBack = () => {
-    if (typeof window !== "undefined") {
-      window.history.back();
+  const handleStorySelect = (story: any) => {
+    selectedStory = story;
+    console.log("Selected story:", story);
+  };
+
+  const handleContinue = () => {
+    if (!selectedStory) {
+      alert("Please select a story for the occasion");
+      return;
     }
+
+    // Save story selection to gift store
+    giftCreation.setOccasionAndStory({
+      occasion: selectedStory.title, // Using story title as occasion for now
+      selectedStory: selectedStory,
+    });
+
+    // Navigate to step 3
+    goto("/gift/3");
+  };
+
+  const handleBack = () => {
+    // Navigate back to step 1
+    goto("/gift/1");
   };
 </script>
 
@@ -107,7 +168,7 @@
       <div class="logo-img"></div>
     </div>
   </div>
-  
+
   <!-- Mobile Back Button -->
   <div class="mobile-back-button">
     <div
@@ -127,7 +188,8 @@
       <div class="frame-1">
         <div class="heading">
           <div class="tell-us-about-the-child">
-            <span class="tellusaboutthechild_span">What's the special occasion?</span
+            <span class="tellusaboutthechild_span"
+              >What's the special occasion?</span
             >
           </div>
           <div class="well-create-a-personalized-story-just-for-them">
@@ -153,17 +215,19 @@
         {#each stories as story (story.id)}
           <div
             class="story-item"
+            class:selected={selectedStory && selectedStory.id === story.id}
             role="button"
             tabindex="0"
-            on:click={() => console.log("Selected story:", story.title)}
-            on:keydown={(e) =>
-              e.key === "Enter" && console.log("Selected story:", story.title)}
+            on:click={() => handleStorySelect(story)}
+            on:keydown={(e) => e.key === "Enter" && handleStorySelect(story)}
           >
             <GiftStoryComponent
               image={story.image}
               ageRange={story.ageRange}
               title={story.title}
               description={story.description}
+              isSelected={selectedStory && selectedStory.id === story.id}
+              showPopularTag={story.id === 2}
             />
           </div>
         {/each}
@@ -173,13 +237,25 @@
       <div class="continue-section-container">
         <div class="continue-section">
           <div class="frame-1410103991">
-            <div class="button">
+            <div
+              class="button"
+              role="button"
+              tabindex="0"
+              on:click={handleContinue}
+              on:keydown={(e) => e.key === "Enter" && handleContinue()}
+            >
               <div class="continue-to-payment">
                 <span class="continuetopayment_span">Continue to Payment</span>
               </div>
             </div>
           </div>
-          <div class="button_01">
+          <div
+            class="button_01"
+            role="button"
+            tabindex="0"
+            on:click={handleBack}
+            on:keydown={(e) => e.key === "Enter" && handleBack()}
+          >
             <img src={arrow_left} alt="arrow left" class="arrowleft" />
             <div class="back"><span class="back_span">Back</span></div>
           </div>
@@ -322,6 +398,54 @@
     align-items: center;
     gap: 10px;
     display: inline-flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+    border: none;
+  }
+
+  .button:hover {
+    background: #3a7ae4;
+    /* transform: translateY(-2px); */
+    box-shadow: 0 4px 12px rgba(67, 139, 255, 0.3);
+  }
+
+  .button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(67, 139, 255, 0.2);
+    background: #2e6bc7;
+  }
+
+  .button:focus {
+    outline: 2px solid #438bff;
+    outline-offset: 2px;
+  }
+
+  /* Ripple effect */
+  /* .button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: width 0.3s, height 0.3s;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+  } */
+
+  .button:active::before {
+    width: 300px;
+    height: 300px;
+  }
+
+  .button span {
+    position: relative;
+    z-index: 2;
   }
 
   .frame-1410103820 {
@@ -391,6 +515,28 @@
     align-items: center;
     gap: 10px;
     display: inline-flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    background: white;
+  }
+
+  .button_01:hover {
+    background: #f8fafb;
+    transform: translateY(-1px);
+    box-shadow: 0px 6px 8px rgba(98.89, 98.89, 98.89, 0.3);
+    outline-color: #bbb;
+  }
+
+  .button_01:active {
+    transform: translateY(1px);
+    box-shadow: 0px 2px 4px rgba(98.89, 98.89, 98.89, 0.2);
+    background: #f0f0f0;
+  }
+
+  .button_01:focus {
+    outline: 2px solid #438bff;
+    outline-offset: 2px;
   }
 
   .frame-5 {
@@ -448,22 +594,40 @@
   }
 
   .story-item {
-    cursor: pointer;
-    transition:
-      transform 0.2s ease,
-      box-shadow 0.2s ease;
     border-radius: 20px;
     overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
   }
 
   .story-item:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    /* transform: translateY(-2px); */
+    box-shadow: 0px 2px 8px rgba(67, 139, 255, 0.1);
+  }
+
+  .story-item:active {
+    /* transform: translateY(0); */
+    box-shadow: 0px 1px 4px rgba(67, 139, 255, 0.15);
   }
 
   .story-item:focus {
     outline: 2px solid #438bff;
     outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(67, 139, 255, 0.1);
+    /* transform: translateY(-2px); */
+  }
+
+  .story-item.selected {
+    outline: 2px #6912c5 solid;
+    box-shadow: 0px 1px 8px #871fff;
+    /* transform: translateY(-1px); */
+  }
+
+  .story-item.selected:hover {
+    /* transform: translateY(-3px); */
+    box-shadow: 0px 2px 12px #871fff;
   }
 
   .continue-section {
@@ -542,7 +706,16 @@
     font-weight: 600;
     line-height: 22.4px;
   }
+  .story-item.selected {
+    outline: 2px #6912c5 solid;
+    box-shadow: 0px 1px 8px #871fff;
+    /* transform: translateY(-1px); */
+  }
 
+  .story-item.selected:hover {
+    /* transform: translateY(-3px); */
+    box-shadow: 0px 2px 12px #871fff;
+  }
   /* Mobile responsive styles */
   @media (max-width: 800px) {
     .mobile-back-button {
@@ -637,13 +810,17 @@
     }
 
     .story-selection::after {
-      content: '';
+      content: "";
       position: absolute;
       top: 0;
       right: 0;
       width: 20px;
       height: 100%;
-      background: linear-gradient(to left, rgba(255,255,255,0.8), transparent);
+      background: linear-gradient(
+        to left,
+        rgba(255, 255, 255, 0.8),
+        transparent
+      );
       pointer-events: none;
       z-index: 1;
     }
@@ -652,6 +829,23 @@
     .story-item {
       touch-action: manipulation;
       user-select: none;
+    }
+
+    /* Optimize selection effects for mobile */
+    .story-item:hover {
+      /* transform: translateY(-1px); */
+      box-shadow: 0px 1px 4px rgba(67, 139, 255, 0.1);
+    }
+
+    .story-item.selected {
+      outline: 2px #6912c5 solid;
+      box-shadow: 0px 1px 8px #871fff;
+      /* transform: translateY(-1px); */
+    }
+
+    .story-item.selected:hover {
+      /* transform: translateY(-2px); */
+      box-shadow: 0px 2px 8px #871fff;
     }
 
     /* Continue section mobile */
@@ -663,6 +857,18 @@
     .button {
       width: 100%;
       padding: 14px 20px;
+      touch-action: manipulation;
+    }
+
+    /* Optimize button effects for mobile */
+    .button:hover {
+      /* transform: translateY(-1px); */
+      box-shadow: 0 2px 8px rgba(67, 139, 255, 0.25);
+    }
+
+    .button:active::before {
+      width: 200px;
+      height: 200px;
     }
 
     .button_01 {

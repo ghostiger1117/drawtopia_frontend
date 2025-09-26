@@ -1,13 +1,102 @@
-<script>
+<script lang="ts">
   import green_check from "../../../assets/green_check.svg";
   import copy from "../../../assets/Copy.svg";
   import clock from "../../../assets/ClockCountdown.svg";
   import envelope from "../../../assets/Envelope.svg";
   import arrow_left from "../../../assets/ArrowLeft.svg";
+  import { giftCreation } from "../../../lib/stores/giftCreation";
+  import { createGift } from "../../../lib/database/gifts";
+  import { goto } from "$app/navigation";
+  import { onMount } from "svelte";
+  import { user, authLoading, isAuthenticated } from "../../../lib/stores/auth";
+  import { browser } from "$app/environment";
+
+  let isLoading = false;
+  let giftState: any = {};
+
+  // Reactive statements for auth state
+  $: currentUser = $user;
+  $: loading = $authLoading;
+  $: authenticated = $isAuthenticated;
+  $: userId = currentUser?.id;
+  
+  // Additional safety check for SSR
+  $: safeToRedirect = browser && !loading && currentUser !== undefined;
+
+  // Subscribe to gift creation state
+  onMount(() => {
+    // Only run on client side
+    if (browser) {
+      // Add a small delay to ensure auth state is fully loaded
+      setTimeout(() => {
+        if (safeToRedirect && !authenticated) {
+          goto('/login');
+          return;
+        }
+      }, 100);
+    }
+
+    const unsubscribe = giftCreation.subscribe(state => {
+      giftState = state;
+    });
+    
+    return unsubscribe;
+  });
+
+  // Reactive redirect when auth state changes (client-side only)
+  $: if (safeToRedirect && !authenticated) {
+    // Only redirect if we're sure about the auth state
+    goto('/login');
+  }
+
+  // Format delivery time for display
+  const formatDeliveryTime = (deliveryOption: string, deliveryTime: string) => {
+    if (deliveryOption === 'surprise') {
+      return 'Immediate delivery';
+    } else if (deliveryOption === 'scheduled' && deliveryTime) {
+      return new Date(deliveryTime).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+    return deliveryTime || 'Not specified';
+  };
 
   const handleBack = () => {
-    if (typeof window !== "undefined") {
-      window.history.back();
+    // Navigate back to review page
+    goto("/gift/review");
+  };
+
+  const handleFinish = async () => {
+    if (isLoading) return;
+    
+    try {
+      isLoading = true;
+      
+      // Convert gift state to gift object
+      const giftData = giftCreation.toGiftObject(giftState);
+      
+      // Save gift to database
+      const result = await createGift(giftData);
+      
+      if (result.success) {
+        // Store the gift ID
+        giftCreation.setGiftId(result.data.id);
+        
+        console.log('Gift saved successfully:', result.data);
+        
+        // Navigate to dashboard or success page
+        goto('/dashboard');
+      } else {
+        console.error('Failed to save gift:', result.error);
+        alert('Failed to save gift. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error saving gift:', error);
+      alert('An error occurred while saving the gift. Please try again.');
+    } finally {
+      isLoading = false;
     }
   };
 </script>
@@ -44,9 +133,9 @@
             >
           </div>
           <div class="your-special-gift-is-on-its-way-to-emma">
-            <span class="yourspecialgiftisonitswaytoemma_span"
-              >Your special gift is on its way to Emma</span
-            >
+            <span class="yourspecialgiftisonitswaytoemma_span">
+              Your special gift is on its way to {giftState.childName || 'the child'}
+            </span>
           </div>
         </div>
       </div>
@@ -66,17 +155,28 @@
             <div class="frame-1410104139">
               <div class="frame-1410104124">
                 <div><span class="recipient_span">Recipient:</span></div>
-                <div><span class="emmaage5-7_span">Emma (Age 5-7)</span></div>
+                <div><span class="emmaage5-7_span">
+                  {giftState.childName || 'Not specified'} 
+                  {#if giftState.ageGroup}
+                    (Age {giftState.ageGroup})
+                  {/if}
+                </span></div>
               </div>
               <div class="frame-1410104125">
                 <div><span class="sentto_span">Sent To</span></div>
                 <div class="frame-1410104142">
                   <div>
-                    <span class="examplegrowtopiacom_span"
-                      >Example@growtopia.com</span
-                    >
+                    <span class="examplegrowtopiacom_span">
+                      {giftState.deliveryEmail || 'No email specified'}
+                    </span>
                   </div>
-                  <div class="copy">
+                  <div 
+                    class="copy"
+                    role="button"
+                    tabindex="0"
+                    on:click={() => navigator.clipboard.writeText(giftState.deliveryEmail || '')}
+                    on:keydown={(e) => e.key === "Enter" && navigator.clipboard.writeText(giftState.deliveryEmail || '')}
+                  >
                     <img src={copy} alt="copy" />
                   </div>
                 </div>
@@ -85,13 +185,15 @@
             <div class="frame-1410104140">
               <div class="frame-1410104125_01">
                 <div><span class="occasion_span">Occasion:</span></div>
-                <div><span class="birthday_span">Birthday</span></div>
+                <div><span class="birthday_span">{giftState.occasion || 'Not specified'}</span></div>
               </div>
               <div class="frame-1410104124_01">
                 <div>
                   <span class="deliveryoption_span">Delivery Option</span>
                 </div>
-                <div><span class="march152024_span">March 15, 2024</span></div>
+                <div><span class="march152024_span">
+                  {formatDeliveryTime(giftState.deliveryOption, giftState.deliveryTime)}
+                </span></div>
               </div>
             </div>
           </div>
@@ -102,9 +204,9 @@
                 >
               </div>
               <div>
-                <span class="happybirthdayemmalovegrandma_span"
-                  >"Happy Birthday Emma! Love, Grandma"</span
-                >
+                <span class="happybirthdayemmalovegrandma_span">
+                  "{giftState.specialMsg || 'No special message'}"
+                </span>
               </div>
             </div>
             <div class="frame-1410104124_02">
@@ -119,14 +221,14 @@
           <img src={clock} alt="clock" />
           <div class="frame-1410104123">
             <div class="waiting-for-emma-to-create-her-story">
-              <span class="waitingforemmatocreateherstory_span"
-                >Waiting for Emma to create her story</span
-              >
+              <span class="waitingforemmatocreateherstory_span">
+                Waiting for {giftState.childName || 'the child'} to create their story
+              </span>
             </div>
             <div class="an-invitation-email-has-been-sent-to-emmamomemailcom">
-              <span class="aninvitationemailhasbeensenttoemmamomemailcom_span"
-                >An invitation email has been sent to emma.mom@email.com</span
-              >
+              <span class="aninvitationemailhasbeensenttoemmamomemailcom_span">
+                An invitation email has been sent to {giftState.deliveryEmail || 'the specified email'}
+              </span>
             </div>
           </div>
         </div>
@@ -173,11 +275,32 @@
     </div>
     <div class="frame-1410104113">
       <div class="frame-1410103991">
-        <div class="button">
-          <div class="finish"><span class="finish_span">Finish</span></div>
+        <div 
+          class="button" 
+          class:loading={isLoading}
+          role="button"
+          tabindex="0"
+          on:click={handleFinish}
+          on:keydown={(e) => e.key === "Enter" && handleFinish()}
+        >
+          <div class="finish">
+            <span class="finish_span">
+              {#if isLoading}
+                Saving Gift...
+              {:else}
+                Finish
+              {/if}
+            </span>
+          </div>
         </div>
       </div>
-      <div class="button_01">
+      <div 
+        class="button_01"
+        role="button"
+        tabindex="0"
+        on:click={handleBack}
+        on:keydown={(e) => e.key === "Enter" && handleBack()}
+      >
         <div class="arrowleft">
           <img src={arrow_left} alt="arrow_left" />
         </div>
@@ -628,6 +751,58 @@
     align-items: center;
     gap: 10px;
     display: inline-flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .button:hover:not(.loading) {
+    background: #3a7ae4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(67, 139, 255, 0.3);
+  }
+
+  .button:active:not(.loading) {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(67, 139, 255, 0.2);
+    background: #2e6bc7;
+  }
+
+  .button:focus {
+    outline: 2px solid #438bff;
+    outline-offset: 2px;
+  }
+
+  .button.loading {
+    opacity: 0.8;
+    cursor: not-allowed;
+    background: #6ba3ff;
+  }
+
+  .button.loading:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Ripple effect */
+  /* .button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: width 0.3s, height 0.3s;
+    transform: translate(-50%, -50%);
+  } */
+
+  .button:active:not(.loading)::before {
+    width: 300px;
+    height: 300px;
   }
 
   .frame-1410103820 {
@@ -648,6 +823,26 @@
     height: 16px;
     position: relative;
     overflow: hidden;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .copy:hover {
+    background-color: #f0f7ff;
+    transform: scale(1.1);
+  }
+
+  .copy:focus {
+    outline: 2px solid #438bff;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(67, 139, 255, 0.1);
+  }
+
+  .copy:active {
+    transform: scale(0.95);
+    background-color: #e6f3ff;
   }
 
   .copy_01 {
@@ -781,6 +976,28 @@
     align-items: center;
     gap: 10px;
     display: inline-flex;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    background: white;
+  }
+
+  .button_01:hover {
+    background: #f8fafb;
+    transform: translateY(-1px);
+    box-shadow: 0px 6px 8px rgba(98.89, 98.89, 98.89, 0.3);
+    outline-color: #bbb;
+  }
+
+  .button_01:active {
+    transform: translateY(1px);
+    box-shadow: 0px 2px 4px rgba(98.89, 98.89, 98.89, 0.2);
+    background: #f0f0f0;
+  }
+
+  .button_01:focus {
+    outline: 2px solid #438bff;
+    outline-offset: 2px;
   }
 
   .frame-5 {

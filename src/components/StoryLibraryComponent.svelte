@@ -16,6 +16,7 @@
   export let createdDate: string = "15/01/2024";
   export let durationText: string = "8 min read";
   export let occasion: string = "Birthday";
+  export let imageUrl: string = "https://placehold.co/332x225";
 
   const dispatch = createEventDispatcher();
 
@@ -43,39 +44,42 @@
     </div>
   </div>
   <div class="image">
-    {#if status === "completed"}
-      <div class="frame-1410103869">
-        <img src={check} alt="check" class="check" />
-        <div class="sub-menu">
-          <div class="completed">
-            <span class="completed_span">Completed</span>
+    <img src={imageUrl} alt={title} class="story-image" />
+    <div class="status-overlay">
+      {#if status === "completed"}
+        <div class="frame-1410103869">
+          <img src={check} alt="check" class="check" />
+          <div class="sub-menu">
+            <div class="completed">
+              <span class="completed_span">Completed</span>
+            </div>
           </div>
         </div>
-      </div>
-    {:else if status === "generating"}
-      <div class="frame-1410103869 generating-status">
-        <img src={generating} alt="check" class="check" />
-        <div class="sub-menu">
-          <div class="completed">
-            <span class="generating_span">Generating</span>
+      {:else if status === "generating"}
+        <div class="frame-1410103869 generating-status">
+          <img src={generating} alt="check" class="check" />
+          <div class="sub-menu">
+            <div class="completed">
+              <span class="generating_span">Generating</span>
+            </div>
           </div>
         </div>
-      </div>
-    {:else if status === "draft"}
-      <div class="frame-1410103869 draft-status">
-        <img src={draft} alt="check" class="check" />
-        <div class="sub-menu">
-          <div class="completed"><span class="draft_span">Draft</span></div>
+      {:else if status === "draft"}
+        <div class="frame-1410103869 draft-status">
+          <img src={draft} alt="check" class="check" />
+          <div class="sub-menu">
+            <div class="completed"><span class="draft_span">Draft</span></div>
+          </div>
         </div>
-      </div>
-    {:else}
-      <div class="frame-1410103869 failed-status">
-        <img src={failed} alt="check" class="check" />
-        <div class="sub-menu">
-          <div class="completed"><span class="failed_span">Failed</span></div>
+      {:else}
+        <div class="frame-1410103869 failed-status">
+          <img src={failed} alt="check" class="check" />
+          <div class="sub-menu">
+            <div class="completed"><span class="failed_span">Failed</span></div>
+          </div>
         </div>
-      </div>
-    {/if}
+      {/if}
+    </div>
   </div>
   <div class="frame-1410104158">
     <div class="frame-1410104124">
@@ -434,17 +438,27 @@
   .image {
     align-self: stretch;
     height: 225px;
-    padding: 8px;
     background: #fbfbfb;
     overflow: hidden;
     border-radius: 12px;
     outline: 1px #d3d3d3 solid;
     outline-offset: -1px;
-    background-image: url(https://placehold.co/332x225);
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 10px;
-    display: inline-flex;
+    position: relative;
+    display: flex;
+  }
+
+  .story-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .status-overlay {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 1;
   }
 
   .frame-1410104165 {
@@ -457,6 +471,7 @@
 
   .cardd {
     width: 100%;
+    max-width: 400px;
     height: 100%;
     padding: 12px;
     background: white;

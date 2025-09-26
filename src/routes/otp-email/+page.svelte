@@ -517,5 +517,8 @@
     .background-image {
       display: none;
     }
+    .frame-1410103856 {
+      gap: 12px;
+    }
   }
 </style>

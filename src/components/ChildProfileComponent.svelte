@@ -175,7 +175,7 @@
   }
 
   .frame-1410104152 {
-    width: 84px;
+    width: 100%;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;

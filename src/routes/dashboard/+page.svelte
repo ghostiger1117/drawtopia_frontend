@@ -4,6 +4,8 @@
   import { browser } from "$app/environment";
   import { user } from "../../lib/stores/auth";
   import { getChildProfiles, type ChildProfile } from "../../lib/database/childProfiles";
+  import { getAllStoriesForParent, type Story } from "../../lib/database/stories";
+  import { getGiftsForUser, type Gift } from "../../lib/database/gifts";
   import ChildProfileComponent from "../../components/ChildProfileComponent.svelte";
   import StoryLibraryComponent from "../../components/StoryLibraryComponent.svelte";
   import usercircleplus from "../../assets/UserCirclePlus.svg";
@@ -19,8 +21,14 @@
 
   let showMobileMenu = false;
   let childProfiles: any[] = [];
+  let stories: any[] = [];
+  let gifts: any[] = [];
   let loading = true;
+  let loadingStories = true;
+  let loadingGifts = true;
   let error = "";
+  let storiesError = "";
+  let giftsError = "";
 
   // Random story themes for lastStory
   const storyThemes = [
@@ -81,16 +89,103 @@
     }
   };
 
-  // Fetch profiles when component mounts and user is available
+  // Fetch stories for the user
+  const fetchStories = async (userId: string) => {
+    try {
+      loadingStories = true;
+      storiesError = "";
+      
+      const result = await getAllStoriesForParent(userId);
+      
+      if (result.success && result.data) {
+        // Transform the data to match the StoryLibraryComponent interface
+        stories = result.data.map((story: Story & { child_profiles?: any }) => ({
+          title: story.story_title || `${story.character_name}'s Adventure`,
+          author: story.child_profiles?.first_name || story.child_profile_name || "Unknown",
+          status: story.status || "completed",
+          createdDate: story.created_at ? new Date(story.created_at).toLocaleDateString('en-GB') : "Unknown",
+          durationText: "8 min read", // Default duration - could be calculated based on story content
+          occasion: determineOccasion(story.adventure_type, story.story_world),
+          imageUrl: story.original_image_url || "https://placehold.co/332x225"
+        }));
+      } else {
+        storiesError = result.error || "Failed to fetch stories";
+        stories = [];
+      }
+    } catch (err) {
+      console.error("Error fetching stories:", err);
+      storiesError = "An unexpected error occurred while fetching stories";
+      stories = [];
+    } finally {
+      loadingStories = false;
+    }
+  };
+
+  // Fetch gifts for the user
+  const fetchGifts = async () => {
+    try {
+      loadingGifts = true;
+      giftsError = "";
+      
+      const result = await getGiftsForUser();
+      
+      if (result.success && result.data) {
+        // Transform the data to match the GiftTrackingComponent interface
+        gifts = result.data.map((gift: Gift) => ({
+          id: gift.id,
+          childName: gift.child_name,
+          ageGroup: gift.age_group,
+          status: gift.status,
+          giftFrom: gift.relationship,
+          occasion: gift.occasion,
+          expectedDelivery: gift.delivery_time ? new Date(gift.delivery_time).toLocaleDateString('en-GB') : "Unknown",
+          createdAt: gift.created_at ? new Date(gift.created_at) : new Date()
+        }));
+      } else {
+        giftsError = result.error || "Failed to fetch gifts";
+        gifts = [];
+      }
+    } catch (err) {
+      console.error("Error fetching gifts:", err);
+      giftsError = "An unexpected error occurred while fetching gifts";
+      gifts = [];
+    } finally {
+      loadingGifts = false;
+    }
+  };
+
+  // Helper function to determine occasion based on story properties
+  const determineOccasion = (adventureType: string, storyWorld: string): string => {
+    // Map adventure types and worlds to occasions
+    const occasionMap: { [key: string]: string } = {
+      'treasure_hunt': 'Adventure',
+      'helping_friend': 'Friendship',
+      'forest': 'Nature',
+      'space': 'Space Adventure',
+      'underwater': 'Ocean Adventure'
+    };
+    
+    return occasionMap[adventureType] || occasionMap[storyWorld] || 'Adventure';
+  };
+
+  // Fetch profiles, stories, and gifts when component mounts and user is available
   onMount(() => {
     const unsubscribe = user.subscribe(($user) => {
       if ($user?.id) {
         fetchChildProfiles($user.id);
+        fetchStories($user.id);
+        fetchGifts();
       } else {
         // Reset state if no user
         childProfiles = [];
+        stories = [];
+        gifts = [];
         loading = false;
+        loadingStories = false;
+        loadingGifts = false;
         error = "";
+        storiesError = "";
+        giftsError = "";
       }
     });
 
@@ -118,47 +213,6 @@
     goto('/create-character/1');
   };
 
-  const stories: Array<{
-    title: string;
-    author: string;
-    status: "completed" | "generating" | "draft" | "failed";
-    createdDate: string;
-    durationText: string;
-    occasion: string;
-  }> = [
-    {
-      title: "Luna's Magic Adventure",
-      author: "Andreas",
-      status: "completed",
-      createdDate: "15/01/2024",
-      durationText: "8 min read",
-      occasion: "Birthday",
-    },
-    {
-      title: "Forest of Whispers",
-      author: "Andreas",
-      status: "generating",
-      createdDate: "15/01/2024",
-      durationText: "8 min read",
-      occasion: "Birthday",
-    },
-    {
-      title: "Starry Night Quest",
-      author: "Andreas",
-      status: "draft",
-      createdDate: "15/01/2024",
-      durationText: "8 min read",
-      occasion: "Birthday",
-    },
-    {
-      title: "Ocean Rescue",
-      author: "Andreas",
-      status: "failed",
-      createdDate: "15/01/2024",
-      durationText: "8 min read",
-      occasion: "Birthday",
-    },
-  ];
 </script>
 
 <div class="parent-dashboard">
@@ -417,18 +471,42 @@
             </div>
           </div>
           <div class="stories-grid">
-            {#each stories as s}
-              <StoryLibraryComponent
-                title={s.title}
-                author={s.author}
-                status={s.status}
-                createdDate={s.createdDate}
-                durationText={s.durationText}
-                occasion={s.occasion}
-              />
-            {/each}
+            {#if loadingStories}
+              <div class="loading-state">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Loading stories...</p>
+              </div>
+            {:else if storiesError}
+              <div class="error-state">
+                <p class="error-text">{storiesError}</p>
+                <button class="retry-button" on:click={() => $user?.id && fetchStories($user.id)}>
+                  Try Again
+                </button>
+              </div>
+            {:else if stories.length === 0}
+              <div class="empty-state">
+                <p class="empty-text">No stories found.</p>
+                <p class="empty-subtext">Create your first story to get started!</p>
+              </div>
+            {:else}
+              {#each stories as s}
+                <StoryLibraryComponent
+                  title={s.title}
+                  author={s.author}
+                  status={s.status}
+                  createdDate={s.createdDate}
+                  durationText={s.durationText}
+                  occasion={s.occasion}
+                  imageUrl={s.imageUrl}
+                />
+              {/each}
+            {/if}
           </div>
-          <GiftTrackingComponent />
+          <GiftTrackingComponent 
+            gifts={gifts} 
+            loadingGifts={loadingGifts} 
+            giftsError={giftsError} 
+          />
         </div>
       </div>
     </div>
@@ -1043,9 +1121,10 @@
 
   .stories-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(350px, 400px));
     gap: 16px;
     width: 100%;
+    justify-content: start;
   }
 
   .content {

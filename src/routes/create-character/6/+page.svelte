@@ -90,6 +90,8 @@
     // Save the selected adventure image URL
     if (browser && adventureImages[adventure]) {
       saveSelectedImageUrl('6', adventureImages[adventure]);
+      // Set the adventure image as the original_image_url in the story creation store
+      storyCreation.setOriginalImageUrl(adventureImages[adventure]);
     }
   }
 
@@ -100,6 +102,10 @@
       const cachedImage = sessionStorage.getItem(`adventureImage_${selectedWorld}_${adventure}`);
       if (cachedImage) {
         adventureImages[adventure] = cachedImage.split('?')[0];
+        // If this is the currently selected adventure, update the story store
+        if (adventure === selectedAdventure) {
+          storyCreation.setOriginalImageUrl(adventureImages[adventure]);
+        }
       }
     });
     adventureImages = { ...adventureImages };
@@ -153,9 +159,10 @@
         adventureImages[adventure] = result.url;
         adventureImages = { ...adventureImages };
         
-        // If this is the currently selected adventure, save it
+        // If this is the currently selected adventure, save it and update story store
         if (adventure === selectedAdventure) {
           saveSelectedImageUrl('6', result.url);
+          storyCreation.setOriginalImageUrl(result.url);
         }
       }
     } catch (error) {
@@ -618,6 +625,15 @@
   }
 
   @media (max-width: 800px) {
+    .create-your-character {
+      text-align: left;
+    }
+    .upload-your-drawing-or-draw-your-own-character-right-here {
+      text-align: left;
+    }
+    .heading {
+      align-items: flex-start;
+    }
     .frame-1410103852 {
       flex-direction: column;
       gap: 12px;
