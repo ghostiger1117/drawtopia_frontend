@@ -216,16 +216,22 @@
           });
         }
 
-        // Store email for verification if using email method
+        // Store email or phone for verification
         if (signupMethod === "email") {
           localStorage.setItem("pendingEmailVerification", email);
           goto(`/otp-email?email=${encodeURIComponent(email)}`);
         } else {
-          goto("/otp-phone");
+          const phoneToUse = value || phoneNumber;
+          localStorage.setItem("pendingPhoneVerification", phoneToUse);
+          goto(`/otp-phone?phone=${encodeURIComponent(phoneToUse)}`);
         }
       } else {
-        // Handle signup error
-        errors.general = result.error || "Signup failed. Please try again.";
+        // Handle signup error with specific rate limiting message
+        if (result.error && (result.error.includes('over_sms_send_rate_limit') || result.error.includes('rate limit'))) {
+          errors.general = "Please wait 3 seconds before requesting another SMS code.";
+        } else {
+          errors.general = result.error || "Signup failed. Please try again.";
+        }
       }
     } catch (error) {
       console.error("Signup error:", error);
@@ -236,99 +242,7 @@
   };
 
   // Function to get country flag emoji from ISO code
-  const getCountryFlag = (iso2: string): string => {
-    const flagEmojis: { [key: string]: string } = {
-      US: "🇺🇸",
-      GB: "🇬🇧",
-      CA: "🇨🇦",
-      AU: "🇦🇺",
-      DE: "🇩🇪",
-      FR: "🇫🇷",
-      JP: "🇯🇵",
-      IN: "🇮🇳",
-      CN: "🇨🇳",
-      BR: "🇧🇷",
-      MX: "🇲🇽",
-      HU: "🇭🇺",
-      IT: "🇮🇹",
-      ES: "🇪🇸",
-      NL: "🇳🇱",
-      SE: "🇸🇪",
-      NO: "🇳🇴",
-      DK: "🇩🇰",
-      FI: "🇫🇮",
-      PL: "🇵🇱",
-      CZ: "🇨🇿",
-      AT: "🇦🇹",
-      CH: "🇨🇭",
-      BE: "🇧🇪",
-      IE: "🇮🇪",
-      PT: "🇵🇹",
-      GR: "🇬🇷",
-      TR: "🇹🇷",
-      RU: "🇷🇺",
-      UA: "🇺🇦",
-      RO: "🇷🇴",
-      BG: "🇧🇬",
-      HR: "🇭🇷",
-      SI: "🇸🇮",
-      SK: "🇸🇰",
-      LT: "🇱🇹",
-      LV: "🇱🇻",
-      EE: "🇪🇪",
-      MT: "🇲🇹",
-      CY: "🇨🇾",
-      LU: "🇱🇺",
-      IS: "🇮🇸",
-      NZ: "🇳🇿",
-      SG: "🇸🇬",
-      MY: "🇲🇾",
-      TH: "🇹🇭",
-      VN: "🇻🇳",
-      PH: "🇵🇭",
-      ID: "🇮🇩",
-      KR: "🇰🇷",
-      TW: "🇹🇼",
-      HK: "🇭🇰",
-      IL: "🇮🇱",
-      AE: "🇦🇪",
-      SA: "🇸🇦",
-      EG: "🇪🇬",
-      ZA: "🇿🇦",
-      NG: "🇳🇬",
-      KE: "🇰🇪",
-      GH: "🇬🇭",
-      AR: "🇦🇷",
-      CL: "🇨🇱",
-      CO: "🇨🇴",
-      VE: "🇻🇪",
-      EC: "🇪🇨",
-      UY: "🇺🇾",
-      PY: "🇵🇾",
-      BO: "🇧🇴",
-      CR: "🇨🇷",
-      PA: "🇵🇦",
-      GT: "🇬🇹",
-      SV: "🇸🇻",
-      HN: "🇭🇳",
-      NI: "🇳🇮",
-      BZ: "🇧🇿",
-      JM: "🇯🇲",
-      TT: "🇹🇹",
-      BB: "🇧🇧",
-      GD: "🇬🇩",
-      LC: "🇱🇨",
-      VC: "🇻🇨",
-      AG: "🇦🇬",
-      KN: "🇰🇳",
-      DM: "🇩🇲",
-      DO: "🇩🇴",
-      HT: "🇭🇹",
-      CU: "🇨🇺",
-      PR: "🇵🇷",
-    };
-    return flagEmojis[iso2] || "🏳️";
-  };
+  
 
   // Close dropdown when clicking outside
   const handleClickOutside = (event: MouseEvent) => {

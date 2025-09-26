@@ -52,7 +52,7 @@
   // Format delivery time for display
   const formatDeliveryTime = (deliveryOption: string, deliveryTime: string) => {
     if (deliveryOption === 'surprise') {
-      return 'Immediate delivery';
+      return new Date();
     } else if (deliveryOption === 'scheduled' && deliveryTime) {
       return new Date(deliveryTime).toLocaleDateString('en-US', {
         year: 'numeric',

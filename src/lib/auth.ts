@@ -130,6 +130,15 @@ export async function signUpWithPhone(phone: string, password: string, firstName
       options: {
       }
     });
+    
+    // Handle rate limiting error specifically
+    if (otpError && (otpError.message.includes('over_sms_send_rate_limit') || otpError.message.includes('rate limit'))) {
+      return {
+        success: false,
+        error: 'Please wait 3 seconds before requesting another SMS code.'
+      };
+    }
+    
     // console.log('OTP data:', otpData);
     // console.log('OTP error:', otpError);
     return {
@@ -606,6 +615,69 @@ export async function resendEmailOTP(email: string): Promise<{ success: boolean;
     }
 
     // console.log('Resend OTP data:', data);
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'An unexpected error occurred'
+    };
+  }
+}
+
+/**
+ * Resend OTP for phone verification
+ */
+export async function resendPhoneOTP(phone: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const { data, error } = await supabase.auth.signInWithOtp({
+      phone: phone.trim(),
+      options: {}
+    });
+
+    if (error) {
+      // Handle rate limiting error specifically
+      if (error.message.includes('over_sms_send_rate_limit') || error.message.includes('rate limit')) {
+        return {
+          success: false,
+          error: 'Please wait 3 seconds before requesting another SMS code.'
+        };
+      }
+      
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+
+    // console.log('Resend Phone OTP data:', data);
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'An unexpected error occurred'
+    };
+  }
+}
+
+/**
+ * Verify phone OTP
+ */
+export async function verifyPhone(phone: string, token: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const { data, error } = await supabase.auth.verifyOtp({
+      phone: phone.trim(),
+      token: token,
+      type: 'sms',
+    });
+    
+    if (error) {
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+    
+    // console.log('Verify phone data:', data);
     return { success: true };
   } catch (error) {
     return {

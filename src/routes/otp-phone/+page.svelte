@@ -6,6 +6,9 @@
     E164Number,
   } from "svelte-tel-input/types";
   import { addNotification } from "$lib/stores/notification";
+  import { verifyPhone, resendPhoneOTP } from "../../lib/auth";
+  import { goto } from "$app/navigation";
+  import { onMount } from "svelte";
 
   // Any Country Code Alpha-2 (ISO 3166)
   let selectedCountry: CountryCode | null = "HU";
@@ -29,6 +32,27 @@
   // OTP related variables
   let otpValues: string[] = ["", "", "", "", "", ""];
   let otpInputs: HTMLInputElement[] = [];
+  let isResendingOTP = false;
+  let phoneFromStorage = "";
+
+  // Get phone number from localStorage or URL params
+  onMount(() => {
+    // Try to get phone from URL params first
+    const urlParams = new URLSearchParams(window.location.search);
+    const phoneParam = urlParams.get('phone');
+    
+    if (phoneParam) {
+      phoneFromStorage = phoneParam;
+      value = phoneParam as E164Number;
+    } else {
+      // Fallback to localStorage if available
+      const storedPhone = localStorage.getItem('pendingPhoneVerification');
+      if (storedPhone) {
+        phoneFromStorage = storedPhone;
+        value = storedPhone as E164Number;
+      }
+    }
+  });
   // let selectedCountry = { name: 'United States', code: '+1', flag: '🇺🇸' };
   let showCountryDropdown = false;
 
@@ -174,20 +198,35 @@
     errors = {};
     
     try {
-      console.log('Verifying OTP:', otpCode, 'for phone:', value);
+      const phoneToUse = phoneFromStorage || value || phoneNumber;
       
-      // TODO: Replace with actual API call for phone verification
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (!phoneToUse) {
+        errors.general = "Phone number is required for verification";
+        isLoading = false;
+        return;
+      }
       
-      console.log('Phone verification successful');
-      addNotification({
-        type: 'success',
-        message: 'Phone verified successfully! Redirecting to dashboard...'
-      });
+      console.log('Verifying OTP:', otpCode, 'for phone:', phoneToUse);
       
-      // TODO: Redirect to dashboard or main page
-      // goto('/');
+      const result = await verifyPhone(phoneToUse, otpCode);
+      
+      if (result.success) {
+        console.log('Phone verification successful');
+        
+        // Clear any stored pending verification data
+        localStorage.removeItem('pendingPhoneVerification');
+        
+        addNotification({
+          type: 'success',
+          message: 'Phone verified successfully! Redirecting to dashboard...'
+        });
+        
+        // Redirect to dashboard or main page
+        goto('/dashboard');
+      } else {
+        console.error('Phone verification failed:', result.error);
+        errors.general = result.error || 'Invalid verification code. Please try again.';
+      }
     } catch (error) {
       console.error('Phone verification error:', error);
       errors.general = 'An unexpected error occurred. Please try again.';
@@ -291,6 +330,42 @@
     return flagEmojis[iso2] || "🏳️";
   };
 
+  // Handle back button
+  const handleBack = () => {
+    goto('/signup');
+  };
+
+  // Resend OTP function
+  const handleResendOTP = async () => {
+    const phoneToUse = phoneFromStorage || value || phoneNumber;
+    
+    if (!phoneToUse) {
+      errors.general = "Phone number is required to resend code";
+      return;
+    }
+    
+    isResendingOTP = true;
+    errors = {};
+    
+    try {
+      const result = await resendPhoneOTP(phoneToUse);
+      
+      if (result.success) {
+        addNotification({
+          type: 'success',
+          message: 'A new verification code has been sent to your phone.'
+        });
+      } else {
+        errors.general = result.error || 'Failed to resend verification code. Please try again.';
+      }
+    } catch (error) {
+      console.error('Resend OTP error:', error);
+      errors.general = 'Failed to resend verification code. Please try again.';
+    } finally {
+      isResendingOTP = false;
+    }
+  };
+
   // Close dropdown when clicking outside
   const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as Element;
@@ -323,7 +398,7 @@
               >We've sent a 6-digit code to your phone Number</span
             >
             <span class="donthaveaccountsignup_span_02"
-              >+36301234567</span
+              >{phoneFromStorage || value || '+36301234567'}</span
             >
           </div>
         </div>
@@ -360,14 +435,27 @@
               <div class="login"><span class="login_span">Continue</span></div>
             {/if}
           </button>
-          <button type="submit" class="back_btn" disabled={isLoading}>
+          <button type="button" class="back_btn" disabled={isLoading} on:click={handleBack}>
             {#if isLoading}
               <div class="spinner"></div>
-              <span class="login_span">Logging in...</span>
+              <span class="login_span">Processing...</span>
             {:else}
               <div class=""><span class="">Back</span></div>
             {/if}
           </button>
+          
+          <!-- Resend OTP option -->
+          <div class="resend-section">
+            <span class="resend-text">Didn't receive the code?</span>
+            <button 
+              type="button" 
+              class="resend-btn" 
+              on:click={handleResendOTP}
+              disabled={isResendingOTP}
+            >
+              {isResendingOTP ? 'Resending...' : 'Resend Code'}
+            </button>
+          </div>
         </div>
       </form>
     </div>
@@ -661,6 +749,42 @@
   .back_btn:hover:not(:disabled) {
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(67, 139, 255, 0.3);
+  }
+
+  .resend-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .resend-text {
+    color: #666d80;
+    font-size: 14px;
+    font-family: Nunito;
+    font-weight: 400;
+  }
+
+  .resend-btn {
+    background: none;
+    border: none;
+    color: #438bff;
+    font-size: 14px;
+    font-family: Nunito;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: all 0.2s ease;
+  }
+
+  .resend-btn:hover:not(:disabled) {
+    color: #2563eb;
+  }
+
+  .resend-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
   @media (max-width: 768px) {
