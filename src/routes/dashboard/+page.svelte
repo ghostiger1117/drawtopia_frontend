@@ -18,6 +18,7 @@
   import list from "../../assets/List.svg";
   import x from "../../assets/X.svg";
   import GiftTrackingComponent from "../../components/GiftTrackingComponent.svelte";
+  import GiftSelectModal from "../../components/GiftSelectModal.svelte";
   import { storyCreation } from "../../lib/stores/storyCreation";
 
   let showMobileMenu = false;
@@ -30,6 +31,7 @@
   let error = "";
   let storiesError = "";
   let giftsError = "";
+  let showGiftSelectModal = false;
 
   // Random story themes for lastStory
   const storyThemes = [
@@ -169,6 +171,40 @@
     return occasionMap[adventureType] || occasionMap[storyWorld] || 'Adventure';
   };
 
+  // Show gift select modal only once per login session
+  const checkAndShowGiftModal = () => {
+    if (!browser) return;
+    
+    // Check if modal was already shown in this session
+    const hasSeenModalThisSession = sessionStorage.getItem('giftModalShownThisSession');
+    if (!hasSeenModalThisSession) {
+      // Add a small delay to ensure the dashboard has loaded
+      setTimeout(() => {
+        showGiftSelectModal = true;
+        // Mark as shown for this session
+        sessionStorage.setItem('giftModalShownThisSession', 'true');
+      }, 1000);
+    }
+  };
+
+  // Handle gift modal close
+  const handleGiftModalClose = () => {
+    showGiftSelectModal = false;
+  };
+
+  // Handle gift modal actions
+  const handleCreateStory = () => {
+    handleGiftModalClose();
+    // Navigate to create story flow
+    goto('/create-child-profile');
+  };
+
+  const handleGiveAsGift = () => {
+    handleGiftModalClose();
+    // Navigate to gift flow
+    goto('/gift/1');
+  };
+
   // Fetch profiles, stories, and gifts when component mounts and user is available
   onMount(() => {
     const unsubscribe = user.subscribe(($user) => {
@@ -176,6 +212,8 @@
         fetchChildProfiles($user.id);
         fetchStories($user.id);
         fetchGifts();
+        // Show the gift select modal only once per login session
+        checkAndShowGiftModal();
       } else {
         // Reset state if no user
         childProfiles = [];
@@ -187,6 +225,11 @@
         error = "";
         storiesError = "";
         giftsError = "";
+        showGiftSelectModal = false;
+        // Clear session flag when user logs out
+        if (browser) {
+          sessionStorage.removeItem('giftModalShownThisSession');
+        }
       }
     });
 
@@ -514,7 +557,71 @@
   </div>
 </div>
 
+<!-- Gift Select Modal -->
+{#if showGiftSelectModal}
+  <div 
+    class="modal-overlay" 
+    role="dialog" 
+    aria-modal="true" 
+    aria-labelledby="gift-modal-title"
+    on:keydown={(e) => e.key === 'Escape' && handleGiftModalClose()}
+    tabindex="-1"
+  >
+    <section 
+      class="modal-container" 
+      role="document"
+    >
+      <GiftSelectModal 
+        on:createStory={handleCreateStory}
+        on:giveAsGift={handleGiveAsGift}
+        on:close={handleGiftModalClose}
+      />
+    </section>
+  </div>
+{/if}
+
 <style>
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .modal-container {
+    max-width: min(95vw, 900px);
+    max-height: min(95vh, 850px);
+    width: auto;
+    height: auto;
+    overflow: visible;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  /* Ensure modal is centered on all screen sizes */
+  @media (max-width: 768px) {
+    .modal-overlay {
+      padding: 10px;
+    }
+    
+    .modal-container {
+      max-width: 98vw;
+      max-height: 98vh;
+    }
+  }
+
   .logo-img {
     background-image: url("../../assets/logo.png");
     background-size: contain;
