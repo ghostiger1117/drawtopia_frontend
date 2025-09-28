@@ -11,9 +11,11 @@
   import small from "../../../assets/small.png";
   import classic from "../../../assets/classic.png";
   import { storyCreation } from "../../../lib/stores/storyCreation";
+  import { getSelectedImageUrl } from "../../../lib/imageGeneration";
 
   let isMobile = false;
   let characterName = "";
+  let selectedImageFromStep6 = "";
   
   // Selection state variables - these will be updated with the character name
   let selectedTitle = "The Great Addventure [Your Name]";
@@ -47,6 +49,12 @@
           "The Amazing of Journey [Your Name]",
           "[Your Name] and the Space Adventure"
         ];
+      }
+      
+      // Get the selected image from step 6
+      const step6Image = getSelectedImageUrl('6');
+      if (step6Image) {
+        selectedImageFromStep6 = step6Image;
       }
     }
   });
@@ -125,7 +133,7 @@
         </div>
         <img
           class="image"
-          src={small}
+          src={selectedImageFromStep6 || small}
           alt="image_card_1"
         />
       </div>
@@ -271,7 +279,7 @@
               >
                 <img
                   class="frame-1410104088"
-                  src={classic}
+                  src={selectedImageFromStep6 || classic}
                   alt="image_card_2"
                 />
                 <div class="frame-1410103940_04">
@@ -310,7 +318,7 @@
                 <div class="frame-1410103940_05">
                   <img
                     class="frame-1410104088_01"
-                    src={small}
+                    src={selectedImageFromStep6 || small}
                     alt="image_card_3"
                   />
                   <div class="frame-1410103939_05">
@@ -348,7 +356,7 @@
                 <div class="frame-1410103940_06">
                   <img
                     class="frame-1410104088_02"
-                    src={small}
+                    src={selectedImageFromStep6 || small}
                     alt="image_card_4"
                   />
                   <div class="frame-1410103939_06">

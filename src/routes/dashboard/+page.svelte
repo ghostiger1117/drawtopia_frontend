@@ -18,6 +18,7 @@
   import list from "../../assets/List.svg";
   import x from "../../assets/X.svg";
   import GiftTrackingComponent from "../../components/GiftTrackingComponent.svelte";
+  import { storyCreation } from "../../lib/stores/storyCreation";
 
   let showMobileMenu = false;
   let childProfiles: any[] = [];
@@ -209,7 +210,7 @@
       sessionStorage.setItem('selectedChildProfileId', selectedChild.id.toString());
       sessionStorage.setItem('selectedChildProfileName', selectedChild.name); // For display purposes
     }
-    
+    storyCreation.setSelectedChild(selectedChild.id.toString(), selectedChild.name);
     goto('/create-character/1');
   };
 

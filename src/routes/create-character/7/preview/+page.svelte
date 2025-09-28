@@ -97,6 +97,7 @@
       // Get current story state
       let currentState;
       const unsubscribe = storyCreation.subscribe(state => {
+        console.log(state);
         currentState = state;
       });
       unsubscribe();
